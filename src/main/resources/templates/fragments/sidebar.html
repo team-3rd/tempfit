@@ -1,0 +1,141 @@
+<div th:fragment="loginSidebar">
+  <div id="sidebar-login-trigger"></div>
+  <div id="sidebar-login">
+    <button type="button" id="sidebar-login-close" class="btn-close" aria-label="Close"></button>
+    <h4 class="mb-3 mt-3 text-center">로그인</h4>
+    <form th:action="@{/login}" method="post" class="px-3">
+      <div class="mb-3">
+        <label for="login-username" class="form-label">아이디</label>
+        <input type="text" class="form-control" id="login-username" name="username" required />
+      </div>
+      <div class="mb-3">
+        <label for="login-password" class="form-label">비밀번호</label>
+        <input type="password" class="form-control" id="login-password" name="password" required />
+      </div>
+      <button type="submit" class="btn btn-primary w-100">로그인</button>
+    </form>
+  </div>
+  <style>
+    #sidebar-login-trigger {
+      position: fixed;
+      top: 140px;
+      right: 0;
+      width: 44px;
+      height: 110px;
+      background: #3b82f6;
+      border-radius: 14px 0 0 14px;
+      box-shadow: -1px 0 8px rgba(0,0,0,0.10);
+      cursor: pointer;
+      z-index: 1021;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: right 0.35s cubic-bezier(.72,.19,.37,.98), opacity 0.2s;
+    }
+    #sidebar-login-trigger.hide {
+      right: -60px;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #sidebar-login-trigger::before {
+      content: '메뉴';
+      color: #fff;
+      font-size: 1.1rem;
+      writing-mode: vertical-rl;
+      text-align: center;
+      letter-spacing: 1px;
+      font-weight: bold;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+    #sidebar-login {
+      position: fixed;
+      top: 0;
+      right: -340px;
+      width: 340px;
+      height: 100vh;
+      background: #fff;
+      box-shadow: -2px 0 12px rgba(0,0,0,0.13);
+      transition: right 0.35s cubic-bezier(.72,.19,.37,.98);
+      z-index: 1022;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding-top: 28px;
+    }
+    #sidebar-login.active {
+      right: 0;
+    }
+    #sidebar-login-close {
+      position: absolute;
+      top: 14px;
+      left: 18px;
+      background: transparent;
+      border: none;
+      font-size: 1.3rem;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+    }
+    #sidebar-login-close:hover {
+      opacity: 1;
+    }
+    @media (max-width: 480px) {
+      #sidebar-login { width: 100vw; min-width: 0; }
+      #sidebar-login-trigger { width: 38px; height: 80px; }
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const trigger = document.getElementById('sidebar-login-trigger');
+      const sidebar = document.getElementById('sidebar-login');
+      const closeBtn = document.getElementById('sidebar-login-close');
+      let isOpen = false;
+      let overTrigger = false;
+      let overSidebar = false;
+
+      // 마우스가 트리거에 올라가면: 트리거 숨기고 사이드바 보여줌
+      trigger.addEventListener('mouseenter', function() {
+        trigger.classList.add('hide');
+        sidebar.classList.add('active');
+        isOpen = true;
+      });
+      // 트리거에서 마우스가 나가도 바로 닫히지 않음 (sidebar로 이동을 위함)
+      trigger.addEventListener('mouseleave', function(e) {
+        // do nothing (sidebar에 mouseenter시 닫히지 않음)
+      });
+
+      // 모바일: 클릭으로도 열기
+      trigger.addEventListener('click', function() {
+        trigger.classList.add('hide');
+        sidebar.classList.add('active');
+        isOpen = true;
+      });
+
+      // 사이드바 영역에 마우스가 들어가면 상태 체크
+      sidebar.addEventListener('mouseenter', function() {
+        overSidebar = true;
+      });
+      sidebar.addEventListener('mouseleave', function(e) {
+        overSidebar = false;
+        // sidebar 밖으로 나가면 닫기
+        setTimeout(function() {
+          if (!overSidebar) {
+            sidebar.classList.remove('active');
+            trigger.classList.remove('hide');
+            isOpen = false;
+          }
+        }, 100);
+      });
+
+      // 닫기 버튼
+      closeBtn.addEventListener('click', function() {
+        sidebar.classList.remove('active');
+        trigger.classList.remove('hide');
+        isOpen = false;
+      });
+    });
+  </script>
+</div>

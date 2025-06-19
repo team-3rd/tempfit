@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>글쓰기 - TempFit 커뮤니티</title>
+  <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body { background: #f5f6fa; }
+    #warningPopup { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1050; width: 90%; max-width: 500px;}
+    #styleGroup .invalid-feedback { display: none;}
+    #styleGroup.was-validated .invalid-feedback { display: block;}
+  </style>
+</head>
+<body>
+  <div th:replace="fragments/navbar :: navbar"></div>
+  <!-- 경고 팝업 -->
+  <div id="warningPopup" class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+    한 게시글에 하나의 룩만 올려주세요!<br>
+    <span class="text-danger">※다른 룩을 같이 올리실 경우 제재될 수 있습니다.※</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  <div class="container px-4 px-lg-5 mt-5">
+    <h1>글쓰기</h1>
+    <form id="communityForm"
+          th:action="@{/community/register}"
+          method="post"
+          enctype="multipart/form-data"
+          class="needs-validation"
+          novalidate>
+      <!-- 제목 -->
+      <div class="mb-3">
+        <label for="title" class="form-label">제목</label>
+        <input type="text" class="form-control" id="title" name="title" maxlength="11" placeholder="제목을 입력하세요 (최대 11자)" required />
+        <div id="titleHelp" class="form-text">0 / 11</div>
+        <div class="invalid-feedback">제목을 입력해주세요.</div>
+      </div>
+      <!-- 작성자 -->
+      <div class="mb-3">
+        <label for="author" class="form-label">작성자</label>
+        <input type="text" class="form-control" id="author" name="author" placeholder="작성자명을 입력하세요" />
+      </div>
+      <!-- 대표 사진 -->
+      <div class="mb-3">
+        <label for="repImage" class="form-label">대표 사진<span class="text-danger">*</span></label>
+        <input class="form-control" type="file" id="repImage" name="repImage" accept="image/*" required />
+        <div class="invalid-feedback">대표 사진을 선택해주세요.</div>
+      </div>
+      <!-- 추가 사진 -->
+      <div id="extraImageContainer" class="mb-3">
+        <label class="form-label">추가 사진</label>
+        <div class="mb-2">
+          <input class="form-control" type="file" name="extraImages" accept="image/*" />
+        </div>
+      </div>
+      <button type="button" class="btn btn-sm btn-outline-secondary mb-3" onclick="addExtraImageInput()">＋ 사진 추가</button>
+      <!-- 내용 -->
+      <div class="mb-3">
+        <label for="content" class="form-label">내용</label>
+        <textarea class="form-control" id="content" name="content" rows="5" placeholder="내용을 입력하세요"></textarea>
+      </div>
+      <!-- 스타일 선택 (필수: 1~2개) -->
+      <div id="styleGroup" class="mb-3">
+        <label class="form-label">스타일 선택 <span class="text-danger">*</span> (1~2개)</label>
+        <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="CASUAL" id="styleCasual" /><label class="form-check-label" for="styleCasual">캐주얼</label></div>
+        <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="STREET" id="styleStreet" /><label class="form-check-label" for="styleStreet">스트리트</label></div>
+        <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="FORMAL" id="styleFormal" /><label class="form-check-label" for="styleFormal">포멀</label></div>
+        <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="OUTDOOR" id="styleOutdoor" /><label class="form-check-label" for="styleOutdoor">아웃도어</label></div>
+        <div class="invalid-feedback">1개 이상, 최대 2개까지 선택해주세요.</div>
+      </div>
+      <a href="/community/list" class="btn btn-secondary ms-2">목록</a>
+      <button type="submit" class="btn btn-primary">등록</button>
+    </form>
+  </div>
+  <div th:replace="fragments/footer :: footer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const communityForm = document.getElementById('communityForm');
+    const styleGroup    = document.getElementById('styleGroup');
+    const styleChecks   = document.querySelectorAll('.style-check');
+    document.getElementById('title').addEventListener('input', e => {
+      document.getElementById('titleHelp').textContent = `${e.target.value.length} / 11`;
+    });
+    communityForm.addEventListener('submit', function(e) {
+      let valid = communityForm.checkValidity();
+      const checkedCnt = Array.from(styleChecks).filter(c => c.checked).length;
+      if (checkedCnt < 1 || checkedCnt > 2) {
+        valid = false;
+        styleGroup.classList.add('was-validated');
+      }
+      if (!valid) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      communityForm.classList.add('was-validated');
+    }, false);
+    styleChecks.forEach(chk => {
+      chk.addEventListener('change', () => {
+        const checkedCnt = Array.from(styleChecks).filter(c => c.checked).length;
+        styleChecks.forEach(c => {
+          c.disabled = checkedCnt >= 2 && !c.checked;
+        });
+        if (checkedCnt >= 1 && checkedCnt <= 2) {
+          styleGroup.classList.remove('was-validated');
+        }
+      });
+    });
+    function addExtraImageInput() {
+      const container = document.getElementById('extraImageContainer');
+      const div = document.createElement('div');
+      div.className = 'mb-2';
+      div.innerHTML = `<input class="form-control" type="file" name="extraImages" accept="image/*" />`;
+      container.appendChild(div);
+    }
+  </script>
+</body>
+</html>
