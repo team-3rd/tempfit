@@ -11,9 +11,7 @@
     #styleGroup .invalid-feedback { display: none;}
     #styleGroup.was-validated .invalid-feedback { display: block;}
 
-    /* 통일된 input 높이 */
-    .form-control,
-    .file-input-group input[type="file"] {
+    .form-control, .file-row input[type="file"] {
       height: 42px !important;
       min-height: 42px;
       box-sizing: border-box;
@@ -23,36 +21,17 @@
       padding-top: 10px;
       padding-bottom: 10px;
     }
-
-    /* 파일 input+X 구조 */
-    .file-input-group {
+    .file-row {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      gap: 0.5rem;
       position: relative;
-      width: 100%;
-      min-height: 42px;
     }
-    .file-input-group input[type="file"] {
-      width: 100%;
-      padding-right: 48px;
-    }
-    .file-preview-name {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 0.96rem;
-      color: #333;
-      pointer-events: none;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: calc(100% - 64px);
-      z-index: 1;
+    .file-row input[type="file"] {
+      flex: 1;
     }
     .x-square-btn {
-      position: absolute;
-      right: 6px;
-      top: 50%;
-      transform: translateY(-50%);
       width: 38px;
       height: 38px;
       background: #fff;
@@ -65,9 +44,10 @@
       font-size: 1.3rem;
       font-weight: bold;
       cursor: pointer;
-      padding: 0;
       transition: background 0.12s, color 0.12s;
       z-index: 2;
+      margin-left: 0;
+      padding: 0;
     }
     .x-square-btn.show { display: flex; }
     .x-square-btn:hover {
@@ -108,9 +88,8 @@
       <!-- 대표 사진 -->
       <div class="mb-3">
         <label for="repImage" class="form-label">대표 사진<span class="text-danger">*</span></label>
-        <div class="file-input-group">
+        <div class="file-row">
           <input class="form-control" type="file" id="repImage" name="repImage" accept="image/*" required />
-          <span id="repImagePreview" class="file-preview-name"></span>
           <button type="button" id="repImageXBtn" class="x-square-btn" tabindex="-1"><span>&times;</span></button>
         </div>
         <div class="invalid-feedback">대표 사진을 선택해주세요.</div>
@@ -118,9 +97,8 @@
       <!-- 추가 사진 (여러 장 가능) -->
       <div class="mb-3">
         <label for="extraImages" class="form-label">추가 사진</label>
-        <div class="file-input-group">
+        <div class="file-row">
           <input class="form-control" type="file" id="extraImages" name="extraImages" accept="image/*" multiple />
-          <span id="extraImagesPreview" class="file-preview-name"></span>
           <button type="button" id="extraImagesXBtn" class="x-square-btn" tabindex="-1"><span>&times;</span></button>
         </div>
         <div class="form-text">Ctrl 또는 Shift를 눌러 여러 장 선택 가능</div>
@@ -155,45 +133,27 @@
   <div th:replace="fragments/footer :: footer"></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // 대표 사진 미리보기 및 취소
+    // 대표 사진 X 버튼 제어
     const repInput = document.getElementById('repImage');
-    const repPreview = document.getElementById('repImagePreview');
     const repXBtn = document.getElementById('repImageXBtn');
     repXBtn.classList.remove('show');
     repInput.addEventListener('change', function() {
-      repPreview.textContent = '';
-      if (this.files.length > 0) {
-        repPreview.textContent = this.files[0].name;
-        repXBtn.classList.add('show');
-      } else {
-        repPreview.textContent = '';
-        repXBtn.classList.remove('show');
-      }
+      repXBtn.classList.toggle('show', this.files.length > 0);
     });
     repXBtn.onclick = function() {
       repInput.value = '';
-      repPreview.textContent = '';
       repXBtn.classList.remove('show');
     };
 
-    // 추가 사진 미리보기 및 취소
+    // 추가 사진 X 버튼 제어
     const extraInput = document.getElementById('extraImages');
-    const extraPreview = document.getElementById('extraImagesPreview');
     const extraXBtn = document.getElementById('extraImagesXBtn');
     extraXBtn.classList.remove('show');
     extraInput.addEventListener('change', function() {
-      extraPreview.textContent = '';
-      if (this.files.length > 0) {
-        extraPreview.textContent = Array.from(this.files).map(f => f.name).join(', ');
-        extraXBtn.classList.add('show');
-      } else {
-        extraPreview.textContent = '';
-        extraXBtn.classList.remove('show');
-      }
+      extraXBtn.classList.toggle('show', this.files.length > 0);
     });
     extraXBtn.onclick = function() {
       extraInput.value = '';
-      extraPreview.textContent = '';
       extraXBtn.classList.remove('show');
     };
   </script>
