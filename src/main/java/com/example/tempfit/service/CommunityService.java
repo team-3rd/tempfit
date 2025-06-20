@@ -35,7 +35,7 @@ public class CommunityService {
     @Value("${upload.path}")
     private String uploadDir;
 
-    /** 게시글 등록 + 이미지 저장 */
+    /* 게시글 등록 + 이미지 저장 */
     public Long register(CommunityDTO dto, MultipartFile repImage, List<MultipartFile> extraImages) throws IOException {
         // 1) Community 먼저 저장
         Community community = Community.builder()
@@ -74,7 +74,7 @@ public class CommunityService {
         return community.getId();
     }
 
-    /** 단건 조회 + 이미지/스타일 매핑 */
+    /* 단건 조회 + 이미지/스타일 매핑 */
     public CommunityDTO get(Long id) {
         Community entity = communityRepository.findById(id).orElseThrow();
         CommunityDTO dto = entityToDTO(entity);
@@ -98,28 +98,28 @@ public class CommunityService {
         return dto;
     }
 
-    /** 페이징된 DTO 리스트 */
+    /* 페이징된 DTO 리스트 */
     public Page<CommunityDTO> getPage(int page) {
         Pageable pageable = PageRequest.of(page - 1, 25, Sort.by("id").descending());
         return communityRepository.list(null, null, null, pageable)
                                   .map(this::arrayToDTO);
     }
 
-    /** 검색(타입,키워드) + 페이징 */
+    /* 검색(타입,키워드) + 페이징 */
     public Page<CommunityDTO> searchPage(String type, String keyword, int page) {
         Pageable pageable = PageRequest.of(page - 1, 25, Sort.by("id").descending());
         return communityRepository.list(type, keyword, null, pageable)
                                   .map(this::arrayToDTO);
     }
 
-    /** 스타일 필터 포함 검색 + 페이징 */
+    /* 스타일 필터 포함 검색 + 페이징 */
     public Page<CommunityDTO> searchPageRaw(String type, String keyword, List<String> styleNames, int page) {
         Pageable pageable = PageRequest.of(page - 1, 25, Sort.by("id").descending());
         return communityRepository.list(type, keyword, styleNames, pageable)
                                   .map(this::arrayToDTO);
     }
 
-    /** 수정 + 이미지 업데이트 */
+    /* 수정 + 이미지 업데이트 */
     public void modify(CommunityDTO dto, MultipartFile repImage, List<MultipartFile> extraImages) throws IOException {
         Community community = communityRepository.findById(dto.getId()).orElseThrow();
         community.setTitle(dto.getTitle());
@@ -152,7 +152,7 @@ public class CommunityService {
         communityStyleRepository.save(style);
     }
 
-    /** 삭제 */
+    /* 삭제 */
     public void remove(Long id) {
         communityStyleRepository.deleteById(id);
         communityImageRepository.deleteAll(
@@ -161,7 +161,7 @@ public class CommunityService {
         communityRepository.deleteById(id);
     }
 
-    /** 이미지 저장 내부 로직 */
+    /* 이미지 저장 내부 로직 */
     private void saveCommunityImage(Community community, MultipartFile file, boolean isRep) throws IOException {
         File uploadPathDir = new File(uploadDir);
         if (!uploadPathDir.exists()) uploadPathDir.mkdirs();
@@ -194,7 +194,7 @@ public class CommunityService {
                 .build();
     }
 
-    /** 쿼리 결과 배열 → DTO 매핑 (스타일 플래그 포함) */
+    /* 쿼리 결과 배열 → DTO 매핑 (스타일 플래그 포함) */
     private CommunityDTO arrayToDTO(Object[] arr) {
         return CommunityDTO.builder()
                 .id((Long) arr[0])
