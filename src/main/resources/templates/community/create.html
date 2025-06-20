@@ -11,6 +11,8 @@
     #warningPopup { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1050; width: 90%; max-width: 500px;}
     #styleGroup .invalid-feedback { display: none;}
     #styleGroup.was-validated .invalid-feedback { display: block;}
+    #timeGroup .invalid-feedback { display: none;}
+    #timeGroup.was-validated .invalid-feedback { display: block;}
   </style>
 </head>
 <body>
@@ -60,14 +62,26 @@
         <label for="content" class="form-label">내용</label>
         <textarea class="form-control" id="content" name="content" rows="5" placeholder="내용을 입력하세요"></textarea>
       </div>
-      <!-- 스타일 선택 (필수: 1~2개) -->
-      <div id="styleGroup" class="mb-3">
-        <label class="form-label">스타일 선택 <span class="text-danger">*</span> (1~2개)</label>
-        <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="CASUAL" id="styleCasual" /><label class="form-check-label" for="styleCasual">캐주얼</label></div>
-        <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="STREET" id="styleStreet" /><label class="form-check-label" for="styleStreet">스트리트</label></div>
-        <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="FORMAL" id="styleFormal" /><label class="form-check-label" for="styleFormal">포멀</label></div>
-        <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="OUTDOOR" id="styleOutdoor" /><label class="form-check-label" for="styleOutdoor">아웃도어</label></div>
-        <div class="invalid-feedback">1개 이상, 최대 2개까지 선택해주세요.</div>
+      <!-- 스타일 + 시간대 선택 한 줄에 가로 배치 -->
+      <div class="mb-3 d-flex align-items-start gap-4 flex-wrap">
+        <!-- 스타일 선택 -->
+        <div id="styleGroup">
+          <label class="form-label">스타일 선택 <span class="text-danger">*</span> (1~2개)</label>
+          <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="CASUAL" id="styleCasual" /><label class="form-check-label" for="styleCasual">캐주얼</label></div>
+          <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="STREET" id="styleStreet" /><label class="form-check-label" for="styleStreet">스트리트</label></div>
+          <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="FORMAL" id="styleFormal" /><label class="form-check-label" for="styleFormal">포멀</label></div>
+          <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="OUTDOOR" id="styleOutdoor" /><label class="form-check-label" for="styleOutdoor">아웃도어</label></div>
+          <div class="invalid-feedback">1개 이상, 최대 2개까지 선택해주세요.</div>
+        </div>
+        <!-- 시간대 선택 -->
+        <div id="timeGroup">
+          <label class="form-label">시간대 선택 <span class="text-danger">*</span></label>
+          <div class="form-check"><input class="form-check-input" type="radio" name="timeRange" id="time1" value="02-08" required /><label class="form-check-label" for="time1">02시 ~ 08시</label></div>
+          <div class="form-check"><input class="form-check-input" type="radio" name="timeRange" id="time2" value="08-14" /><label class="form-check-label" for="time2">08시 ~ 14시</label></div>
+          <div class="form-check"><input class="form-check-input" type="radio" name="timeRange" id="time3" value="14-20" /><label class="form-check-label" for="time3">14시 ~ 20시</label></div>
+          <div class="form-check"><input class="form-check-input" type="radio" name="timeRange" id="time4" value="20-02" /><label class="form-check-label" for="time4">20시 ~ 02시</label></div>
+          <div class="invalid-feedback">시간대를 선택해주세요.</div>
+        </div>
       </div>
       <a href="/community/list" class="btn btn-secondary ms-2">목록</a>
       <button type="submit" class="btn btn-primary">등록</button>
@@ -76,19 +90,28 @@
   <div th:replace="fragments/footer :: footer"></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    const communityForm = document.getElementById('communityForm');
+    // 추가 이미지 입력 필드 추가
+    function addExtraImageInput() {
+      const container = document.getElementById('extraImageContainer');
+      const div = document.createElement('div');
+      div.className = 'mb-2';
+      div.innerHTML = `<input class="form-control" type="file" name="extraImages" accept="image/*" />`;
+      container.appendChild(div);
+    }
+
+    // 스타일 체크박스 1~2개만 허용 + 시간대 1개 선택만 허용
     const styleGroup    = document.getElementById('styleGroup');
     const styleChecks   = document.querySelectorAll('.style-check');
-    document.getElementById('title').addEventListener('input', e => {
-      document.getElementById('titleHelp').textContent = `${e.target.value.length} / 11`;
-    });
+    const communityForm = document.getElementById('communityForm');
     communityForm.addEventListener('submit', function(e) {
       let valid = communityForm.checkValidity();
+      // 스타일 체크(1~2개)
       const checkedCnt = Array.from(styleChecks).filter(c => c.checked).length;
       if (checkedCnt < 1 || checkedCnt > 2) {
         valid = false;
         styleGroup.classList.add('was-validated');
       }
+      // 시간대(라디오) 체크(HTML5 required로 자동 동작)
       if (!valid) {
         e.preventDefault();
         e.stopPropagation();
@@ -106,13 +129,10 @@
         }
       });
     });
-    function addExtraImageInput() {
-      const container = document.getElementById('extraImageContainer');
-      const div = document.createElement('div');
-      div.className = 'mb-2';
-      div.innerHTML = `<input class="form-control" type="file" name="extraImages" accept="image/*" />`;
-      container.appendChild(div);
-    }
+    // 제목 길이 표시 (선택)
+    document.getElementById('title').addEventListener('input', e => {
+      document.getElementById('titleHelp').textContent = `${e.target.value.length} / 11`;
+    });
   </script>
 </body>
 </html>
