@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta charset="UTF-8" />
   <title>글쓰기 - TempFit 커뮤니티</title>
   <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -11,8 +10,71 @@
     #warningPopup { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1050; width: 90%; max-width: 500px;}
     #styleGroup .invalid-feedback { display: none;}
     #styleGroup.was-validated .invalid-feedback { display: block;}
-    #timeGroup .invalid-feedback { display: none;}
-    #timeGroup.was-validated .invalid-feedback { display: block;}
+
+    /* 통일된 input 높이 */
+    .form-control,
+    .file-input-group input[type="file"] {
+      height: 42px !important;
+      min-height: 42px;
+      box-sizing: border-box;
+    }
+    textarea.form-control {
+      min-height: 100px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    /* 파일 input+X 구조 */
+    .file-input-group {
+      position: relative;
+      width: 100%;
+      min-height: 42px;
+    }
+    .file-input-group input[type="file"] {
+      width: 100%;
+      padding-right: 48px;
+    }
+    .file-preview-name {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.96rem;
+      color: #333;
+      pointer-events: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: calc(100% - 64px);
+      z-index: 1;
+    }
+    .x-square-btn {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 38px;
+      height: 38px;
+      background: #fff;
+      color: #dc3545;
+      border: 1.5px solid #dc3545;
+      border-radius: 7px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 0;
+      transition: background 0.12s, color 0.12s;
+      z-index: 2;
+    }
+    .x-square-btn.show { display: flex; }
+    .x-square-btn:hover {
+      background: #dc3545;
+      color: #fff;
+      border-color: #dc3545;
+    }
   </style>
 </head>
 <body>
@@ -46,42 +108,45 @@
       <!-- 대표 사진 -->
       <div class="mb-3">
         <label for="repImage" class="form-label">대표 사진<span class="text-danger">*</span></label>
-        <input class="form-control" type="file" id="repImage" name="repImage" accept="image/*" required />
+        <div class="file-input-group">
+          <input class="form-control" type="file" id="repImage" name="repImage" accept="image/*" required />
+          <span id="repImagePreview" class="file-preview-name"></span>
+          <button type="button" id="repImageXBtn" class="x-square-btn" tabindex="-1"><span>&times;</span></button>
+        </div>
         <div class="invalid-feedback">대표 사진을 선택해주세요.</div>
       </div>
-      <!-- 추가 사진 -->
-      <div id="extraImageContainer" class="mb-3">
-        <label class="form-label">추가 사진</label>
-        <div class="mb-2">
-          <input class="form-control" type="file" name="extraImages" accept="image/*" />
+      <!-- 추가 사진 (여러 장 가능) -->
+      <div class="mb-3">
+        <label for="extraImages" class="form-label">추가 사진</label>
+        <div class="file-input-group">
+          <input class="form-control" type="file" id="extraImages" name="extraImages" accept="image/*" multiple />
+          <span id="extraImagesPreview" class="file-preview-name"></span>
+          <button type="button" id="extraImagesXBtn" class="x-square-btn" tabindex="-1"><span>&times;</span></button>
         </div>
+        <div class="form-text">Ctrl 또는 Shift를 눌러 여러 장 선택 가능</div>
       </div>
-      <button type="button" class="btn btn-sm btn-outline-secondary mb-3" onclick="addExtraImageInput()">＋ 사진 추가</button>
       <!-- 내용 -->
       <div class="mb-3">
         <label for="content" class="form-label">내용</label>
         <textarea class="form-control" id="content" name="content" rows="5" placeholder="내용을 입력하세요"></textarea>
       </div>
-      <!-- 스타일 + 시간대 선택 한 줄에 가로 배치 -->
-      <div class="mb-3 d-flex align-items-start gap-4 flex-wrap">
-        <!-- 스타일 선택 -->
-        <div id="styleGroup">
-          <label class="form-label">스타일 선택 <span class="text-danger">*</span> (1~2개)</label>
-          <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="CASUAL" id="styleCasual" /><label class="form-check-label" for="styleCasual">캐주얼</label></div>
-          <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="STREET" id="styleStreet" /><label class="form-check-label" for="styleStreet">스트리트</label></div>
-          <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="FORMAL" id="styleFormal" /><label class="form-check-label" for="styleFormal">포멀</label></div>
-          <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="OUTDOOR" id="styleOutdoor" /><label class="form-check-label" for="styleOutdoor">아웃도어</label></div>
-          <div class="invalid-feedback">1개 이상, 최대 2개까지 선택해주세요.</div>
-        </div>
-        <!-- 시간대 선택 -->
-        <div id="timeGroup">
-          <label class="form-label">시간대 선택 <span class="text-danger">*</span></label>
-          <div class="form-check"><input class="form-check-input" type="radio" name="timeRange" id="time1" value="02-08" required /><label class="form-check-label" for="time1">02시 ~ 08시</label></div>
-          <div class="form-check"><input class="form-check-input" type="radio" name="timeRange" id="time2" value="08-14" /><label class="form-check-label" for="time2">08시 ~ 14시</label></div>
-          <div class="form-check"><input class="form-check-input" type="radio" name="timeRange" id="time3" value="14-20" /><label class="form-check-label" for="time3">14시 ~ 20시</label></div>
-          <div class="form-check"><input class="form-check-input" type="radio" name="timeRange" id="time4" value="20-02" /><label class="form-check-label" for="time4">20시 ~ 02시</label></div>
-          <div class="invalid-feedback">시간대를 선택해주세요.</div>
-        </div>
+      <!-- 스타일 선택 (필수: 1~2개) -->
+      <div id="styleGroup" class="mb-3">
+        <label class="form-label">스타일 선택 <span class="text-danger">*</span> (1~2개)</label>
+        <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="CASUAL" id="styleCasual" /><label class="form-check-label" for="styleCasual">캐주얼</label></div>
+        <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="STREET" id="styleStreet" /><label class="form-check-label" for="styleStreet">스트리트</label></div>
+        <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="FORMAL" id="styleFormal" /><label class="form-check-label" for="styleFormal">포멀</label></div>
+        <div class="form-check"><input class="form-check-input style-check" type="checkbox" name="styleNames" value="OUTDOOR" id="styleOutdoor" /><label class="form-check-label" for="styleOutdoor">아웃도어</label></div>
+        <div class="invalid-feedback">1개 이상, 최대 2개까지 선택해주세요.</div>
+      </div>
+      <!-- 시간대 선택 (필수: 1개) -->
+      <div id="timeGroup" class="mb-3">
+        <label class="form-label">시간대 선택 <span class="text-danger">*</span></label>
+        <div class="form-check"><input class="form-check-input" type="radio" name="timeRange" id="time1" value="02-08" required /><label class="form-check-label" for="time1">02시 ~ 08시</label></div>
+        <div class="form-check"><input class="form-check-input" type="radio" name="timeRange" id="time2" value="08-14" /><label class="form-check-label" for="time2">08시 ~ 14시</label></div>
+        <div class="form-check"><input class="form-check-input" type="radio" name="timeRange" id="time3" value="14-20" /><label class="form-check-label" for="time3">14시 ~ 20시</label></div>
+        <div class="form-check"><input class="form-check-input" type="radio" name="timeRange" id="time4" value="20-02" /><label class="form-check-label" for="time4">20시 ~ 02시</label></div>
+        <div class="invalid-feedback">시간대를 선택해주세요.</div>
       </div>
       <a href="/community/list" class="btn btn-secondary ms-2">목록</a>
       <button type="submit" class="btn btn-primary">등록</button>
@@ -90,49 +155,47 @@
   <div th:replace="fragments/footer :: footer"></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // 추가 이미지 입력 필드 추가
-    function addExtraImageInput() {
-      const container = document.getElementById('extraImageContainer');
-      const div = document.createElement('div');
-      div.className = 'mb-2';
-      div.innerHTML = `<input class="form-control" type="file" name="extraImages" accept="image/*" />`;
-      container.appendChild(div);
-    }
+    // 대표 사진 미리보기 및 취소
+    const repInput = document.getElementById('repImage');
+    const repPreview = document.getElementById('repImagePreview');
+    const repXBtn = document.getElementById('repImageXBtn');
+    repXBtn.classList.remove('show');
+    repInput.addEventListener('change', function() {
+      repPreview.textContent = '';
+      if (this.files.length > 0) {
+        repPreview.textContent = this.files[0].name;
+        repXBtn.classList.add('show');
+      } else {
+        repPreview.textContent = '';
+        repXBtn.classList.remove('show');
+      }
+    });
+    repXBtn.onclick = function() {
+      repInput.value = '';
+      repPreview.textContent = '';
+      repXBtn.classList.remove('show');
+    };
 
-    // 스타일 체크박스 1~2개만 허용 + 시간대 1개 선택만 허용
-    const styleGroup    = document.getElementById('styleGroup');
-    const styleChecks   = document.querySelectorAll('.style-check');
-    const communityForm = document.getElementById('communityForm');
-    communityForm.addEventListener('submit', function(e) {
-      let valid = communityForm.checkValidity();
-      // 스타일 체크(1~2개)
-      const checkedCnt = Array.from(styleChecks).filter(c => c.checked).length;
-      if (checkedCnt < 1 || checkedCnt > 2) {
-        valid = false;
-        styleGroup.classList.add('was-validated');
+    // 추가 사진 미리보기 및 취소
+    const extraInput = document.getElementById('extraImages');
+    const extraPreview = document.getElementById('extraImagesPreview');
+    const extraXBtn = document.getElementById('extraImagesXBtn');
+    extraXBtn.classList.remove('show');
+    extraInput.addEventListener('change', function() {
+      extraPreview.textContent = '';
+      if (this.files.length > 0) {
+        extraPreview.textContent = Array.from(this.files).map(f => f.name).join(', ');
+        extraXBtn.classList.add('show');
+      } else {
+        extraPreview.textContent = '';
+        extraXBtn.classList.remove('show');
       }
-      // 시간대(라디오) 체크(HTML5 required로 자동 동작)
-      if (!valid) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      communityForm.classList.add('was-validated');
-    }, false);
-    styleChecks.forEach(chk => {
-      chk.addEventListener('change', () => {
-        const checkedCnt = Array.from(styleChecks).filter(c => c.checked).length;
-        styleChecks.forEach(c => {
-          c.disabled = checkedCnt >= 2 && !c.checked;
-        });
-        if (checkedCnt >= 1 && checkedCnt <= 2) {
-          styleGroup.classList.remove('was-validated');
-        }
-      });
     });
-    // 제목 길이 표시 (선택)
-    document.getElementById('title').addEventListener('input', e => {
-      document.getElementById('titleHelp').textContent = `${e.target.value.length} / 11`;
-    });
+    extraXBtn.onclick = function() {
+      extraInput.value = '';
+      extraPreview.textContent = '';
+      extraXBtn.classList.remove('show');
+    };
   </script>
 </body>
 </html>
