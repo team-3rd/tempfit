@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.*;
 import com.example.tempfit.service.CoordiService;
 import com.example.tempfit.dto.CoordiDTO;
 import com.example.tempfit.entity.TemperatureRange;
-import com.example.tempfit.guide.ClothingGuide;
+import com.example.tempfit.guide.ClothingGuideMale;
+import com.example.tempfit.guide.ClothingGuideFemale;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,8 +40,12 @@ public class CoordiController {
 
     // 메인화면 가이드라인(랜덤/이미지)
     @GetMapping("/guide")
-    public Map<String, Map<String, String>> getRandomGuide(@RequestParam("temp") int temp) {
+    public Map<String, Map<String, Map<String, String>>> getRandomGuide(@RequestParam("temp") int temp) {
         TemperatureRange range = TemperatureRange.fromTemperature(temp);
-        return ClothingGuide.getRandomClothingWithImage(range);
+
+        Map<String, Map<String, Map<String, String>>> result = new HashMap<>();
+        result.put("male", ClothingGuideMale.getRandomClothingWithImage(range)); // ← 여기!
+        result.put("female", ClothingGuideFemale.getRandomClothingWithImage(range));
+        return result;
     }
 }

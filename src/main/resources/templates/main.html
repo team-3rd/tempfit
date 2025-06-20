@@ -34,8 +34,8 @@
 <div class="container px-4 px-lg-5">
   <div class="row gx-4 gx-lg-5 align-items-start my-5">
     <!-- 왼쪽 50%: 날씨카드+시간대별온도 -->
-    <div class="col-12 col-lg-6 d-flex flex-column">
-      <div class="card shadow-sm mb-4" style="width: 100%;">
+    <div class="col-12 col-lg-6 d-flex flex-column h-100">
+      <div class="card shadow-sm mb-4 flex-grow-1" style="width: 100%;">
         <div class="card-body text-center">
           <div id="weather-icon" style="font-size: 3rem; margin-bottom: 8px"></div>
           <div id="weather-sky" class="fw-bold" style="font-size: 1.1rem; color: #226be7">-</div>
@@ -53,7 +53,7 @@
       </div>
     </div>
     <!-- 오른쪽 50%: 추천 코디 -->
-<div class="col-12 col-lg-6 d-flex flex-column align-items-center justify-content-start">
+<div class="col-12 col-lg-6 d-flex flex-column h-100">
   <h1 class="font-weight-light mt-5 mb-3" id="clothing-guide-head" style="font-size:2.4rem;">
     오늘의 추천 코디
   </h1>
@@ -127,61 +127,73 @@
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/scripts.js"></script>
-    <!-- 위치 + 날씨 + 추천 JS -->
-    <script>
-      window.addEventListener("DOMContentLoaded", function () {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            function (pos) {
-              const lat = pos.coords.latitude;
-              const lon = pos.coords.longitude;
-              fetch(`/api/weather/current?lat=${lat}&lon=${lon}`)
-                .then((res) => res.json())
-                .then((data) => {
-                  let tempNum = parseInt(data.temp);
-                  // 날씨 상세 표시 (좌측)
-                  document.getElementById("weather-sky").textContent = data.sky || "-";
-                  document.getElementById("weather-desc").textContent = data.rainType || "-";
-                  document.getElementById("weather-temp").textContent = data.temp !== undefined ? data.temp : "-";
-                  document.getElementById("weather-date").textContent = data.fcstDate || "-";
-                  document.getElementById("weather-time").textContent = data.fcstTime || "-";
-                  // 옷 추천
-                  fetch(`/api/coordi/guide?temp=${tempNum}`)
-                    .then((res) => res.json())
-                    .then(renderGuide)
-                    .catch(() => {
-                      document.getElementById("clothing-guide").innerText = "추천 코디 정보를 가져오지 못했습니다";
-                    });
-                })
-                .catch(() => {
-                  document.getElementById("weather-info").innerText = "날씨 정보를 가져오지 못했습니다.";
-                });
-            },
-            function (error) {
-              document.getElementById("weather-info").innerText = "위치 권한을 허용해 주세요!";
-            }
-          );
-        } else {
-          document.getElementById("weather-info").innerText = "브라우저가 위치정보를 지원하지 않습니다.";
-        }
 
-        // 옷 추천 렌더 함수(기존거 활용)
-        function renderGuide(data) {
-          // 예: data = { top: {name: "...", imageUrl: "..."}, ... }
-          const guideDiv = document.getElementById("clothing-guide");
-          guideDiv.innerHTML = "";
-          for (const [part, info] of Object.entries(data)) {
-            guideDiv.innerHTML += `
-      <div style="text-align:center;">
-        <img src="${info.imageUrl}" alt="${info.name}" width="100" height="100"
-          style="border-radius:10px; border:1px solid #ddd; background:#fafafa;"/><br/>
-        <b>${part === "top" ? "상의" : part === "bottom" ? "하의" : "신발"}</b><br/>
-        <span style="font-size:18px;">${info.name}</span>
-      </div>
-    `;
-          }
-        }
-      });
+    <!-- 위치 + 날씨 + 추천 JS -->
+      <script>
+    window.addEventListener("DOMContentLoaded", function () {
+  // 1. 위치정보 받아오기
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function (pos) {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+
+        // 2. 날씨 API 호출 (온도 받아오기)
+        fetch(`/api/weather/current?lat=${lat}&lon=${lon}`)
+          .then(res => res.json())
+          .then(weatherData => {
+            // 온도 표시 (기존 날씨카드용)
+            document.getElementById("weather-sky").textContent = weatherData.sky || "-";
+            document.getElementById("weather-desc").textContent = weatherData.rainType || "-";
+            document.getElementById("weather-temp").textContent = weatherData.temp !== undefined ? weatherData.temp : "-";
+            document.getElementById("weather-date").textContent = weatherData.fcstDate || "-";
+            document.getElementById("weather-time").textContent = weatherData.fcstTime || "-";
+            document.getElementById("weather-location").textContent = weatherData.location || "";
+
+            let tempNum = parseInt(weatherData.temp);
+
+            // 3. 온도로 남/여 코디 추천 API 호출
+            fetch(`/api/coordi/guide?temp=${tempNum}`)
+              .then(res => res.json())
+              .then(data => {
+                renderGuide("clothing-guide-male", data.male);
+                renderGuide("clothing-guide-female", data.female);
+              })
+              .catch(() => {
+                document.getElementById("clothing-guide-male").innerText = "추천 코디 정보를 가져오지 못했습니다";
+                document.getElementById("clothing-guide-female").innerText = "추천 코디 정보를 가져오지 못했습니다";
+              });
+          })
+          .catch(() => {
+            document.getElementById("weather-temp").textContent = "날씨 정보를 가져오지 못했습니다";
+          });
+      },
+      function (error) {
+        document.getElementById("weather-temp").textContent = "위치 권한을 허용해 주세요!";
+      }
+    );
+  } else {
+    document.getElementById("weather-temp").textContent = "브라우저가 위치정보를 지원하지 않습니다.";
+  }
+
+  // 공통 렌더 함수
+  function renderGuide(divId, data) {
+    const guideDiv = document.getElementById(divId);
+    guideDiv.innerHTML = "";
+    ["top", "bottom", "shoes"].forEach(part => {
+      if (data[part]) {
+        guideDiv.innerHTML += `
+          <div style="text-align:center;">
+            <img src="${data[part].imageUrl}" alt="${data[part].name}" width="150" height="150"
+              style="border-radius:10px; border:1px solid #ddd; background:#fafafa;"/><br/>
+            <b>${part === "top" ? "상의" : part === "bottom" ? "하의" : "신발"}</b><br/>
+            <span style="font-size:18px;">${data[part].name}</span>
+          </div>
+        `;
+      }
+    });
+  }
+});
     </script>
   </body>
 </html>

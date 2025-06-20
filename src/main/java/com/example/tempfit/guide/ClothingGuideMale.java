@@ -4,7 +4,7 @@ package com.example.tempfit.guide;
 import com.example.tempfit.entity.TemperatureRange;
 import java.util.*;
 
-public class ClothingGuide {
+public class ClothingGuideMale {
 
     public static class GuideSet {
         public List<String> tops;
