@@ -19,6 +19,8 @@ public class WeatherDTO {
     private String pty;
     private String sky;
     private String tmp;
+    private String reh;
+    private String wsd;
 
     private LocalDate fcstDate;
     private LocalTime fcstTime;

@@ -120,6 +120,8 @@ public class WeatherService {
             List<String> ptyList = new ArrayList<>();
             List<String> skyList = new ArrayList<>();
             List<String> tmpList = new ArrayList<>();
+            List<String> rehList = new ArrayList<>();
+            List<String> wsdList = new ArrayList<>();
             List<String> dateList = new ArrayList<>();
             List<String> timeList = new ArrayList<>();
 
@@ -139,6 +141,11 @@ public class WeatherService {
                     skyList.add(value);
                 } else if (category.equals("TMP")) {
                     tmpList.add(value);
+                } else if (category.equals("REH")) {
+                    rehList.add(value);
+                }
+                else if (category.equals("WSD")) {
+                    wsdList.add(value);
                     dateList.add(fcstDate);
                     timeList.add(fcstTime);
                 } else
@@ -146,7 +153,7 @@ public class WeatherService {
             }
 
             // 모은 리스트의 값을 순서대로 DTO에 저장
-            for (int i = 0; i < ptyList.size(); i++) {
+            for (int i = 0; i < rehList.size(); i++) {
                 WeatherDTO weatherDTO = new WeatherDTO();
 
                 switch (ptyList.get(i)) {
@@ -186,6 +193,8 @@ public class WeatherService {
                 }
 
                 weatherDTO.setTmp(tmpList.get(i) + "℃");
+                weatherDTO.setReh(rehList.get(i) + "%");
+                weatherDTO.setWsd(wsdList.get(i) + "m/s");
 
                 // 예보 날짜 및 시간 파싱
                 LocalDate parseDate = LocalDate.parse(dateList.get(i), DateTimeFormatter.BASIC_ISO_DATE);

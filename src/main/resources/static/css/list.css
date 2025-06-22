@@ -1,0 +1,67 @@
+body {
+  background: #f5f6fa;
+}
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  margin-top: 40px;
+}
+.post-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+.post-date,
+.post-author {
+  font-size: 0.85rem;
+  color: #666;
+  text-align: center;
+}
+.post-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin: 8px 0 12px;
+  line-height: 1.3;
+  color: #333;
+  text-align: center;
+  text-decoration: none;
+}
+.badge-list {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+.badge-list span.badge {
+  font-size: 0.75rem;
+  padding: 0.25em 0.5em;
+}
+.post-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+.search-form .form-select,
+.search-form .form-control {
+  width: 15rem;
+  height: 2rem;
+  font-size: 0.75rem;
+  padding: 0.25rem;
+}
+.search-form .btn,
+.search-form .reset-btn,
+.create-btn {
+  width: 4rem;
+  height: 2rem;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.5rem;
+}

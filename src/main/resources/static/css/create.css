@@ -1,0 +1,66 @@
+body {
+  background: #f5f6fa;
+}
+#warningPopup {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1050;
+  width: 90%;
+  max-width: 500px;
+}
+#styleGroup .invalid-feedback {
+  display: none;
+}
+#styleGroup.was-validated .invalid-feedback {
+  display: block;
+}
+
+.form-control,
+.file-row input[type="file"] {
+  height: 42px !important;
+  min-height: 42px;
+  box-sizing: border-box;
+}
+textarea.form-control {
+  min-height: 100px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.file-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0.5rem;
+  position: relative;
+}
+.file-row input[type="file"] {
+  flex: 1;
+}
+.x-square-btn {
+  width: 38px;
+  height: 38px;
+  background: #fff;
+  color: #dc3545;
+  border: 1.5px solid #dc3545;
+  border-radius: 7px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  z-index: 2;
+  margin-left: 0;
+  padding: 0;
+}
+.x-square-btn.show {
+  display: flex;
+}
+.x-square-btn:hover {
+  background: #dc3545;
+  color: #fff;
+  border-color: #dc3545;
+}
