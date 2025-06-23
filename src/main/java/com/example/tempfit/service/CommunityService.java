@@ -19,7 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -84,9 +86,9 @@ public class CommunityService {
         if (!imgs.isEmpty()) {
             dto.setRepImageUrl(imgs.get(0).getFileName());
             dto.setExtraImageUrls(imgs.stream()
-                                       .skip(1)
-                                       .map(CommunityImage::getFileName)
-                                       .collect(Collectors.toList()));
+                    .skip(1)
+                    .map(CommunityImage::getFileName)
+                    .collect(Collectors.toList()));
         }
 
         communityStyleRepository.findById(id).ifPresent(style -> {
@@ -103,21 +105,21 @@ public class CommunityService {
     public Page<CommunityDTO> getPage(int page) {
         Pageable pageable = PageRequest.of(page - 1, 25, Sort.by("id").descending());
         return communityRepository.list(null, null, null, pageable)
-                                  .map(this::arrayToDTO);
+                .map(this::arrayToDTO);
     }
 
     /* 검색(타입,키워드) + 페이징 */
     public Page<CommunityDTO> searchPage(String type, String keyword, int page) {
         Pageable pageable = PageRequest.of(page - 1, 25, Sort.by("id").descending());
         return communityRepository.list(type, keyword, null, pageable)
-                                  .map(this::arrayToDTO);
+                .map(this::arrayToDTO);
     }
 
     /* 스타일 필터 포함 검색 + 페이징 */
     public Page<CommunityDTO> searchPageRaw(String type, String keyword, List<String> styleNames, int page) {
         Pageable pageable = PageRequest.of(page - 1, 25, Sort.by("id").descending());
         return communityRepository.list(type, keyword, styleNames, pageable)
-                                  .map(this::arrayToDTO);
+                .map(this::arrayToDTO);
     }
 
     /* 수정 + 이미지 업데이트 */
@@ -157,15 +159,15 @@ public class CommunityService {
     public void remove(Long id) {
         communityStyleRepository.deleteById(id);
         communityImageRepository.deleteAll(
-            communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(id)
-        );
+                communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(id));
         communityRepository.deleteById(id);
     }
 
     /* 이미지 저장 내부 로직 */
     private void saveCommunityImage(Community community, MultipartFile file, boolean isRep) throws IOException {
         File uploadPathDir = new File(uploadDir);
-        if (!uploadPathDir.exists()) uploadPathDir.mkdirs();
+        if (!uploadPathDir.exists())
+            uploadPathDir.mkdirs();
 
         String uuid = UUID.randomUUID().toString();
         String ext = StringUtils.getFilenameExtension(file.getOriginalFilename());
@@ -174,15 +176,15 @@ public class CommunityService {
         file.transferTo(dest);
 
         CommunityImage img = CommunityImage.builder()
-                                           .community(community)
-                                           .origName(file.getOriginalFilename())
-                                           .fileName(storedName)
-                                           .isRep(isRep)
-                                           .build();
+                .community(community)
+                .origName(file.getOriginalFilename())
+                .fileName(storedName)
+                .isRep(isRep)
+                .build();
         communityImageRepository.save(img);
     }
 
-    private CommunityDTO entityToDTO(Community entity) {
+    public CommunityDTO entityToDTO(Community entity) {
         return CommunityDTO.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
@@ -210,4 +212,15 @@ public class CommunityService {
                 .outdoor((Boolean) arr[9])
                 .build();
     }
+
+    // 메인 홈페이지에 top 코디들 추가
+    public Map<String, List<Community>> getTopCommunitiesByStyleAndTemperature(int temp) {
+        Map<String, List<Community>> result = new HashMap<>();
+        for (String style : List.of("캐주얼", "포멀", "스트리트", "아웃도어")) {
+            List<Community> posts = communityRepository.findTopCommunitiesByStyleAndTemp(style, temp, 3);
+            result.put(style, posts);
+        }
+        return result;
+    }
+
 }

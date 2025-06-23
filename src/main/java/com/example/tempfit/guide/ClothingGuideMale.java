@@ -23,11 +23,11 @@ public class ClothingGuideMale {
     static {
         // 상의
         imageUrlMap.put("민소매", "/images/guide/top/sleeveless.png");
-        imageUrlMap.put("반소매", "/images/guide/top/shortsleeve.png");
+        imageUrlMap.put("헨리넥 반소매", "/images/guide/top/shortsleeve.png");
         imageUrlMap.put("피케/카라 티셔츠", "/images/guide/top/piqueshirt.png");
         imageUrlMap.put("얇은 니트", "/images/guide/top/shortsleeveknit.png");
         imageUrlMap.put("반팔 셔츠", "/images/guide/top/shortsleeveshirts.png");
-        imageUrlMap.put("린넨셔츠", "/images/guide/top/linenshirts.png");
+        imageUrlMap.put("린넨 셔츠", "/images/guide/top/linenshirts.png");
         imageUrlMap.put("긴소매", "/images/guide/top/longsleeve.png");
         imageUrlMap.put("셔츠", "/images/guide/top/shirt.png");
         imageUrlMap.put("가디건", "/images/guide/top/cardigan.png");
@@ -43,7 +43,7 @@ public class ClothingGuideMale {
 
         // 하의
         imageUrlMap.put("반바지", "/images/guide/bottom/denimshorts.png");
-        imageUrlMap.put("린넨바지", "/images/guide/bottom/linenpants.png");
+        imageUrlMap.put("린넨 팬츠", "/images/guide/bottom/linenpants.png");
         imageUrlMap.put("얇은 데님", "/images/guide/bottom/lightdenim.png");
         imageUrlMap.put("데님", "/images/guide/bottom/denim.png");
         imageUrlMap.put("코튼 팬츠", "/images/guide/bottom/chinopants.png");
@@ -65,15 +65,15 @@ public class ClothingGuideMale {
     static {
         guideMap.put(TemperatureRange.VERY_HOT, // 28 ~ 100
                 new GuideSet(
-                        Arrays.asList("민소매", "반소매", "피케/카라 티셔츠", "얇은 니트", "반팔 셔츠", "린넨셔츠"),
-                        Arrays.asList("반바지", "린넨바지", "얇은 데님"),
+                        Arrays.asList("민소매", "헨리넥 반소매", "피케/카라 티셔츠", "얇은 니트", "반팔 셔츠", "린넨 셔츠"),
+                        Arrays.asList("반바지", "린넨 팬츠", "얇은 데님"),
                         Arrays.asList("샌들/슬리퍼", "스니커즈")
                 )
         );
         guideMap.put(TemperatureRange.HOT, // 23 ~ 27
                 new GuideSet(
-                        Arrays.asList("반소매", "피케/카라 티셔츠", "얇은 니트", "반팔 셔츠", "린넨셔츠"),
-                        Arrays.asList("린넨바지", "얇은 데님", "코튼 팬츠", "슬랙스"),
+                        Arrays.asList("헨리넥 반소매", "피케/카라 티셔츠", "얇은 니트", "반팔 셔츠", "린넨 셔츠"),
+                        Arrays.asList("린넨 팬츠", "얇은 데님", "코튼 팬츠", "슬랙스"),
                         Arrays.asList("스니커즈", "스포츠화")
                 )
         );

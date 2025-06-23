@@ -11,18 +11,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = {"communityStyle", "images"})
+@ToString(exclude = { "communityStyle", "images" })
 @Getter
 @Setter
 public class Community extends Base {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "community_seq_gen")
-    @SequenceGenerator(
-        name = "community_seq_gen",
-        sequenceName = "COMMUNITY_SEQ",
-        allocationSize = 1
-    )
+    @SequenceGenerator(name = "community_seq_gen", sequenceName = "COMMUNITY_SEQ", allocationSize = 1)
     private Long id;
 
     /** 제목은 반드시 입력되도록 유지 */
@@ -42,19 +38,11 @@ public class Community extends Base {
     @Column(nullable = false)
     private int recommendCount;
 
-    @OneToMany(
-        mappedBy = "community",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("isRep DESC, id ASC")
     private List<CommunityImage> images = new ArrayList<>();
 
-    @OneToOne(
-        cascade = CascadeType.ALL,
-        fetch = FetchType.LAZY,
-        orphanRemoval = true
-    )
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "style_flags_id")
     private CommunityStyle communityStyle;
 
@@ -75,4 +63,7 @@ public class Community extends Base {
     public void preUpdate() {
         this.upDateTime = LocalDateTime.now();
     }
+
+    @Column(name = "temperature")
+    private Integer temperature;
 }

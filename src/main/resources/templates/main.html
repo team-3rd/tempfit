@@ -83,7 +83,7 @@
         </div>
       </div>
 
-      <!-- 전체 T.O.P LOOKS 박스 (이전 답변 코드 참고) -->
+      <!-- TOP LOOKS 박스 (row/col은 JS에서 자동 생성) -->
       <div class="col-12">
         <div class="card shadow-sm mb-4 flex-grow-1" style="width: 100%">
           <div class="card-body">
@@ -94,70 +94,8 @@
                 <span style="letter-spacing: 1px; color: red; font-weight: 700">BEST LOOKS</span>
               </span>
             </div>
-            <!-- 여기서 row에 d-flex와 align-items-stretch 추가! -->
-            <div class="row gx-4 gx-lg-5 d-flex align-items-stretch">
-              <div class="col-md-3 mb-4 d-flex">
-                <div class="card flex-fill h-100">
-                  <div class="card-body d-flex flex-column">
-                    <h2 class="card-title">캐주얼</h2>
-                    <p class="card-text flex-grow-1">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem magni quas ex numquam, maxime minus
-                      quam molestias corporis quod, ea minima accusamus.
-                    </p>
-                  </div>
-                  <div class="card-footer bg-white border-0">
-                    <a class="btn btn-primary btn-sm w-100" href="#!">작성글 바로가기</a>
-                  </div>
-                </div>
-              </div>
-              <!-- 나머지 카드들도 col-md-3 mb-4 d-flex ... 동일하게 반복 -->
-              <div class="col-md-3 mb-4 d-flex">
-                <div class="card flex-fill h-100">
-                  <div class="card-body d-flex flex-column">
-                    <h2 class="card-title">포멀</h2>
-                    <p class="card-text flex-grow-1">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod tenetur ex natus at dolorem enim!
-                      Nesciunt pariatur voluptatem sunt quam eaque, vel, non in id dolore voluptates quos eligendi
-                      labore.
-                    </p>
-                  </div>
-                  <div class="card-footer bg-white border-0">
-                    <a class="btn btn-primary btn-sm w-100" href="#!">작성글 바로가기</a>
-                  </div>
-                </div>
-              </div>
-              <!-- 스트리트 -->
-              <div class="col-md-3 mb-4 d-flex">
-                <div class="card flex-fill h-100">
-                  <div class="card-body d-flex flex-column">
-                    <h2 class="card-title">스트리트</h2>
-                    <p class="card-text flex-grow-1">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem magni quas ex numquam, maxime minus
-                      quam molestias corporis quod, ea minima accusamus.
-                    </p>
-                  </div>
-                  <div class="card-footer bg-white border-0">
-                    <a class="btn btn-primary btn-sm w-100" href="#!">작성글 바로가기</a>
-                  </div>
-                </div>
-              </div>
-              <!-- 아웃도어 -->
-              <div class="col-md-3 mb-4 d-flex">
-                <div class="card flex-fill h-100">
-                  <div class="card-body d-flex flex-column">
-                    <h2 class="card-title">아웃도어</h2>
-                    <p class="card-text flex-grow-1">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod tenetur ex natus at dolorem enim!
-                      Nesciunt pariatur voluptatem sunt quam eaque, vel, non in id dolore voluptates quos eligendi
-                      labore.
-                    </p>
-                  </div>
-                  <div class="card-footer bg-white border-0">
-                    <a class="btn btn-primary btn-sm w-100" href="#!">작성글 바로가기</a>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <!-- ⭐ 여기만 row + id로! (JS가 내부 col을 자동 생성) -->
+            <div id="top-looks-area" class="row gx-4 gx-lg-5 d-flex align-items-stretch"></div>
           </div>
         </div>
       </div>
