@@ -29,11 +29,10 @@ public class Community extends Base {
     @Column(nullable = false)
     private String title;
 
-    /** author도 비워둘 수 있게 nullable=true (기본값) */
-    // @JoinColumn(name = "name")
-    // @ManyToOne(fetch = FetchType.LAZY)
-    @Column
-    private String author;
+    /* author도 비워둘 수 있게 nullable=true (기본값) */
+    @JoinColumn(name = "author_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member author;
 
     /** content 역시 nullable=true (기본값), CLOB 매핑 유지 */
     @Lob

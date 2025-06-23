@@ -4,6 +4,7 @@ import com.example.tempfit.dto.CommunityDTO;
 import com.example.tempfit.entity.Community;
 import com.example.tempfit.entity.CommunityImage;
 import com.example.tempfit.entity.CommunityStyle;
+import com.example.tempfit.entity.Member;
 import com.example.tempfit.repository.CommunityImageRepository;
 import com.example.tempfit.repository.CommunityRepository;
 import com.example.tempfit.repository.CommunityStyleRepository;
@@ -36,11 +37,11 @@ public class CommunityService {
     private String uploadDir;
 
     /* 게시글 등록 + 이미지 저장 */
-    public Long register(CommunityDTO dto, MultipartFile repImage, List<MultipartFile> extraImages) throws IOException {
+    public Long register(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages) throws IOException {
         // 1) Community 먼저 저장
         Community community = Community.builder()
                 .title(dto.getTitle())
-                .author(dto.getAuthor())
+                .author(currentUser)
                 .content(dto.getContent())
                 .recommendCount(dto.getRecommendCount())
                 .build();
@@ -123,7 +124,7 @@ public class CommunityService {
     public void modify(CommunityDTO dto, MultipartFile repImage, List<MultipartFile> extraImages) throws IOException {
         Community community = communityRepository.findById(dto.getId()).orElseThrow();
         community.setTitle(dto.getTitle());
-        community.setAuthor(dto.getAuthor());
+        //community.setAuthor(member);
         community.setContent(dto.getContent());
         community.setRecommendCount(dto.getRecommendCount());
         communityRepository.save(community);
@@ -185,7 +186,7 @@ public class CommunityService {
         return CommunityDTO.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
-                .author(entity.getAuthor())
+                .author(entity.getAuthor().getName())
                 .content(entity.getContent())
                 .recommendCount(entity.getRecommendCount())
                 .repImageUrl(null)

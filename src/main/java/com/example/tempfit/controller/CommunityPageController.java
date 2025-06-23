@@ -1,9 +1,13 @@
 package com.example.tempfit.controller;
 
 import com.example.tempfit.dto.CommunityDTO;
+import com.example.tempfit.entity.Member;
+import com.example.tempfit.security.LoginMemberDetails;
 import com.example.tempfit.service.CommentService;
 import com.example.tempfit.service.CommunityService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -82,8 +86,9 @@ public class CommunityPageController {
             @ModelAttribute("communityDTO") CommunityDTO dto,
             @RequestParam(value = "styleNames", required = false) List<String> styleNames,
             @RequestParam("repImage") MultipartFile repImage,
-            @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages
-    ) throws IOException {
+            @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
+            @AuthenticationPrincipal LoginMemberDetails loginMemberDetails
+        ) throws IOException {
         // 스타일 처리
         if (styleNames != null) {
             dto.setStyleNames(styleNames);
@@ -92,8 +97,9 @@ public class CommunityPageController {
             dto.setFormal   (styleNames.contains("FORMAL"));
             dto.setOutdoor  (styleNames.contains("OUTDOOR"));   // <-- 변경된 부분
         }
+         Member loginMember = loginMemberDetails.getMember();
         // 서비스 호출: 게시글 + 이미지 저장
-        communityService.register(dto, repImage, extraImages);
+        communityService.register(dto, loginMember, repImage, extraImages);
         return "redirect:/community/list";
     }
 }

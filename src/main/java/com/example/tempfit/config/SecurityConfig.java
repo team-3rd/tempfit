@@ -14,20 +14,11 @@ import org.springframework.security.web.authentication.rememberme.TokenBasedReme
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices.RememberMeTokenAlgorithm;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+
 @EnableMethodSecurity
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
-
-//     @Bean
-//     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//         http
-//             .csrf(csrf -> csrf.disable())   // CSRF 비활성화
-//             .authorizeHttpRequests(auth -> auth
-//                 .anyRequest().permitAll()   // 모든 요청 허용
-//             );
-//         return http.build();
-//     }
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, RememberMeServices rememberMeServices) throws Exception
@@ -38,10 +29,11 @@ public class SecurityConfig {
             .formLogin(login -> login.loginPage("/member/login")
             .successHandler(successHandler())
             .permitAll())
-            .oauth2Login(login -> login.successHandler(successHandler()));
-        http.logout(logout -> logout
+            .oauth2Login(login -> login.successHandler(successHandler()))
+            .logout(logout -> logout
             .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
-            .logoutSuccessUrl("/"));
+            .logoutSuccessUrl("/"))
+            .csrf(csrf -> csrf.disable());
         http.rememberMe(remember -> remember.rememberMeServices(rememberMeServices));
 
         return http.build();
@@ -65,4 +57,5 @@ public class SecurityConfig {
         rememberMeServices.setTokenValiditySeconds(60*60*24*7);
         return rememberMeServices;
     }
+
 }

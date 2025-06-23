@@ -22,7 +22,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @PreAuthorize("permitAll()")
+    //@PreAuthorize("permitAll()")
     @GetMapping("/login")
     public void getLogin(){
         log.info("login 폼 요청");

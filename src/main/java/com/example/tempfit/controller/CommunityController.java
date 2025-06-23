@@ -1,6 +1,8 @@
 package com.example.tempfit.controller;
 
 import com.example.tempfit.dto.CommunityDTO;
+import com.example.tempfit.entity.Member;
+import com.example.tempfit.security.LoginMemberDetails;
 import com.example.tempfit.service.CommunityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 
@@ -25,11 +29,14 @@ public class CommunityController {
     /**
      * 게시글 등록 (Multipart/Form-Data)
      */
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'MANAGER')")
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Long registerPost(@ModelAttribute CommunityDTO dto) throws IOException {
+    public Long registerPost(@ModelAttribute CommunityDTO dto, @AuthenticationPrincipal LoginMemberDetails loginMemberDetails) throws IOException {
         log.info("등록 요청: {}", dto);
+        Member loginMember = loginMemberDetails.getMember();
         return communityService.register(
             dto,
+            loginMember,
             dto.getRepImage(),
             dto.getExtraImages()
         );
@@ -38,6 +45,7 @@ public class CommunityController {
     /**
      * 페이징된 리스트 조회 (전체)
      */
+    @PreAuthorize("permitAll()")
     @GetMapping("/list")
     public Page<CommunityDTO> list(
         @PageableDefault(size = 25, sort = "id", direction = Sort.Direction.DESC)
@@ -58,12 +66,15 @@ public class CommunityController {
     /**
      * 게시글 수정 (Multipart/Form-Data)
      */
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'MANAGER')")
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void modify(
         @PathVariable Long id,
-        @ModelAttribute CommunityDTO dto
+        @ModelAttribute CommunityDTO dto,
+        @AuthenticationPrincipal LoginMemberDetails loginMemberDetails
     ) throws IOException {
         dto.setId(id);
+        Member loginMember = loginMemberDetails.getMember();
         log.info("수정 요청: {}", dto);
         communityService.modify(
             dto,
@@ -75,6 +86,7 @@ public class CommunityController {
     /**
      * 게시글 삭제
      */
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'MANAGER')")
     @DeleteMapping("/{id}")
     public void remove(@PathVariable Long id) {
         log.info("삭제 요청: id={}", id);

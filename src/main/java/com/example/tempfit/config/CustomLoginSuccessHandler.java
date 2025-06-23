@@ -1,13 +1,13 @@
 package com.example.tempfit.config;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 import com.example.tempfit.security.AuthMemberDTO;
 
@@ -24,6 +24,12 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
         AuthMemberDTO authMemberDTO = (AuthMemberDTO) authentication.getPrincipal();
         log.info("CustomLoginSuccessHandler {}", authMemberDTO);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        request.getSession().setAttribute(
+        HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+        SecurityContextHolder.getContext()
+    );
 
         Set<String> roleSet = new HashSet();
         authMemberDTO.getAuthorities().forEach(auth -> {
