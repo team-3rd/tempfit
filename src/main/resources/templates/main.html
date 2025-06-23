@@ -30,6 +30,65 @@
       .section-gap-bottom {
         margin-bottom: 48px;
       }
+      /* 모바일에서 날씨+온도 박스 간격 조정 */
+      /* @media (max-width: 991px) {
+        .section-gap .col-12.col-lg-6 .card {
+          margin-bottom: 16px !important;
+        }
+      } */
+      .top-looks-title-box {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        border: 1.5px solid gray;
+        border-radius: 8px; /* 추천코디 카드와 동일하게 더 둥글게 */
+        box-shadow: 0 3px 16px 0 rgba(60, 70, 86, 0.07); /* 카드와 동일한 그림자 */
+        padding: 16px 32px; /* 여백 넉넉하게 */
+        margin: 0 auto 34px auto; /* 위아래 간격 */
+        font-size: 1.18rem;
+        font-weight: 600;
+        max-width: 600px;
+        gap: 6px;
+        /* min-width 추가로 한 줄 유지, 너무 좁을 때만 wrap */
+      }
+      .current-temp-tag {
+        font-weight: 500;
+        font-size: 1.05em;
+        /* 줄바꿈 방지 */
+        white-space: nowrap;
+      }
+
+      .style-best {
+        font-size: 1.1em;
+        font-weight: 600;
+        color: #222;
+        margin-left: 8px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .best-looks {
+        color: red;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-left: 3px;
+      }
+
+      /* 모바일 등 화면 작아질 때 두 줄 */
+      /* @media (max-width: 510px) {
+        .top-looks-title-box {
+          flex-direction: column;
+          gap: 0px;
+          padding: 8px 8px;
+        }
+        .style-best {
+          margin-left: 0;
+          margin-top: 1px;
+        }
+      } */
     </style>
   </head>
   <body>
@@ -39,10 +98,10 @@
     <div class="container px-4 px-lg-5">
       <!-- 상단: 날씨/추천코디 (section-gap 적용) -->
       <div class="row gx-4 gx-lg-5 align-items-start section-gap">
-        <!-- 왼쪽: 날씨카드+시간대별온도 -->
+        <!-- 왼쪽: [날씨카드+시간대별온도]를 하나의 카드(박스)로 묶음 -->
         <div class="col-12 col-lg-6 d-flex flex-column h-100">
           <div class="card shadow-sm mb-4 flex-grow-1" style="width: 100%">
-            <div class="card-body text-center">
+            <div class="card-body text-center" style="padding-bottom: 0.5rem">
               <div id="weather-icon" style="font-size: 3rem; margin-bottom: 8px"></div>
               <div id="weather-sky" class="fw-bold" style="font-size: 1.1rem; color: #226be7">-</div>
               <div id="weather-desc" style="margin-bottom: 2px">-</div>
@@ -51,10 +110,9 @@
               <div class="text-secondary" id="weather-time">-</div>
               <div id="weather-location" class="mt-2"></div>
             </div>
-          </div>
-          <div class="card text-white bg-secondary my-1 py-4 text-center" style="width: 100%">
-            <div class="card-body">
-              <p class="text-white m-0">시간대별 온도</p>
+            <div class="card-body p-2 bg-secondary text-white text-center" style="border-top: 1px solid #eee">
+              <p class="m-0" style="font-size: 1.04rem">시간대별 온도</p>
+              <!-- 실제 시간대별 온도 그래프/리스트 들어갈 자리라면 아래에 추가 -->
             </div>
           </div>
         </div>
@@ -84,21 +142,14 @@
       </div>
 
       <!-- TOP LOOKS 박스 (row/col은 JS에서 자동 생성) -->
-      <div class="col-12">
-        <div class="card shadow-sm mb-4 flex-grow-1" style="width: 100%">
-          <div class="card-body">
-            <div style="text-align: center; font-size: 1.18rem; font-weight: 600; margin-bottom: 30px">
-              <span style="border: 2px solid #222; border-radius: 8px; padding: 8px 18px; background: #fff">
-                <span id="current-temp-tag" style="color: #2076ff"> ‘현재 온도 기준(℃)’ </span>
-                스타일별
-                <span style="letter-spacing: 1px; color: red; font-weight: 700">BEST LOOKS</span>
-              </span>
-            </div>
-            <!-- ⭐ 여기만 row + id로! (JS가 내부 col을 자동 생성) -->
-            <div id="top-looks-area" class="row gx-4 gx-lg-5 d-flex align-items-stretch"></div>
-          </div>
+      <div style="text-align: center; font-size: 1.18rem; font-weight: 600; margin-bottom: 30px">
+        <div class="top-looks-title-box">
+          <span id="current-temp-tag" class="current-temp-tag" style="color: #2076ff"> ‘현재 온도 기준(℃)’ </span>
+          <span class="style-best"> 스타일별 <span class="best-looks">BEST LOOKS</span> </span>
         </div>
       </div>
+      <!-- ⭐ 여기만 row + id로! (JS가 내부 col을 자동 생성) -->
+      <div id="top-looks-area" class="row gx-4 gx-lg-5 d-flex align-items-stretch"></div>
     </div>
 
     <!-- Footer-->
