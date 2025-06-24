@@ -3,6 +3,8 @@ package com.example.tempfit.controller;
 import com.example.tempfit.dto.CommunityDTO;
 import com.example.tempfit.entity.Community;
 import com.example.tempfit.entity.Member;
+import com.example.tempfit.repository.MemberRepository;
+import com.example.tempfit.security.AuthMemberDTO;
 import com.example.tempfit.security.LoginMemberDetails;
 import com.example.tempfit.service.CommunityService;
 import lombok.RequiredArgsConstructor;
@@ -29,21 +31,24 @@ import java.util.stream.Collectors;
 public class CommunityController {
 
     private final CommunityService communityService;
+    private final MemberRepository memberRepository;
 
     /**
      * 게시글 등록 (Multipart/Form-Data)
      */
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Long registerPost(@ModelAttribute CommunityDTO dto, @AuthenticationPrincipal LoginMemberDetails loginMemberDetails) throws IOException {
+    public Long registerPost(@ModelAttribute CommunityDTO dto,
+     @AuthenticationPrincipal AuthMemberDTO authMemberDTO) throws IOException {
         log.info("등록 요청: {}", dto);
-        Member loginMember = loginMemberDetails.getMember();
-        return communityService.register(
-            dto,
-            loginMember,
-            dto.getRepImage(),
-            dto.getExtraImages()
-        );
+        if (authMemberDTO == null) {
+            throw new IllegalStateException("로그인된 사용자 정보가 없습니다.");
+        }
+        Member loginMember = memberRepository.findByEmailAndFromSocial(
+        authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
+        Community community = new Community();
+        community.setAuthor(loginMember);
+        return communityService.register(dto, loginMember, dto.getRepImage(), dto.getExtraImages());
     }
 
     /**
@@ -68,7 +73,7 @@ public class CommunityController {
     /**
      * 게시글 수정 (Multipart/Form-Data)
      */
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void modify(
         @PathVariable Long id,

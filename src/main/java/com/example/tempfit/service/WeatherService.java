@@ -31,16 +31,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class WeatherService {
 
-    // "최신 예보 1개만" 반환하는 편의 메서드 (프론트에서 사용)
-    public WeatherDTO getCurrentWeather(GridDTO dto) {
-        List<WeatherDTO> all = getWeatherApi(dto);
-        // 가장 최근 데이터 한 개만 반환 (null-safe)
-        if (all != null && !all.isEmpty()) {
-            return all.get(0);
-        }
-        return null;
-    }
-
     // 날씨 API
     public List<WeatherDTO> getWeatherApi(GridDTO dto) {
         // 날짜, 시간 포맷팅
@@ -120,6 +110,7 @@ public class WeatherService {
             List<String> ptyList = new ArrayList<>();
             List<String> skyList = new ArrayList<>();
             List<String> tmpList = new ArrayList<>();
+            List<String> popList = new ArrayList<>();
             List<String> rehList = new ArrayList<>();
             List<String> wsdList = new ArrayList<>();
             List<String> dateList = new ArrayList<>();
@@ -141,10 +132,11 @@ public class WeatherService {
                     skyList.add(value);
                 } else if (category.equals("TMP")) {
                     tmpList.add(value);
+                } else if (category.equals("POP")) {
+                    popList.add(value);
                 } else if (category.equals("REH")) {
                     rehList.add(value);
-                }
-                else if (category.equals("WSD")) {
+                } else if (category.equals("WSD")) {
                     wsdList.add(value);
                     dateList.add(fcstDate);
                     timeList.add(fcstTime);
@@ -191,6 +183,8 @@ public class WeatherService {
                         weatherDTO.setSky("흐림");
                         break;
                 }
+
+                weatherDTO.setPop(popList.get(i));
 
                 weatherDTO.setTmp(tmpList.get(i) + "℃");
                 weatherDTO.setReh(rehList.get(i) + "%");

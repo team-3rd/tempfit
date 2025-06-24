@@ -1,16 +1,33 @@
 <div th:fragment="weatherCard" class="col-12 col-lg-6 d-flex flex-column h-100">
   <div class="card shadow-sm mb-4 flex-grow-1" style="width: 100%">
     <div class="card-body text-center" style="padding-bottom: 0.5rem">
-      <div id="weather-icon" style="font-size: 3rem; margin-bottom: 8px"></div>
-      <div id="weather-sky" class="fw-bold" style="font-size: 1.1rem; color: #226be7">-</div>
-      <div id="weather-desc" style="margin-bottom: 2px">-</div>
-      <div id="weather-temp" style="font-size: 2.4rem; font-weight: bold; margin-bottom: 5px">-℃</div>
-      <div class="text-secondary" id="weather-date">-</div>
-      <div class="text-secondary" id="weather-time">-</div>
       <div id="weather-location" class="mt-2"></div>
+      <div id="weather-icon" style="font-size: 3rem; margin-bottom: 8px"></div>
+      <div
+        id="weather-temp"
+        style="font-size: 2.4rem; font-weight: bold; margin-bottom: 5px"
+      >
+        -℃
+      </div>
+      <div
+        id="weather-sky"
+        class="fw-bold"
+        style="font-size: 1.1rem; color: #226be7"
+      >
+        -
+      </div>
+      <div id="weather-rains" style="margin-bottom: 2px">-</div>
+      <div id="weather-humid" style="margin-bottom: 2px">-</div>
+      <div id="weather-wind" style="margin-bottom: 2px">-</div>
     </div>
-    <div class="card-body p-2 bg-secondary text-white text-center" style="border-top: 1px solid #eee">
-      <p class="m-0" style="font-size: 1.04rem">시간대별 온도</p>
+    <div
+      class="card-body p-2 text-center scroll-box output form-floating"
+      id="weather-list"
+      style="border-top: 1px solid #eee"
+    >
+      <ul></ul>
+      <a class="btn-prev" href=""></a>
+      <a class="btn-next" href=""></a>
     </div>
   </div>
 </div>

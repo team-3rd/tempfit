@@ -19,12 +19,10 @@ public class WeatherDTO {
     private String pty;
     private String sky;
     private String tmp;
+    private String pop;
     private String reh;
     private String wsd;
 
     private LocalDate fcstDate;
     private LocalTime fcstTime;
-
-    private String temp;
-
 }

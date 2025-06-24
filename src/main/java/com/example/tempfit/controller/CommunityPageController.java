@@ -2,6 +2,8 @@ package com.example.tempfit.controller;
 
 import com.example.tempfit.dto.CommunityDTO;
 import com.example.tempfit.entity.Member;
+import com.example.tempfit.repository.MemberRepository;
+import com.example.tempfit.security.AuthMemberDTO;
 import com.example.tempfit.security.LoginMemberDetails;
 import com.example.tempfit.service.CommentService;
 import com.example.tempfit.service.CommunityService;
@@ -23,6 +25,7 @@ public class CommunityPageController {
 
     private final CommunityService communityService;
     private final CommentService   commentService;
+    private final MemberRepository memberRepository;
 
     // 게시글 목록
     @GetMapping("/list")
@@ -87,7 +90,7 @@ public class CommunityPageController {
             @RequestParam(value = "styleNames", required = false) List<String> styleNames,
             @RequestParam("repImage") MultipartFile repImage,
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
-            @AuthenticationPrincipal LoginMemberDetails loginMemberDetails
+            @AuthenticationPrincipal AuthMemberDTO authMemberDTO
         ) throws IOException {
         // 스타일 처리
         if (styleNames != null) {
@@ -97,7 +100,8 @@ public class CommunityPageController {
             dto.setFormal   (styleNames.contains("FORMAL"));
             dto.setOutdoor  (styleNames.contains("OUTDOOR"));   // <-- 변경된 부분
         }
-         Member loginMember = loginMemberDetails.getMember();
+         Member loginMember = memberRepository.findByEmailAndFromSocial(
+        authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
         // 서비스 호출: 게시글 + 이미지 저장
         communityService.register(dto, loginMember, repImage, extraImages);
         return "redirect:/community/list";

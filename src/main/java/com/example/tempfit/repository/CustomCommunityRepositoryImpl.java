@@ -45,9 +45,9 @@ public class CustomCommunityRepositoryImpl implements CustomCommunityRepository 
                 .selectFrom(c)
                 .join(c.communityStyle, cs)
                 .where(
-                        styleCond,
-                        c.temperature.goe(minTemp),
-                        c.temperature.loe(maxTemp)
+                        styleCond
+                        // c.temperature.goe(minTemp),
+                        // c.temperature.loe(maxTemp)
                 )
                 .orderBy(c.recommendCount.desc())
                 .limit(limit)
