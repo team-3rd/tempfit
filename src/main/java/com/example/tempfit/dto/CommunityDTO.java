@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.tempfit.entity.Member;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,7 +20,7 @@ public class CommunityDTO {
     private Long id;
 
     private String title;
-    private String author;
+    private Member author;
     private String content;
 
     private int recommendCount;

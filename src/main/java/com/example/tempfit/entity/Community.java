@@ -17,6 +17,7 @@ import java.util.List;
 public class Community extends Base {
 
     @Id
+    @Column(name = "post_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "community_seq_gen")
     @SequenceGenerator(name = "community_seq_gen", sequenceName = "COMMUNITY_SEQ", allocationSize = 1)
     private Long id;
@@ -64,6 +65,6 @@ public class Community extends Base {
         this.upDateTime = LocalDateTime.now();
     }
 
-    @Column(name = "temperature")
-    private Integer temperature;
+    //@Column(name = "temperature")
+    //private Integer temperature;
 }

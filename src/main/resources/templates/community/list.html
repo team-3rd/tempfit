@@ -130,7 +130,7 @@
             th:src="@{'/uploads/' + ${post.repImageUrl}}"
             alt="대표사진"
           />
-          <div class="post-author" th:text="${post.author}">작성자</div>
+          <div class="post-author" th:text="${post.author.name}">작성자</div>
         </div>
       </div>
       <nav class="mt-4">
