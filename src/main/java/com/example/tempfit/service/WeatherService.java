@@ -31,16 +31,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class WeatherService {
 
-    // "최신 예보 1개만" 반환하는 편의 메서드 (프론트에서 사용)
-    public WeatherDTO getCurrentWeather(GridDTO dto) {
-        List<WeatherDTO> all = getWeatherApi(dto);
-        // 가장 최근 데이터 한 개만 반환 (null-safe)
-        if (all != null && !all.isEmpty()) {
-            return all.get(0);
-        }
-        return null;
-    }
-
     // 날씨 API
     public List<WeatherDTO> getWeatherApi(GridDTO dto) {
         // 날짜, 시간 포맷팅
@@ -120,6 +110,7 @@ public class WeatherService {
             List<String> ptyList = new ArrayList<>();
             List<String> skyList = new ArrayList<>();
             List<String> tmpList = new ArrayList<>();
+            List<String> pcpList = new ArrayList<>();
             List<String> rehList = new ArrayList<>();
             List<String> wsdList = new ArrayList<>();
             List<String> dateList = new ArrayList<>();
@@ -141,10 +132,11 @@ public class WeatherService {
                     skyList.add(value);
                 } else if (category.equals("TMP")) {
                     tmpList.add(value);
+                } else if (category.equals("PCP")) {
+                    pcpList.add(value);
                 } else if (category.equals("REH")) {
                     rehList.add(value);
-                }
-                else if (category.equals("WSD")) {
+                } else if (category.equals("WSD")) {
                     wsdList.add(value);
                     dateList.add(fcstDate);
                     timeList.add(fcstTime);
@@ -192,6 +184,20 @@ public class WeatherService {
                         break;
                 }
 
+                if (pcpList.get(i).contains("1mm")) {
+                    weatherDTO.setPcp("1");
+                } else if (pcpList.get(i).matches("^[0-9]+.[0-9]mm")) {
+                    String pcps = pcpList.get(i).substring(0, pcpList.get(i).length() - 2);
+                    long pcpVal = Math.round(Double.valueOf(pcps));
+                    weatherDTO.setPcp(String.valueOf(pcpVal));
+                } else if (pcpList.get(i).equals("30.0~50.0mm")) {
+                    weatherDTO.setPcp("30");
+                } else if (pcpList.get(i).contains("50.0mm")) {
+                    weatherDTO.setPcp("50");
+                } else {
+                    weatherDTO.setPcp("0");
+                }
+
                 weatherDTO.setTmp(tmpList.get(i) + "℃");
                 weatherDTO.setReh(rehList.get(i) + "%");
                 weatherDTO.setWsd(wsdList.get(i) + "m/s");
@@ -202,7 +208,7 @@ public class WeatherService {
                 weatherDTO.setFcstDate(parseDate);
                 weatherDTO.setFcstTime(parseTime);
 
-                // 테스트용 출력문
+                // DTO 테스트용 출력문
                 // System.out
                 // .println(weatherDTO.getPty() + " | " + weatherDTO.getSky() + " | " +
                 // weatherDTO.getTmp() + " | "

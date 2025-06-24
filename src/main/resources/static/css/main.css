@@ -1,0 +1,27 @@
+body {
+  min-height: 100vh;
+}
+footer.py-5.bg-dark {
+  height: 56px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+/* 통일된 여백을 위해 직접 지정 */
+.section-gap {
+  margin-top: 48px;
+  margin-bottom: 48px;
+}
+/* 가장 마지막 row와 footer 사이 간격 */
+.section-gap-bottom {
+  margin-bottom: 48px;
+}
+.weather-tmp {
+  position: absolute;
+  top: 12%;
+  left: 28%;
+  font-size: 48px;
+}
