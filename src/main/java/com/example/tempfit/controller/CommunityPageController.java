@@ -2,6 +2,7 @@ package com.example.tempfit.controller;
 
 import com.example.tempfit.dto.CommunityDTO;
 import com.example.tempfit.entity.Member;
+import com.example.tempfit.entity.Sex;
 import com.example.tempfit.repository.MemberRepository;
 import com.example.tempfit.security.AuthMemberDTO;
 import com.example.tempfit.security.LoginMemberDetails;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/community")
@@ -34,6 +36,7 @@ public class CommunityPageController {
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "styleNames", required = false) List<String> styleNames,
+            @RequestParam(value = "sexs", required = false) List<String> sexs,
             Model model
     ) {
         var result      = communityService.searchPageRaw(type, keyword, styleNames, page);
@@ -51,6 +54,7 @@ public class CommunityPageController {
         model.addAttribute("type",        type);
         model.addAttribute("keyword",     keyword);
         model.addAttribute("styleNames",  styleNames);
+        model.addAttribute("sexs",  sexs);
 
         return "community/list";
     }
@@ -90,7 +94,8 @@ public class CommunityPageController {
             @RequestParam(value = "styleNames", required = false) List<String> styleNames,
             @RequestParam("repImage") MultipartFile repImage,
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
-            @AuthenticationPrincipal AuthMemberDTO authMemberDTO
+            @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
+            @RequestParam(value = "sex", required = false) List<Sex> sexs
         ) throws IOException {
         // 스타일 처리
         if (styleNames != null) {
@@ -99,6 +104,11 @@ public class CommunityPageController {
             dto.setStreet   (styleNames.contains("STREET"));
             dto.setFormal   (styleNames.contains("FORMAL"));
             dto.setOutdoor  (styleNames.contains("OUTDOOR"));   // <-- 변경된 부분
+        }
+        if (sexs != null) {
+            dto.setSexSet(sexs);
+            dto.setMale(sexs.contains(Sex.MALE));
+            dto.setFemale(sexs.contains(Sex.FEMALE));
         }
          Member loginMember = memberRepository.findByEmailAndFromSocial(
         authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
@@ -121,7 +131,8 @@ public class CommunityPageController {
         @RequestParam(value = "styleNames", required = false) List<String> styleNames,
         @RequestParam(value = "repImage", required = false) MultipartFile repImage,
         @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
-        @AuthenticationPrincipal AuthMemberDTO authMemberDTO) throws IOException {
+        @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
+        @RequestParam(value = "sex", required = false) List<Sex> sexs) throws IOException {
          // 스타일 처리
         if (styleNames != null) {
             dto.setStyleNames(styleNames);
@@ -130,7 +141,11 @@ public class CommunityPageController {
             dto.setFormal(styleNames.contains("FORMAL"));
             dto.setOutdoor(styleNames.contains("OUTDOOR"));
         }
-
+        if (sexs != null) {
+            dto.setSexSet(sexs);
+            dto.setMale(sexs.contains(Sex.MALE));
+            dto.setFemale(sexs.contains(Sex.FEMALE));
+        }
         Member loginMember = memberRepository.findByEmailAndFromSocial(
         authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
         communityService.modify(dto, loginMember, repImage, extraImages);

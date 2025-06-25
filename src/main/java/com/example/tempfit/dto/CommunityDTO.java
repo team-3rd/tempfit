@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.tempfit.entity.Member;
+import com.example.tempfit.entity.Sex;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +25,9 @@ public class CommunityDTO {
     private String content;
 
     private int recommendCount;
+    private List<Sex> sexSet;
+    private boolean male;
+    private boolean female;
 
     /** 스타일 체크박스 값 */
     private List<String> styleNames;

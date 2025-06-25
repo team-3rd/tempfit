@@ -25,6 +25,11 @@
         &nbsp;|&nbsp; 추천: <span th:text="${post.recommendCount}">0</span>
       </div>
 
+      <div class="badge-list mb-3">
+        <span th:if="${post.male}" class="badge bg-secondary">남성</span>
+        <span th:if="${post.female}" class="badge bg-secondary">여성</span>
+      </div>
+
       <!-- 스타일 배지 -->
       <div class="badge-list mb-3">
         <span th:if="${post.casual}" class="badge bg-secondary">캐주얼</span>
