@@ -7,7 +7,7 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/detail.css" />
+    <link rel="stylesheet" href="/css/detail.css" />
   </head>
   <body>
     <div class="container detail-container">
@@ -16,7 +16,7 @@
 
       <!-- 작성자, 날짜, 추천 수 -->
       <div class="detail-meta">
-        작성자: <span th:text="${post.author}">관리자</span> &nbsp;|&nbsp;
+        작성자: <span th:text="${post.author.name}">관리자</span> &nbsp;|&nbsp;
         등록일:
         <span
           th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"
@@ -64,12 +64,14 @@
         <a
           th:href="@{/community/edit/{id}(id=${post.id})}"
           class="btn btn-primary"
+          th:if="${#authentication.name}==${post.author.email}"
           >수정</a
         >
         <a
           th:href="@{/community/delete/{id}(id=${post.id})}"
           class="btn btn-danger"
           onclick="return confirm('정말 삭제하시겠습니까?');"
+          th:if="${#authentication.name}==${post.author.email}"
           >삭제</a
         >
       </div>
