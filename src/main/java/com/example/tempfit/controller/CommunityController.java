@@ -78,13 +78,15 @@ public class CommunityController {
     public void modify(
         @PathVariable Long id,
         @ModelAttribute CommunityDTO dto,
-        @AuthenticationPrincipal LoginMemberDetails loginMemberDetails
+        @AuthenticationPrincipal AuthMemberDTO authMemberDTO
     ) throws IOException {
         dto.setId(id);
-        Member loginMember = loginMemberDetails.getMember();
+        Member loginMember = memberRepository.findByEmailAndFromSocial(
+        authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
         log.info("수정 요청: {}", dto);
         communityService.modify(
                 dto,
+                loginMember,
                 dto.getRepImage(),
                 dto.getExtraImages());
     }
@@ -92,7 +94,7 @@ public class CommunityController {
     /**
      * 게시글 삭제
      */
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{id}")
     public void remove(@PathVariable Long id) {
         log.info("삭제 요청: id={}", id);

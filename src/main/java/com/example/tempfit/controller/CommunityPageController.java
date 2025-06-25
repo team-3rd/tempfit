@@ -106,4 +106,52 @@ public class CommunityPageController {
         communityService.register(dto, loginMember, repImage, extraImages);
         return "redirect:/community/list";
     }
+
+    @GetMapping("/edit/{id}")
+    public String editPost(@PathVariable Long id, Model model) {
+        CommunityDTO dto = communityService.get(id);
+        model.addAttribute("communityDTO", dto);
+        return "community/edit";
+}
+
+    @PostMapping("/edit/{id}")
+    public String editPost(
+        @PathVariable Long id,
+        @ModelAttribute("communityDTO") CommunityDTO dto,
+        @RequestParam(value = "styleNames", required = false) List<String> styleNames,
+        @RequestParam(value = "repImage", required = false) MultipartFile repImage,
+        @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
+        @AuthenticationPrincipal AuthMemberDTO authMemberDTO) throws IOException {
+         // 스타일 처리
+        if (styleNames != null) {
+            dto.setStyleNames(styleNames);
+            dto.setCasual(styleNames.contains("CASUAL"));
+            dto.setStreet(styleNames.contains("STREET"));
+            dto.setFormal(styleNames.contains("FORMAL"));
+            dto.setOutdoor(styleNames.contains("OUTDOOR"));
+        }
+
+        Member loginMember = memberRepository.findByEmailAndFromSocial(
+        authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
+        communityService.modify(dto, loginMember, repImage, extraImages);
+        return "redirect:/community/detail/" + id;
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public String delete(@PathVariable Long id) {
+        communityService.remove(id);
+        return "redirect:/community/list";
+    }
+
+    @PostMapping("/recommend/{id}")
+    public String recommendPost(
+        @PathVariable Long id,
+        @AuthenticationPrincipal AuthMemberDTO authMemberDTO) {
+    Member member = memberRepository.findByEmailAndFromSocial(
+        authMemberDTO.getUsername(), authMemberDTO.isFromSocial()
+    );
+
+    communityService.recommendPost(id, member);
+    return "redirect:/community/detail/" + id;
+}
 }

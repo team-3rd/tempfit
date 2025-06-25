@@ -61,19 +61,33 @@
         <a th:href="@{/community/list}" class="btn btn-outline-secondary"
           >목록</a
         >
+        <form
+          th:action="@{/community/recommend/{id}(id=${post.id})}"
+          method="post"
+        >
+          <button type="submit" class="btn btn-outline-primary">
+            추천
+          </button>
+        </form>
         <a
           th:href="@{/community/edit/{id}(id=${post.id})}"
           class="btn btn-primary"
           th:if="${#authentication.name}==${post.author.email}"
           >수정</a
         >
-        <a
-          th:href="@{/community/delete/{id}(id=${post.id})}"
-          class="btn btn-danger"
-          onclick="return confirm('정말 삭제하시겠습니까?');"
+        <form
+          th:action="@{/community/delete/{id}(id=${post.id})}"
+          method="post"
           th:if="${#authentication.name}==${post.author.email}"
-          >삭제</a
+          onsubmit="return confirm('정말 삭제하시겠습니까?');"
+          style="display: inline"
         >
+          <!-- DELETE로 요청 변경 -->
+          <input type="hidden" name="_method" value="delete" />
+
+          <!-- 삭제 버튼 -->
+          <button type="submit" class="btn btn-danger">삭제</button>
+        </form>
       </div>
 
       <!-- 댓글 작성 폼 -->

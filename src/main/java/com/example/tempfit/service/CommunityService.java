@@ -5,9 +5,12 @@ import com.example.tempfit.entity.Community;
 import com.example.tempfit.entity.CommunityImage;
 import com.example.tempfit.entity.CommunityStyle;
 import com.example.tempfit.entity.Member;
+import com.example.tempfit.entity.Recommend;
 import com.example.tempfit.repository.CommunityImageRepository;
 import com.example.tempfit.repository.CommunityRepository;
 import com.example.tempfit.repository.CommunityStyleRepository;
+import com.example.tempfit.repository.RecommendRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,8 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +39,7 @@ public class CommunityService {
     private final CommunityRepository communityRepository;
     private final CommunityStyleRepository communityStyleRepository;
     private final CommunityImageRepository communityImageRepository;
+    private final RecommendRepository recommendRepository;
 
     @Value("${upload.path}")
     private String uploadDir;
@@ -123,10 +129,10 @@ public class CommunityService {
     }
 
     /* 수정 + 이미지 업데이트 */
-    public void modify(CommunityDTO dto, MultipartFile repImage, List<MultipartFile> extraImages) throws IOException {
+    public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages) throws IOException {
         Community community = communityRepository.findById(dto.getId()).orElseThrow();
         community.setTitle(dto.getTitle());
-        //community.setAuthor(member);
+        community.setAuthor(currentUser);
         community.setContent(dto.getContent());
         community.setRecommendCount(dto.getRecommendCount());
         communityRepository.save(community);
@@ -223,4 +229,28 @@ public class CommunityService {
         return result;
     }
 
+    @Transactional
+public void recommendPost(Long communityId, Member member) {
+    Community community = communityRepository.findById(communityId)
+        .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+
+    boolean alreadyRecommended = recommendRepository.existsByMemberAndCommunity(member, community);
+    Optional<Recommend> existRec = recommendRepository.findByMemberAndCommunity(member, community);
+
+    if (!alreadyRecommended) {
+        Recommend rec = Recommend.builder()
+                .community(community)
+                .member(member)
+                .build();
+        recommendRepository.save(rec);
+
+        community.setRecommendCount(community.getRecommendCount() + 1);
+    }
+    else
+    {
+        recommendRepository.delete(existRec.get());
+        community.setRecommendCount(community.getRecommendCount() - 1);
+    }
+        communityRepository.save(community);
+}
 }

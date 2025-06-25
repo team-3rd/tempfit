@@ -3,6 +3,7 @@ package com.example.tempfit.entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -49,8 +50,8 @@ public class Member {
     private Set<String> dibsList = new HashSet<>(); //String -> Coordi
     
     @Builder.Default
-    @OneToMany(mappedBy = "author")
-    private Set<Community> likeList = new HashSet<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Recommend> RecommendSet = new HashSet<>();
 
     public void addMemberRole(Role role){
         roleSet.add(role);
