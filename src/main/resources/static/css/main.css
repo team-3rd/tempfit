@@ -1,0 +1,125 @@
+.li {
+  display: inline-block;
+  position: static;
+  width: 45px;
+  height: 134px;
+  text-align: center;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  list-style: none;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.time {
+  position: absolute;
+  left: 8px;
+  right: 3px;
+  bottom: 25px;
+  display: block;
+  height: 13px;
+  line-height: 13px;
+  font-size: 1rem;
+  font-weight: normal;
+  letter-spacing: -0.18px;
+  color: #77777a;
+  color: rgba(var(--gray40), 1);
+}
+.icon-box {
+  position: absolute;
+  right: 2px;
+  bottom: 50px;
+  z-index: 10;
+}
+.weather-content {
+  position: relative;
+  height: 100%;
+}
+.mh {
+  max-height: 190px;
+  margin-top: 22px;
+}
+.btn-prev {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  margin-top: -18px;
+  overflow: hidden;
+  width: 36px;
+  height: 36px;
+  line-height: 0;
+  color: transparent;
+  z-index: 100;
+  border: 1px solid #eaeaea;
+  border: 1px solid rgba(var(--gray80), 1);
+  border-radius: 50%;
+  background-color: #fff;
+  background-color: rgba(var(--bgSurface), 1);
+}
+.btn-next {
+  display: block;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  margin-top: -18px;
+  overflow: hidden;
+  width: 36px;
+  height: 36px;
+  line-height: 0;
+  color: transparent;
+  z-index: 100;
+  border: 1px solid #eaeaea;
+  border: 1px solid rgba(var(--gray80), 1);
+  border-radius: 50%;
+  background-color: #fff;
+  background-color: rgba(var(--bgSurface), 1);
+}
+.btn-next::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 11px;
+  margin: -5px 0 0 -2px;
+  display: inline-block;
+  overflow: hidden;
+  background: url(https://ssl.pstatic.net/sstatic/keypage/outside/scui/weather_new_new/img/sp_icon_v7.png)
+    no-repeat;
+  background-size: 100px 100px;
+  vertical-align: top;
+  color: transparent;
+  background-position: -33px -36px;
+  z-index: 1;
+}
+.btn-prev::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 11px;
+  margin: -5px 0 0 -2px;
+  display: inline-block;
+  overflow: hidden;
+  background: url(https://ssl.pstatic.net/sstatic/keypage/outside/scui/weather_new_new/img/sp_icon_v7.png)
+    no-repeat;
+  background-size: 100px 100px;
+  vertical-align: top;
+  color: transparent;
+  background-position: -33px -36px;
+  z-index: 1;
+  transform: scaleX(-1);
+}
+.ul {
+  white-space: nowrap;
+  position: relative;
+  top: 50%;
+  left: 0px;
+  width: 520px;
+  overflow: hidden;
+  overflow-x: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

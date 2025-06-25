@@ -24,7 +24,7 @@ window.addEventListener("DOMContentLoaded", () => {
           const address = location.split(" ");
 
           let locs = "";
-          locs += `<span>${address[0] + " " + address[1]}</span>`;
+          locs += `<span>${address[1] + " " + address[2]}</span>`;
           locs += `<button
           class="btn btn-lg btn-light fw-bold border-white bg-white"
           onclick="refresh()"
@@ -482,7 +482,7 @@ window.addEventListener("DOMContentLoaded", () => {
             result += `</li>`;
           });
 
-          document.querySelector("#weather-list").innerHTML = result;
+          document.querySelector(".ul").innerHTML = result;
 
           // 온도 정수로 변환
           const tempNum =

@@ -37,6 +37,14 @@ public class WeatherService {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmm");
 
+        // 발효일자 설정
+        LocalDate date = null;
+        if (LocalTime.now().isBefore(LocalTime.of(3, 0, 0))) {
+            date = LocalDate.now().minusDays(1);
+        } else {
+            date = LocalDate.now();
+        }
+
         // 발효시간 리스트 설정
         LocalTime time = LocalTime.now();
         LocalTime[] timeList = new LocalTime[8];
@@ -47,13 +55,19 @@ public class WeatherService {
 
         // API url 설정
         String apiUrl = "https://apihub.kma.go.kr/api/typ02/openApi/VilageFcstInfoService_2.0/getVilageFcst?pageNo=1&numOfRows=1000&dataType=XML";
-        String base_date = LocalDate.now().format(dateFormatter);
+        String base_date = date.format(dateFormatter);
         String base_time = "";
 
-        for (LocalTime localTime : timeList) {
-            long diffHours = ChronoUnit.HOURS.between(localTime, time);
-            if (diffHours < 3 && localTime.isBefore(time) || localTime == time) {
-                base_time = localTime.format(timeFormatter);
+        if (!date.equals(LocalDate.now())) {
+            base_time = LocalTime.of(23, 0, 0).format(timeFormatter);
+        } else {
+            for (LocalTime localTime : timeList) {
+                long diffHours = ChronoUnit.HOURS.between(localTime, time);
+                if (diffHours < 3 && localTime.isBefore(time)) {
+                    base_time = localTime.format(timeFormatter);
+                } else if (localTime == time) {
+                    base_time = localTime.minusHours(3).format(timeFormatter);
+                }
             }
         }
 
@@ -74,7 +88,7 @@ public class WeatherService {
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
             connection.setRequestMethod("GET");
             System.out.println(url);
-            // API 에서 받은 값 String 형태로 변환
+            // API 에서 받은 값 String 형태로 변환 후 리턴
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -107,6 +121,7 @@ public class WeatherService {
             Document document = builder.parse(new ByteArrayInputStream(weatherData.getBytes(StandardCharsets.UTF_8)));
             NodeList items = document.getElementsByTagName("item");
 
+            // 데이터를 임시로 담아둘 리스트 설정
             List<String> ptyList = new ArrayList<>();
             List<String> skyList = new ArrayList<>();
             List<String> tmpList = new ArrayList<>();
@@ -118,6 +133,14 @@ public class WeatherService {
 
             // 예보자료 카테고리, 예보일, 예보시간, 예보 정보 추출
             for (int i = 0; i < items.getLength(); i++) {
+                LocalTime parseTime = LocalTime.parse(items.item(0).getChildNodes().item(4).getTextContent(),
+                        DateTimeFormatter.ofPattern("HHmm"));
+                if (parseTime.plusHours(1) == LocalTime.now()) {
+                    i = 1;
+                } else if (parseTime.plusHours(2) == LocalTime.now()) {
+                    i = 2;
+                }
+
                 String category = items.item(i).getChildNodes().item(2).getTextContent();
 
                 String fcstDate = items.item(i).getChildNodes().item(3).getTextContent();
