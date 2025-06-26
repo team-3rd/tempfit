@@ -3,6 +3,14 @@ function refresh() {
   location.reload();
 }
 
+function nextBtn() {
+  document.querySelector(".ul").scrollBy(500, 0);
+}
+
+function prevBtn() {
+  document.querySelector(".ul").scrollBy(-500, 0);
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   if (!navigator.geolocation) {
     document.getElementById("weather-temp").textContent =
@@ -477,8 +485,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
             result += `</dd>`;
             result += `<dd>`;
-            result += `<span>${weathers.tmp}</span></dd>`;
-            result += `<dl>`;
+            result += `<div class="degree">`;
+            result += `<span>${weathers.tmp}</span></div>`;
+            result += `</div>`;
+            result += `</dl>`;
             result += `</li>`;
           });
 

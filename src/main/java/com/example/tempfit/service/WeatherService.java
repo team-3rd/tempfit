@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,15 +57,15 @@ public class WeatherService {
         String base_date = date.format(dateFormatter);
         String base_time = "";
 
-        if (!date.equals(LocalDate.now())) {
+        if (date == LocalDate.now().minusDays(1)) {
             base_time = LocalTime.of(23, 0, 0).format(timeFormatter);
         } else {
             for (LocalTime localTime : timeList) {
-                long diffHours = ChronoUnit.HOURS.between(localTime, time);
-                if (diffHours < 3 && localTime.isBefore(time)) {
-                    base_time = localTime.format(timeFormatter);
-                } else if (localTime == time) {
+                if (localTime.getHour() == time.getHour()) {
                     base_time = localTime.minusHours(3).format(timeFormatter);
+                } else if (time.getHour() - localTime.getHour() < 3 && time.getHour() - localTime.getHour() > 0
+                        && localTime.getHour() != time.getHour()) {
+                    base_time = localTime.format(timeFormatter);
                 }
             }
         }
@@ -133,14 +132,6 @@ public class WeatherService {
 
             // 예보자료 카테고리, 예보일, 예보시간, 예보 정보 추출
             for (int i = 0; i < items.getLength(); i++) {
-                LocalTime parseTime = LocalTime.parse(items.item(0).getChildNodes().item(4).getTextContent(),
-                        DateTimeFormatter.ofPattern("HHmm"));
-                if (parseTime.plusHours(1) == LocalTime.now()) {
-                    i = 1;
-                } else if (parseTime.plusHours(2) == LocalTime.now()) {
-                    i = 2;
-                }
-
                 String category = items.item(i).getChildNodes().item(2).getTextContent();
 
                 String fcstDate = items.item(i).getChildNodes().item(3).getTextContent();
@@ -165,6 +156,32 @@ public class WeatherService {
                     timeList.add(fcstTime);
                 } else
                     continue;
+            }
+
+            LocalTime parsedTime = LocalTime.parse(items.item(0).getChildNodes().item(4).getTextContent(),
+                    DateTimeFormatter.ofPattern("HHmm"));
+            int j = 2;
+            if (parsedTime.plusHours(1).getHour() == LocalTime.now().getHour()) {
+                ptyList.remove(0);
+                skyList.remove(0);
+                tmpList.remove(0);
+                popList.remove(0);
+                rehList.remove(0);
+                wsdList.remove(0);
+                dateList.remove(0);
+                timeList.remove(0);
+            } else if (parsedTime.plusHours(2).getHour() == LocalTime.now().getHour()) {
+                while (j > 0) {
+                    ptyList.remove(0);
+                    skyList.remove(0);
+                    tmpList.remove(0);
+                    popList.remove(0);
+                    rehList.remove(0);
+                    wsdList.remove(0);
+                    dateList.remove(0);
+                    timeList.remove(0);
+                    j--;
+                }
             }
 
             // 모은 리스트의 값을 순서대로 DTO에 저장
