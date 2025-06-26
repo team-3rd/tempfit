@@ -92,7 +92,12 @@
             </div>
           </div>
         </form>
-        <a href="/community/create" class="btn btn-primary ms-3 create-btn" sec:authorize="isAuthenticated()">글쓰기</a>
+        <a
+          href="/community/create"
+          class="btn btn-primary ms-3 create-btn"
+          sec:authorize="isAuthenticated()"
+          >글쓰기</a
+        >
       </div>
       <div class="post-grid">
         <div th:each="post : ${list}" class="post-card">
@@ -100,10 +105,16 @@
             <span th:text="${#temporals.format(post.createdDate,'yyyy-MM-dd')}"
               >2025-06-15</span
             >
-            <span th:if="${currentWeather != null}">
-              | 날씨: <span th:text="${currentWeather}">맑음</span>,
-              <span th:text="${currentTemp}">25.3</span>°C
-            </span>
+            <span
+              id="avgTemp"
+              th:if="${post.dayTime}"
+              th:text="${post.dayAvgTemp}"
+            ></span>
+            <span
+              id="avgTemp"
+              th:if="${post.nightTime}"
+              th:text="${post.nightAvgTemp}"
+            ></span>
           </div>
           <a
             th:href="@{/community/detail/{id}(id=${post.id})}"

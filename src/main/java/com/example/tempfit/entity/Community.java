@@ -13,7 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = { "communityStyle", "images" })
+@ToString(exclude = { "communityStyle", "images", "communityTemp" })
 @Getter
 @Setter
 public class Community extends Base {
@@ -54,6 +54,10 @@ public class Community extends Base {
     @JoinColumn(name = "style_flags_id")
     private CommunityStyle communityStyle;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "temp_id")
+    private CommunityTemp communityTemp;
+
     @Column(nullable = false)
     private LocalDateTime createdDate;
 
@@ -71,7 +75,7 @@ public class Community extends Base {
     public void preUpdate() {
         this.upDateTime = LocalDateTime.now();
     }
-    
-    //@Column(name = "temperature")
-    //private Integer temperature;
+
+    // @Column(name = "temperature")
+    // private Integer temperature;
 }

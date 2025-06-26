@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Sex;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,6 +36,16 @@ public class CommunityDTO {
     private boolean street;
     private boolean formal;
     private boolean outdoor;
+
+    /* 평균 기온 관련 값 */
+    private List<String> times;
+    private LocalDate dates;
+    private boolean dayTime;
+    private boolean nightTime;
+    private double dayAvgTemp;
+    private double nightAvgTemp;
+    private double lat;
+    private double lon;
 
     /** 업로드용 MultipartFile 필드 */
     private MultipartFile repImage;

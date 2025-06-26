@@ -103,7 +103,7 @@ const minStr = formatDate(adjustDate(date_now, -2));
 const maxStr = formatDate(adjustDate(date_now, +4));
 
 // input에 넣기
-const dateInput = document.getElementById("dates");
+const dateInput = document.getElementById("date");
 dateInput.value = todayStr;
 dateInput.min = minStr;
 dateInput.max = maxStr;
@@ -118,8 +118,8 @@ document.querySelectorAll(".time-check").forEach(function (chk) {
   });
 });
 
-// api 호출을 위한 좌표 값 가져오기
-window.addEventListener("DOMContentLoaded", () => {
+// 좌표 값 가져오기
+document.getElementById("subminBtn").addEventListener("click", () => {
   navigator.geolocation.getCurrentPosition((pos) => {
     const lat = pos.coords.latitude;
     const lon = pos.coords.longitude;
@@ -128,3 +128,12 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("lon").value = lon;
   });
 });
+
+// 평균온도 출력을 위한 값 export하기
+const dates = document.getElementById("date").value;
+const isDay = document.getElementById("dayTime").checked;
+const isNight = document.getElementById("nightTime").checked;
+const lat = document.getElementById("lat").value;
+const lon = document.getElementById("lon").value;
+
+export { dates, isDay, isNight, lat, lon };

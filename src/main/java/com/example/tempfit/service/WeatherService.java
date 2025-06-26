@@ -209,7 +209,7 @@ public class WeatherService {
 
                 weatherDTO.setPop(popList.get(i));
 
-                weatherDTO.setTmp(tmpList.get(i) + "℃");
+                weatherDTO.setTmp(tmpList.get(i));
                 weatherDTO.setReh(rehList.get(i) + "%");
                 weatherDTO.setWsd(wsdList.get(i) + "m/s");
 
@@ -218,12 +218,6 @@ public class WeatherService {
                 LocalTime parseTime = LocalTime.parse(timeList.get(i), DateTimeFormatter.ofPattern("HHmm"));
                 weatherDTO.setFcstDate(parseDate);
                 weatherDTO.setFcstTime(parseTime);
-
-                // 테스트용 출력문
-                // System.out
-                // .println(weatherDTO.getPty() + " | " + weatherDTO.getSky() + " | " +
-                // weatherDTO.getTmp() + " | "
-                // + weatherDTO.getFcstDate() + " | " + weatherDTO.getFcstTime());
 
                 // 리스트에 DTO 값 넣기
                 weatherList.add(weatherDTO);

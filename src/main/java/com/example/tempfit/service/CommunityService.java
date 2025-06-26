@@ -1,14 +1,17 @@
 package com.example.tempfit.service;
 
 import com.example.tempfit.dto.CommunityDTO;
+import com.example.tempfit.dto.SelectedWeatherDTO;
 import com.example.tempfit.entity.Community;
 import com.example.tempfit.entity.CommunityImage;
 import com.example.tempfit.entity.CommunityStyle;
+import com.example.tempfit.entity.CommunityTemp;
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Recommend;
 import com.example.tempfit.repository.CommunityImageRepository;
 import com.example.tempfit.repository.CommunityRepository;
 import com.example.tempfit.repository.CommunityStyleRepository;
+import com.example.tempfit.repository.CommunityTempRepository;
 import com.example.tempfit.repository.RecommendRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -40,12 +43,15 @@ public class CommunityService {
     private final CommunityStyleRepository communityStyleRepository;
     private final CommunityImageRepository communityImageRepository;
     private final RecommendRepository recommendRepository;
+    private final CommunityTempRepository communityTempRepository;
 
     @Value("${upload.path}")
     private String uploadDir;
 
     /* 게시글 등록 + 이미지 저장 */
-    public Long register(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages) throws IOException {
+    public Long register(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
+            List<SelectedWeatherDTO> weatherList)
+            throws IOException {
         // 1) Community 먼저 저장
         Community community = Community.builder()
                 .title(dto.getTitle())
@@ -73,12 +79,48 @@ public class CommunityService {
                 .outdoor(dto.isOutdoor())
                 .build();
 
-        // 4) 연관 설정
-        style.setCommunity(community);
-        community.setCommunityStyle(style);
+        // 4) 평균 기온 계산 후 날씨 객체 생성
+        double daySum = 0, nightSum = 0;
+        int dayCount = 0, nightCount = 0;
 
-        // 5) 스타일 저장
+        for (int i = 0; i < weatherList.size(); i++) {
+            int hour = weatherList.get(i).getFcstTime().getHour();
+            double tmp = Double.parseDouble(weatherList.get(i).getTmp());
+
+            if (hour >= 6 && hour <= 17) {
+                daySum += tmp;
+                dayCount++;
+            }
+
+            if (hour >= 18 || hour <= 5) {
+                nightSum += tmp;
+                nightCount++;
+            }
+        }
+
+        Double dayAvg = dayCount > 0 ? daySum / dayCount : 0;
+        Double nightAvg = nightCount > 0 ? nightSum / nightCount : 0;
+
+        dto.setDayAvgTemp(dayAvg);
+        dto.setNightAvgTemp(nightAvg);
+
+        CommunityTemp temp = CommunityTemp.builder()
+                .dates(dto.getDates())
+                .dayTime(dto.isDayTime())
+                .nightTime(dto.isNightTime())
+                .dayAvgTemp(dto.getDayAvgTemp())
+                .nightAvgTemp(dto.getNightAvgTemp())
+                .build();
+
+        // 5) 연관 설정
+        style.setCommunity(community);
+        temp.setCommunity(community);
+        community.setCommunityStyle(style);
+        community.setCommunityTemp(temp);
+
+        // 6) 스타일, 날씨 저장
         communityStyleRepository.save(style);
+        communityTempRepository.save(temp);
 
         return community.getId();
     }
@@ -129,7 +171,8 @@ public class CommunityService {
     }
 
     /* 수정 + 이미지 업데이트 */
-    public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages) throws IOException {
+    public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages)
+            throws IOException {
         Community community = communityRepository.findById(dto.getId()).orElseThrow();
         community.setTitle(dto.getTitle());
         community.setAuthor(currentUser);
@@ -230,27 +273,25 @@ public class CommunityService {
     }
 
     @Transactional
-public void recommendPost(Long communityId, Member member) {
-    Community community = communityRepository.findById(communityId)
-        .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+    public void recommendPost(Long communityId, Member member) {
+        Community community = communityRepository.findById(communityId)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 
-    boolean alreadyRecommended = recommendRepository.existsByMemberAndCommunity(member, community);
-    Optional<Recommend> existRec = recommendRepository.findByMemberAndCommunity(member, community);
+        boolean alreadyRecommended = recommendRepository.existsByMemberAndCommunity(member, community);
+        Optional<Recommend> existRec = recommendRepository.findByMemberAndCommunity(member, community);
 
-    if (!alreadyRecommended) {
-        Recommend rec = Recommend.builder()
-                .community(community)
-                .member(member)
-                .build();
-        recommendRepository.save(rec);
+        if (!alreadyRecommended) {
+            Recommend rec = Recommend.builder()
+                    .community(community)
+                    .member(member)
+                    .build();
+            recommendRepository.save(rec);
 
-        community.setRecommendCount(community.getRecommendCount() + 1);
-    }
-    else
-    {
-        recommendRepository.delete(existRec.get());
-        community.setRecommendCount(community.getRecommendCount() - 1);
-    }
+            community.setRecommendCount(community.getRecommendCount() + 1);
+        } else {
+            recommendRepository.delete(existRec.get());
+            community.setRecommendCount(community.getRecommendCount() - 1);
+        }
         communityRepository.save(community);
-}
+    }
 }

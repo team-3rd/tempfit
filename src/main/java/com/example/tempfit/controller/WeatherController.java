@@ -27,9 +27,10 @@ public class WeatherController {
         coords.setLat(lat);
         coords.setLon(lon);
         GridDTO grid = weatherService.changeCoords(coords);
-        // 2. 해당 좌표의 날씨 가져오기 (최신 1건)
+        // 2. 해당 좌표의 날씨 가져오기
         List<WeatherDTO> weather = weatherService.getWeatherApi(grid);
 
         return weather;
+
     }
 }

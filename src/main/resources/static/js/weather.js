@@ -245,7 +245,7 @@ window.addEventListener("DOMContentLoaded", () => {
           document.querySelector("#weather-icon").innerHTML = icon;
 
           document.getElementById("weather-temp").textContent =
-            weather.tmp !== undefined ? weather.tmp : "-";
+            weather.tmp !== undefined ? weather.tmp + "℃" : "-";
 
           if (weather.sky == "맑음") {
             document.getElementById("weather-sky").textContent = "맑음";
