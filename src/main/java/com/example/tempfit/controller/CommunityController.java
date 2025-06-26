@@ -103,24 +103,22 @@ public class CommunityController {
             @RequestParam("repImage") MultipartFile repImage,
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
-            @RequestParam(value = "sex", required = false) List<Sex> sexs) throws IOException {
-        // 스타일 처리
-        if (styleNames != null) {
-            dto.setStyleNames(styleNames);
-            dto.setCasual   (styleNames.contains("CASUAL"));
-            dto.setStreet   (styleNames.contains("STREET"));
-            dto.setFormal   (styleNames.contains("FORMAL"));
-            dto.setOutdoor  (styleNames.contains("OUTDOOR"));   
-            dto.setCasual(styleNames.contains("CASUAL"));
-            dto.setStreet(styleNames.contains("STREET"));
-            dto.setFormal(styleNames.contains("FORMAL"));
-            dto.setOutdoor(styleNames.contains("OUTDOOR")); // <-- 변경된 부분
-        }
+            @RequestParam(value = "sexSet", required = false) List<Sex> sexs) throws IOException {
+
         if (sexs != null) {
             dto.setSexSet(sexs);
             dto.setMale(sexs.contains(Sex.MALE));
             dto.setFemale(sexs.contains(Sex.FEMALE));
         }
+        // 스타일 처리
+        if (styleNames != null) {
+            dto.setStyleNames(styleNames);
+            dto.setCasual(styleNames.contains("CASUAL"));
+            dto.setStreet(styleNames.contains("STREET"));
+            dto.setFormal(styleNames.contains("FORMAL"));
+            dto.setOutdoor(styleNames.contains("OUTDOOR")); // <-- 변경된 부분
+        }
+
         if (times != null) {
             dto.setTimes(times);
             dto.setDayTime(times.contains("dayTimes"));
@@ -157,7 +155,13 @@ public class CommunityController {
             @RequestParam(value = "repImage", required = false) MultipartFile repImage,
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
-            @RequestParam(value = "sex", required = false) List<Sex> sexs) throws IOException {
+            @RequestParam(value = "sexSet", required = false) List<Sex> sexs) throws IOException {
+        if (sexs != null) {
+            dto.setSexSet(sexs);
+            dto.setMale(sexs.contains(Sex.MALE));
+            dto.setFemale(sexs.contains(Sex.FEMALE));
+        }
+
         // 스타일 처리
         if (styleNames != null) {
             dto.setStyleNames(styleNames);
@@ -165,11 +169,6 @@ public class CommunityController {
             dto.setStreet(styleNames.contains("STREET"));
             dto.setFormal(styleNames.contains("FORMAL"));
             dto.setOutdoor(styleNames.contains("OUTDOOR"));
-        }
-        if (sexs != null) {
-            dto.setSexSet(sexs);
-            dto.setMale(sexs.contains(Sex.MALE));
-            dto.setFemale(sexs.contains(Sex.FEMALE));
         }
 
         Member loginMember = memberRepository.findByEmailAndFromSocial(

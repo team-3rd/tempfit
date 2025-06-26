@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@ToString(exclude = {"dibsList", "likeList"})
+@ToString(exclude = {"dibsList", "RecommendSet"})
 @Getter
 @Setter
 @NoArgsConstructor

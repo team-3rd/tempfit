@@ -130,9 +130,10 @@
             <input
               class="form-check-input"
               type="checkbox"
-              name="sexs"
+              name="sexSet"
               id="male"
               value="MALE"
+              th:checked="${#authentication.principal.sex?.name() == 'MALE'}"
             />
             <label class="form-check-label" for="male">남성</label>
           </div>
@@ -140,9 +141,10 @@
             <input
               class="form-check-input"
               type="checkbox"
-              name="sexs"
+              name="sexSet"
               id="female"
               value="FEMALE"
+              th:checked="${#authentication.principal.sex?.name() == 'FEMALE'}"
             />
             <label class="form-check-label" for="female">여성</label>
           </div>

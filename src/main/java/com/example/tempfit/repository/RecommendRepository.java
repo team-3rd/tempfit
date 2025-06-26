@@ -12,4 +12,5 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long>  {
     boolean existsByMemberAndCommunity(Member member, Community community);
 
     Optional<Recommend> findByMemberAndCommunity(Member member, Community community);
+    void deleteByCommunity(Community community);
 }

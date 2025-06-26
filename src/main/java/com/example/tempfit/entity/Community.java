@@ -41,10 +41,9 @@ public class Community extends Base {
     @Column(nullable = false)
     private int recommendCount;
 
-    @ElementCollection(targetClass = Sex.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "community_sex", joinColumns = @JoinColumn(name = "community_id"))
-    @Enumerated(EnumType.STRING)
-    private List<Sex> SexSet = new ArrayList();
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "gender_id")
+    private CommunitySex communitySex;
 
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("isRep DESC, id ASC")

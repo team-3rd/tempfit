@@ -11,6 +11,7 @@ import com.example.tempfit.entity.Sex;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -26,6 +27,7 @@ public class CommunityDTO {
     private String content;
 
     private int recommendCount;
+    
     private List<Sex> sexSet;
     private boolean male;
     private boolean female;
@@ -57,4 +59,15 @@ public class CommunityDTO {
 
     private LocalDateTime createdDate;
     private LocalDateTime upDateTime;
+
+    public void syncBooleansFromSexSet() {
+        this.male = sexSet != null && sexSet.contains(Sex.MALE);
+        this.female = sexSet != null && sexSet.contains(Sex.FEMALE);
+    }
+
+    public void syncSexSetFromBooleans() {
+        this.sexSet = new ArrayList<>();
+        if (male) sexSet.add(Sex.MALE);
+        if (female) sexSet.add(Sex.FEMALE);
+    }
 }

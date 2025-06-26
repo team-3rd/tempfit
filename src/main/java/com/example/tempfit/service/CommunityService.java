@@ -4,12 +4,16 @@ import com.example.tempfit.dto.CommunityDTO;
 import com.example.tempfit.dto.SelectedWeatherDTO;
 import com.example.tempfit.entity.Community;
 import com.example.tempfit.entity.CommunityImage;
+import com.example.tempfit.entity.CommunitySex;
 import com.example.tempfit.entity.CommunityStyle;
 import com.example.tempfit.entity.CommunityTemp;
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Recommend;
+import com.example.tempfit.entity.Sex;
+import com.example.tempfit.repository.CommentRepository;
 import com.example.tempfit.repository.CommunityImageRepository;
 import com.example.tempfit.repository.CommunityRepository;
+import com.example.tempfit.repository.CommunitySexRepository;
 import com.example.tempfit.repository.CommunityStyleRepository;
 import com.example.tempfit.repository.CommunityTempRepository;
 import com.example.tempfit.repository.RecommendRepository;
@@ -24,6 +28,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
+import java.util.Set;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -41,8 +46,10 @@ public class CommunityService {
 
     private final CommunityRepository communityRepository;
     private final CommunityStyleRepository communityStyleRepository;
+    private final CommunitySexRepository communitySexRepository;
     private final CommunityImageRepository communityImageRepository;
     private final RecommendRepository recommendRepository;
+    private final CommentRepository commentRepository;
     private final CommunityTempRepository communityTempRepository;
 
     @Value("${upload.path}")
@@ -70,6 +77,11 @@ public class CommunityService {
             }
         }
 
+         CommunitySex sex = CommunitySex.builder()
+                .male(dto.isMale())
+                .female(dto.isFemale())
+                .build();
+
         CommunityStyle style = CommunityStyle.builder()
                 .casual(dto.isCasual())
                 .street(dto.isStreet())
@@ -81,8 +93,8 @@ public class CommunityService {
         double daySum = 0, nightSum = 0;
         int dayCount = 0, nightCount = 0;
 
-        style.setCommunity(community);
-        community.setCommunityStyle(style);
+        sex.setCommunity(community);
+        community.setCommunitySex(sex);
 
         for (int i = 0; i < weatherList.size(); i++) {
             int hour = weatherList.get(i).getFcstTime().getHour();
@@ -120,8 +132,11 @@ public class CommunityService {
         community.setCommunityTemp(temp);
 
         // 6) 스타일, 날씨 저장
+        communitySexRepository.save(sex);
         communityStyleRepository.save(style);
         communityTempRepository.save(temp);
+
+        communityRepository.save(community);
 
         return community.getId();
     }
@@ -208,6 +223,14 @@ public class CommunityService {
             }
         }
 
+        CommunitySex sex = communitySexRepository.findById(dto.getId())
+                .orElseGet(() -> CommunitySex.builder().build());
+        sex.setMale(dto.isMale());
+        sex.setFemale(dto.isFemale());
+        sex.setCommunity(community);
+        community.setCommunitySex(sex);
+        communitySexRepository.save(sex);
+
         CommunityStyle style = communityStyleRepository.findById(dto.getId())
                 .orElseGet(() -> CommunityStyle.builder().build());
         style.setCasual(dto.isCasual());
@@ -217,13 +240,16 @@ public class CommunityService {
         style.setCommunity(community);
         community.setCommunityStyle(style);
         communityStyleRepository.save(style);
+
+        communityRepository.save(community);
     }
 
     /* 삭제 */
     public void remove(Long id) {
+        communityTempRepository.deleteById(id);
         communityStyleRepository.deleteById(id);
-        communityImageRepository.deleteAll(
-                communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(id));
+        communitySexRepository.deleteById(id);
+        communityImageRepository.deleteAll(communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(id));
         communityRepository.deleteById(id);
     }
 
