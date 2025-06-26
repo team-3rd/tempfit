@@ -1,16 +1,32 @@
-// src/main/resources/static/js/weather.js
+// 페이지 리로드 함수
 function refresh() {
   location.reload();
 }
 
+const ul = document.querySelector(".ul");
+
+// 시간별 날씨 스크롤 버튼 작동 + 스크롤 끝까지 가면 한쪽 버튼 숨기기 함수
 function nextBtn() {
-  document.querySelector(".ul").scrollBy(500, 0);
+  document.querySelector(".btn-prev").classList.remove("hide");
+  ul.scrollBy({ left: 500, behavior: "smooth" });
+  if (ul.scrollLeft == 3000) {
+    document.querySelector(".btn-next").classList.add("hide");
+  } else {
+    document.querySelector(".btn-next").classList.remove("hide");
+  }
 }
 
 function prevBtn() {
-  document.querySelector(".ul").scrollBy(-500, 0);
+  document.querySelector(".btn-next").classList.remove("hide");
+  ul.scrollBy({ left: -500, behavior: "smooth" });
+  if (ul.scrollLeft == 500) {
+    document.querySelector(".btn-prev").classList.add("hide");
+  } else {
+    document.querySelector(".btn-prev").classList.remove("hide");
+  }
 }
 
+// 날씨 불러오기
 window.addEventListener("DOMContentLoaded", () => {
   if (!navigator.geolocation) {
     document.getElementById("weather-temp").textContent =
@@ -32,9 +48,12 @@ window.addEventListener("DOMContentLoaded", () => {
           const address = location.split(" ");
 
           let locs = "";
-          locs += `<span>${address[1] + " " + address[2]}</span>`;
+          locs += `<div class="figure">`;
+          locs += `<span class="h3">${address[1] + " " + address[2]}</span>`;
+          locs += `</div>`;
+          locs += `<div class="figure offset-1">`;
           locs += `<button
-          class="btn btn-lg btn-light fw-bold border-white bg-white"
+          class="btn btn-lg btn-light fw-bold border-white bg-white offset-1"
           onclick="refresh()"
         >
           <svg
@@ -50,6 +69,7 @@ window.addEventListener("DOMContentLoaded", () => {
             />
           </svg>
         </button>`;
+          locs += `</div>`;
           document.querySelector("#weather-location").innerHTML = locs;
         });
 
@@ -484,9 +504,9 @@ window.addEventListener("DOMContentLoaded", () => {
             }
 
             result += `</dd>`;
-            result += `<dd>`;
+            result += `<dd class="temp">`;
             result += `<div class="degree">`;
-            result += `<span>${weathers.tmp}</span></div>`;
+            result += `<span>${weathers.tmp + "°"}</span></div>`;
             result += `</div>`;
             result += `</dl>`;
             result += `</li>`;

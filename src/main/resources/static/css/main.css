@@ -48,7 +48,7 @@
   display: block;
   position: absolute;
   top: 50%;
-  left: 5px;
+  left: 0px;
   margin-top: -18px;
   overflow: hidden;
   width: 36px;
@@ -56,8 +56,7 @@
   line-height: 0;
   color: transparent;
   z-index: 100;
-  border: 1px solid #eaeaea;
-  border: 1px solid rgba(var(--gray80), 1);
+  border: 1px solid #a6a6a6;
   border-radius: 50%;
   background-color: #fff;
   background-color: rgba(var(--bgSurface), 1);
@@ -66,7 +65,7 @@
   display: block;
   position: absolute;
   top: 50%;
-  right: 10px;
+  right: 5px;
   margin-top: -18px;
   overflow: hidden;
   width: 36px;
@@ -74,8 +73,7 @@
   line-height: 0;
   color: transparent;
   z-index: 100;
-  border: 1px solid #eaeaea;
-  border: 1px solid rgba(var(--gray80), 1);
+  border: 1px solid #a6a6a6;
   border-radius: 50%;
   background-color: #fff;
   background-color: rgba(var(--bgSurface), 1);
@@ -102,7 +100,7 @@
   content: "";
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: 45%;
   width: 7px;
   height: 11px;
   margin: -5px 0 0 -2px;
@@ -143,4 +141,14 @@
   line-height: 2rem;
   -ms-box-sizing: border-box;
   box-sizing: border-box;
+}
+.hide {
+  display: none;
+}
+.temp {
+  position: relative;
+  left: 5px;
+}
+ul + li {
+  background-color: rgb(197, 197, 197);
 }
