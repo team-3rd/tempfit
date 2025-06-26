@@ -1,131 +1,173 @@
 package com.example.tempfit.controller;
 
 import com.example.tempfit.dto.CommunityDTO;
-import com.example.tempfit.entity.Community;
 import com.example.tempfit.entity.Member;
+import com.example.tempfit.entity.Sex;
 import com.example.tempfit.repository.MemberRepository;
 import com.example.tempfit.security.AuthMemberDTO;
 import com.example.tempfit.security.LoginMemberDetails;
+import com.example.tempfit.service.CommentService;
 import com.example.tempfit.service.CommunityService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Set;
 
-@RestController
-@RequestMapping("/api/community")
+@Controller
+@RequestMapping("/community")
 @RequiredArgsConstructor
-@Slf4j
 public class CommunityController {
 
     private final CommunityService communityService;
+    private final CommentService   commentService;
     private final MemberRepository memberRepository;
 
-    /**
-     * 게시글 등록 (Multipart/Form-Data)
-     */
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Long registerPost(@ModelAttribute CommunityDTO dto,
-     @AuthenticationPrincipal AuthMemberDTO authMemberDTO) throws IOException {
-        log.info("등록 요청: {}", dto);
-        if (authMemberDTO == null) {
-            throw new IllegalStateException("로그인된 사용자 정보가 없습니다.");
-        }
-        Member loginMember = memberRepository.findByEmailAndFromSocial(
-        authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
-        Community community = new Community();
-        community.setAuthor(loginMember);
-        return communityService.register(dto, loginMember, dto.getRepImage(), dto.getExtraImages());
-    }
-
-    /**
-     * 페이징된 리스트 조회 (전체)
-     */
-    @PreAuthorize("permitAll()")
+    // 게시글 목록
     @GetMapping("/list")
-    public Page<CommunityDTO> list(
-            @PageableDefault(size = 25, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        // pageable.getPageNumber()는 0-based이므로 +1
-        return communityService.getPage(pageable.getPageNumber() + 1);
-    }
-
-    /**
-     * 단건 조회
-     */
-    @GetMapping("/{id}")
-    public CommunityDTO getOne(@PathVariable Long id) {
-        return communityService.get(id);
-    }
-
-    /**
-     * 게시글 수정 (Multipart/Form-Data)
-     */
-    @PreAuthorize("isAuthenticated()")
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void modify(
-        @PathVariable Long id,
-        @ModelAttribute CommunityDTO dto,
-        @AuthenticationPrincipal AuthMemberDTO authMemberDTO
-    ) throws IOException {
-        dto.setId(id);
-        Member loginMember = memberRepository.findByEmailAndFromSocial(
-        authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
-        log.info("수정 요청: {}", dto);
-        communityService.modify(
-                dto,
-                loginMember,
-                dto.getRepImage(),
-                dto.getExtraImages());
-    }
-
-    /**
-     * 게시글 삭제
-     */
-    @PreAuthorize("isAuthenticated()")
-    @DeleteMapping("/{id}")
-    public void remove(@PathVariable Long id) {
-        log.info("삭제 요청: id={}", id);
-        communityService.remove(id);
-    }
-
-    /**
-     * 검색 + 스타일 필터 + 페이징
-     */
-    @GetMapping("/search")
-    public Page<CommunityDTO> searchPage(
+    public String list(
+            @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "styleNames", required = false) List<String> styleNames,
-            @RequestParam(value = "page", defaultValue = "1") int page) {
-        return communityService.searchPageRaw(type, keyword, styleNames, page);
+            @RequestParam(value = "sexs", required = false) List<String> sexs,
+            Model model
+    ) {
+        var result      = communityService.searchPageRaw(type, keyword, styleNames, page);
+        int currentPage = page;
+        int totalPages  = result.getTotalPages();
+        int pageBlock   = 10;
+        int startPage   = ((currentPage - 1) / pageBlock) * pageBlock + 1;
+        int endPage = Math.max(1, Math.min(startPage + pageBlock - 1, totalPages));
+
+
+        model.addAttribute("list",        result.getContent());
+        model.addAttribute("totalPages",  totalPages);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("startPage",   startPage);
+        model.addAttribute("endPage",     endPage);
+        model.addAttribute("type",        type);
+        model.addAttribute("keyword",     keyword);
+        model.addAttribute("styleNames",  styleNames);
+        model.addAttribute("sexs",  sexs);
+
+        return "community/list";
     }
 
-    // 메인 홈페이지에 top 코디들 추가
-    @GetMapping("/api/community/top")
-    @ResponseBody
-    public Map<String, List<CommunityDTO>> getTopCommunitiesByStyleAndTemperature(@RequestParam("temp") int temp) {
-        Map<String, List<Community>> result = communityService.getTopCommunitiesByStyleAndTemperature(temp);
-
-        // Entity → DTO 변환 (서비스단에서 바로 DTO 반환해도 됨. 지금 구조면 여기서 변환)
-        Map<String, List<CommunityDTO>> dtoResult = new HashMap<>();
-        result.forEach((style, posts) -> {
-            dtoResult.put(style, posts.stream()
-                .map(communityService::entityToDTO) // entityToDTO는 public으로 변경
-                .collect(Collectors.toList()));
-        });
-        return dtoResult;
+    // 상세 페이지
+    @GetMapping("/detail/{id}")
+    public String detail(@PathVariable Long id, Model model) {
+        var postDto  = communityService.get(id);
+        var comments = commentService.getComments(id);
+        model.addAttribute("post",     postDto);
+        model.addAttribute("comments", comments);
+        return "community/detail";
     }
+
+    // 댓글 등록 처리 (익명)
+    @PostMapping("/detail/{id}/comments")
+    public String addComment(
+            @PathVariable Long id,
+            @RequestParam(required = false) String authorName,
+            @RequestParam String content
+    ) {
+        commentService.addComment(id, authorName, content);
+        return "redirect:/community/detail/" + id;
+    }
+
+    // 글쓰기 폼
+    @GetMapping("/create")
+    public String createForm(Model model) {
+        model.addAttribute("communityDTO", new CommunityDTO());
+        return "community/create";
+    }
+
+    // 글 등록 처리 (대표 이미지 + 추가 이미지)
+    @PostMapping("/register")
+    public String registerPost(
+            @ModelAttribute("communityDTO") CommunityDTO dto,
+            @RequestParam(value = "styleNames", required = false) List<String> styleNames,
+            @RequestParam("repImage") MultipartFile repImage,
+            @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
+            @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
+            @RequestParam(value = "sex", required = false) List<Sex> sexs
+        ) throws IOException {
+        // 스타일 처리
+        if (styleNames != null) {
+            dto.setStyleNames(styleNames);
+            dto.setCasual   (styleNames.contains("CASUAL"));
+            dto.setStreet   (styleNames.contains("STREET"));
+            dto.setFormal   (styleNames.contains("FORMAL"));
+            dto.setOutdoor  (styleNames.contains("OUTDOOR"));   // <-- 변경된 부분
+        }
+        if (sexs != null) {
+            dto.setSexSet(sexs);
+            dto.setMale(sexs.contains(Sex.MALE));
+            dto.setFemale(sexs.contains(Sex.FEMALE));
+        }
+         Member loginMember = memberRepository.findByEmailAndFromSocial(
+        authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
+        // 서비스 호출: 게시글 + 이미지 저장
+        communityService.register(dto, loginMember, repImage, extraImages);
+        return "redirect:/community/list";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editPost(@PathVariable Long id, Model model) {
+        CommunityDTO dto = communityService.get(id);
+        model.addAttribute("communityDTO", dto);
+        return "community/edit";
+}
+
+    @PostMapping("/edit/{id}")
+    public String editPost(
+        @PathVariable Long id,
+        @ModelAttribute("communityDTO") CommunityDTO dto,
+        @RequestParam(value = "styleNames", required = false) List<String> styleNames,
+        @RequestParam(value = "repImage", required = false) MultipartFile repImage,
+        @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
+        @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
+        @RequestParam(value = "sex", required = false) List<Sex> sexs) throws IOException {
+         // 스타일 처리
+        if (styleNames != null) {
+            dto.setStyleNames(styleNames);
+            dto.setCasual(styleNames.contains("CASUAL"));
+            dto.setStreet(styleNames.contains("STREET"));
+            dto.setFormal(styleNames.contains("FORMAL"));
+            dto.setOutdoor(styleNames.contains("OUTDOOR"));
+        }
+        if (sexs != null) {
+            dto.setSexSet(sexs);
+            dto.setMale(sexs.contains(Sex.MALE));
+            dto.setFemale(sexs.contains(Sex.FEMALE));
+        }
+        Member loginMember = memberRepository.findByEmailAndFromSocial(
+        authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
+        communityService.modify(dto, loginMember, repImage, extraImages);
+        return "redirect:/community/detail/" + id;
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public String delete(@PathVariable Long id) {
+        communityService.remove(id);
+        return "redirect:/community/list";
+    }
+
+    @PostMapping("/recommend/{id}")
+    public String recommendPost(
+        @PathVariable Long id,
+        @AuthenticationPrincipal AuthMemberDTO authMemberDTO) {
+    Member member = memberRepository.findByEmailAndFromSocial(
+        authMemberDTO.getUsername(), authMemberDTO.isFromSocial()
+    );
+
+    communityService.recommendPost(id, member);
+    return "redirect:/community/detail/" + id;
+}
 }
