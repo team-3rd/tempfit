@@ -49,7 +49,6 @@ public class CommunityService {
     private String uploadDir;
 
     /* 게시글 등록 + 이미지 저장 */
-    public Long register(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages) throws IOException {
     public Long register(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
             List<SelectedWeatherDTO> weatherList)
             throws IOException {
@@ -84,9 +83,6 @@ public class CommunityService {
 
         style.setCommunity(community);
         community.setCommunityStyle(style);
-        // 4) 평균 기온 계산 후 날씨 객체 생성
-        double daySum = 0, nightSum = 0;
-        int dayCount = 0, nightCount = 0;
 
         for (int i = 0; i < weatherList.size(); i++) {
             int hour = weatherList.get(i).getFcstTime().getHour();
