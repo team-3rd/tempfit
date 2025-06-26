@@ -30,8 +30,8 @@
           <div class="d-flex" style="gap: 8px">
             <select name="type" class="form-select">
               <option value="">전체</option>
-              <option value="t" th:selected="${type} == 't'">제목</option>
-              <option value="a" th:selected="${type} == 'a'">작성자</option>
+              <option value="t" th:selected="${type == 't'}">제목</option>
+              <option value="a" th:selected="${type == 'a'}">작성자</option>
             </select>
             <input
               type="text"
@@ -49,16 +49,27 @@
               >초기화</a
             >
           </div>
-<form method="get" action="/community/list">
-  <select class="form-select" name="styleNames">
-    <option value="">스타일</option>
-<option value="CASUAL" th:selected="${styleNames != null and styleNames.contains('CASUAL')}">캐주얼</option>
-<option value="STREET" th:selected="${styleNames != null and styleNames.contains('STREET')}">스트리트</option>
-<option value="FORMAL" th:selected="${styleNames != null and styleNames.contains('FORMAL')}">포멀</option>
-<option value="OUTDOOR" th:selected="${styleNames != null and styleNames.contains('OUTDOOR')}">아웃도어</option>
-  </select>
-</form>      
+
+          <!-- 스타일 라디오 버튼 그룹 -->
+          <div class="btn-group" role="group" aria-label="스타일 선택" style="margin-top: 8px;">
+            <input type="radio" class="btn-check" name="styleNames" id="styleCasual" autocomplete="off" value="CASUAL"
+              th:checked="${styleNames != null and styleNames.contains('CASUAL')}" />
+            <label class="btn btn-outline-primary" for="styleCasual">캐주얼</label>
+
+            <input type="radio" class="btn-check" name="styleNames" id="styleStreet" autocomplete="off" value="STREET"
+              th:checked="${styleNames != null and styleNames.contains('STREET')}" />
+            <label class="btn btn-outline-primary" for="styleStreet">스트리트</label>
+
+            <input type="radio" class="btn-check" name="styleNames" id="styleFormal" autocomplete="off" value="FORMAL"
+              th:checked="${styleNames != null and styleNames.contains('FORMAL')}" />
+            <label class="btn btn-outline-primary" for="styleFormal">포멀</label>
+
+            <input type="radio" class="btn-check" name="styleNames" id="styleOutdoor" autocomplete="off" value="OUTDOOR"
+              th:checked="${styleNames != null and styleNames.contains('OUTDOOR')}" />
+            <label class="btn btn-outline-primary" for="styleOutdoor">아웃도어</label>
+          </div>
         </form>
+
         <a
           href="/community/create"
           class="btn btn-primary ms-3 create-btn"
