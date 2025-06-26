@@ -156,6 +156,7 @@ public class CommunityController {
             @RequestParam(value = "styleNames", required = false) List<String> styleNames,
             @RequestParam(value = "repImage", required = false) MultipartFile repImage,
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
+            @RequestParam(value = "removeRepImage", defaultValue = "false") boolean removeRepImage,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
             @RequestParam(value = "sex", required = false) List<Sex> sexs) throws IOException {
         // 스타일 처리
@@ -171,12 +172,13 @@ public class CommunityController {
             dto.setMale(sexs.contains(Sex.MALE));
             dto.setFemale(sexs.contains(Sex.FEMALE));
         }
-
+    
         Member loginMember = memberRepository.findByEmailAndFromSocial(
                 authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
-        communityService.modify(dto, loginMember, repImage, extraImages);
+        communityService.modify(dto, loginMember, repImage, extraImages, removeRepImage);
         return "redirect:/community/detail/" + id;
     }
+    
 
     @DeleteMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
