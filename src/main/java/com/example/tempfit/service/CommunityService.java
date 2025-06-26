@@ -187,7 +187,8 @@ public class CommunityService {
     }
 
     /* 수정 + 이미지 업데이트 */
-    public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages)
+    // !! 파라미터에 removeRepImage 추가 !!
+    public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages, boolean removeRepImage)
             throws IOException {
         Community community = communityRepository.findById(dto.getId()).orElseThrow();
         community.setTitle(dto.getTitle());
@@ -196,21 +197,28 @@ public class CommunityService {
         community.setRecommendCount(dto.getRecommendCount());
         communityRepository.save(community);
 
-        // 기존 이미지 삭제
         List<CommunityImage> existing = communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(dto.getId());
-        if (!existing.isEmpty()) {
-            communityImageRepository.deleteAll(existing);
-        }
 
-        // 대표 이미지 저장 및 DTO 업데이트
-        if (repImage != null && !repImage.isEmpty()) {
+        // 1. 대표 이미지 X버튼 눌렀을 때: 기존 대표사진 삭제
+        if (removeRepImage) {
+            if (!existing.isEmpty()) {
+                communityImageRepository.deleteAll(existing);
+            }
+            dto.setRepImageUrl(null);
+        }
+        // 2. 새 대표 이미지 업로드: 기존 대표사진 삭제 후 새 파일 저장
+        else if (repImage != null && !repImage.isEmpty()) {
+            if (!existing.isEmpty()) {
+                communityImageRepository.deleteAll(existing);
+            }
             saveCommunityImage(community, repImage, true);
             List<CommunityImage> imgs = communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(dto.getId());
             if (!imgs.isEmpty()) {
                 dto.setRepImageUrl(imgs.get(0).getFileName());
             }
-        } else {
-            // 대표 이미지 미변경 시 기존 유지
+        }
+        // 3. 아무것도 안 하면: 기존 대표사진 유지!
+        else {
             dto.setRepImageUrl(existing.isEmpty() ? null : existing.get(0).getFileName());
         }
 
