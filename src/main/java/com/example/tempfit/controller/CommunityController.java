@@ -107,6 +107,10 @@ public class CommunityController {
         // 스타일 처리
         if (styleNames != null) {
             dto.setStyleNames(styleNames);
+            dto.setCasual   (styleNames.contains("CASUAL"));
+            dto.setStreet   (styleNames.contains("STREET"));
+            dto.setFormal   (styleNames.contains("FORMAL"));
+            dto.setOutdoor  (styleNames.contains("OUTDOOR"));   
             dto.setCasual(styleNames.contains("CASUAL"));
             dto.setStreet(styleNames.contains("STREET"));
             dto.setFormal(styleNames.contains("FORMAL"));

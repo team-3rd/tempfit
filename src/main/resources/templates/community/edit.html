@@ -8,10 +8,11 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/css/create.css" />
+    <link rel="stylesheet" href="/css/edit.css" />
   </head>
   <body>
     <div th:replace="fragments/navbar :: navbar"></div>
+
     <!-- 경고 팝업 -->
     <div
       id="warningPopup"
@@ -29,6 +30,7 @@
         aria-label="Close"
       ></button>
     </div>
+
     <div class="container px-4 px-lg-5 mt-5">
       <h1>글쓰기</h1>
       <form
@@ -39,6 +41,7 @@
         class="needs-validation"
         novalidate
       >
+        <!-- 번호 -->
         <div class="mb-3">
           <label for="id" class="form-label">번호</label>
           <input
@@ -50,6 +53,7 @@
             readonly
           />
         </div>
+
         <!-- 제목 -->
         <div class="mb-3">
           <label for="title" class="form-label">제목</label>
@@ -63,42 +67,81 @@
             th:value="${communityDTO.title}"
             required
           />
-          <div id="titleHelp" class="form-text">0 / 11</div>
         </div>
+
         <!-- 작성자 -->
         <div class="mb-3">
           <label for="author" class="form-label">작성자</label>
-          <input type="text" class="form-control" id="author" name="author" th:value="${#authentication.principal.name}" readonly />
+          <input
+            type="text"
+            class="form-control"
+            id="author"
+            name="author"
+            th:value="${#authentication.principal.name}"
+            readonly
+          />
         </div>
-        <!-- 대표 사진 -->
-        <div class="mb-3">
-          <label for="repImage" class="form-label"
-            >대표 사진<span class="text-danger">*</span></label
-          >
-          <div class="file-row">
-            <input
-              class="form-control"
-              type="file"
-              id="repImage"
-              name="repImage"
-              accept="image/*"
-              required
-            />
-            <button
-              type="button"
-              id="repImageXBtn"
-              class="x-square-btn"
-              tabindex="-1"
-            >
-              <span>&times;</span>
-            </button>
-          </div>
-          <div class="invalid-feedback">대표 사진을 선택해주세요.</div>
-        </div>
-        <!-- 추가 사진 (여러 장 가능) -->
+
+<!-- 대표 사진 -->
+<div class="mb-3">
+  <label for="repImage" class="form-label">
+    대표 사진<span class="text-danger">*</span>
+  </label>
+
+  <!-- 미리보기 + X 버튼 -->
+  <div class="mb-2 d-flex align-items-center gap-2">
+    <img
+      id="previewImage"
+      th:src="@{'/uploads/' + ${communityDTO.repImageUrl}}"
+      alt="대표사진"
+      style="max-width: 200px;"
+    />
+    <button
+      type="button"
+      id="repImageXBtn"
+      class="x-square-btn show"
+      tabindex="-1"
+    >&times;</button>
+  </div>
+
+  <!-- 파일 선택 필드 -->
+  <div class="file-row d-flex align-items-center gap-2">
+    <!-- required 추가 -->
+    <input
+      class="form-control"
+      type="file"
+      id="repImage"
+      name="repImage"
+      accept="image/*"
+      required
+    />
+    <button
+      type="button"
+      id="repImageXBtn2"
+      class="x-square-btn"
+      tabindex="-1"
+    >&times;</button>
+  </div>
+
+  <!-- 삭제 플래그 -->
+  <input
+    type="hidden"
+    id="removeRepImage"
+    name="removeRepImage"
+    value="false"
+  />
+
+  <!-- 유효성 메시지 -->
+  <div class="invalid-feedback">
+    대표 사진을 선택해주세요.
+  </div>
+</div>
+
+
+        <!-- 추가 사진 (여러 장) -->
         <div class="mb-3">
           <label for="extraImages" class="form-label">추가 사진</label>
-          <div class="file-row">
+          <div class="file-row d-flex align-items-center gap-2">
             <input
               class="form-control"
               type="file"
@@ -110,14 +153,13 @@
             <button
               type="button"
               id="extraImagesXBtn"
-              class="x-square-btn"
+              class="x-square-btn btn btn-outline-danger"
               tabindex="-1"
-            >
-              <span>&times;</span>
-            </button>
+            >&times;</button>
           </div>
           <div class="form-text">Ctrl 또는 Shift를 눌러 여러 장 선택 가능</div>
         </div>
+
         <!-- 내용 -->
         <div class="mb-3">
           <label for="content" class="form-label">내용</label>
@@ -127,21 +169,38 @@
             name="content"
             rows="5"
             placeholder="내용을 입력하세요"
-            th:value="${communityDTO.content}"
+            th:text="${communityDTO.content}"
           ></textarea>
         </div>
+
+        <!-- 성별 체크 -->
         <div id="sexGroup" class="mb-3">
           <label class="form-label">성별 선택</label>
           <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="sexs" id="male" value="MALE" th:checked="${communityDTO.male}"/>
-              <label class="form-check-label" for="male">남성</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="sexs" id="female" value="FEMALE" th:checked="${communityDTO.female}"/>
-              <label class="form-check-label" for="female">여성</label>
-            </div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="sexs"
+              id="male"
+              value="MALE"
+              th:checked="${communityDTO.male}"
+            />
+            <label class="form-check-label" for="male">남성</label>
           </div>
-        <!-- 스타일 선택 (필수: 1~2개) -->
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="sexs"
+              id="female"
+              value="FEMALE"
+              th:checked="${communityDTO.female}"
+            />
+            <label class="form-check-label" for="female">여성</label>
+          </div>
+        </div>
+
+        <!-- 스타일 선택 -->
         <div id="styleGroup" class="mb-3">
           <label class="form-label"
             >스타일 선택 <span class="text-danger">*</span> (1~2개)</label
@@ -154,7 +213,8 @@
               value="CASUAL"
               id="styleCasual"
               th:checked="${communityDTO.casual}"
-            /><label class="form-check-label" for="styleCasual">캐주얼</label>
+            />
+            <label class="form-check-label" for="styleCasual">캐주얼</label>
           </div>
           <div class="form-check">
             <input
@@ -164,7 +224,8 @@
               value="STREET"
               id="styleStreet"
               th:checked="${communityDTO.street}"
-            /><label class="form-check-label" for="styleStreet">스트리트</label>
+            />
+            <label class="form-check-label" for="styleStreet">스트리트</label>
           </div>
           <div class="form-check">
             <input
@@ -174,7 +235,8 @@
               value="FORMAL"
               id="styleFormal"
               th:checked="${communityDTO.formal}"
-            /><label class="form-check-label" for="styleFormal">포멀</label>
+            />
+            <label class="form-check-label" for="styleFormal">포멀</label>
           </div>
           <div class="form-check">
             <input
@@ -184,20 +246,22 @@
               value="OUTDOOR"
               id="styleOutdoor"
               th:checked="${communityDTO.outdoor}"
-            /><label class="form-check-label" for="styleOutdoor"
-              >아웃도어</label
-            >
+            />
+            <label class="form-check-label" for="styleOutdoor">아웃도어</label>
           </div>
           <div class="invalid-feedback">
             1개 이상, 최대 2개까지 선택해주세요.
           </div>
         </div>
+
         <a href="/community/list" class="btn btn-secondary ms-2">목록</a>
         <button type="submit" class="btn btn-primary">수정</button>
       </form>
     </div>
+
     <div th:replace="fragments/footer :: footer"></div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/create.js"></script>
+    <script src="/js/edit.js"></script>
   </body>
 </html>

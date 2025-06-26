@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/css/detail.css" />
   </head>
   <body>
+        <div th:replace="fragments/navbar :: navbar"></div>
     <div class="container detail-container">
       <!-- 제목 -->
       <div class="detail-title" th:text="${post.title}">게시글 제목</div>
@@ -140,5 +141,6 @@
         </div>
       </div>
     </div>
+        <div th:replace="fragments/footer :: footer"></div>
   </body>
 </html>

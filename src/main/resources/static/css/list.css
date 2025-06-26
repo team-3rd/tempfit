@@ -1,6 +1,9 @@
 body {
   background: #f5f6fa;
 }
+.styleNames{
+  width: 8;
+}
 .post-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -47,9 +50,14 @@ body {
   border-radius: 8px;
   margin-bottom: 12px;
 }
-.search-form .form-select,
+.search-form .form-select{
+  width: 8rem;
+  height: 2rem;
+  font-size: 0.75rem;
+  padding: 0.25rem;
+}
 .search-form .form-control {
-  width: 15rem;
+  width: 20rem;
   height: 2rem;
   font-size: 0.75rem;
   padding: 0.25rem;
@@ -65,3 +73,4 @@ body {
   justify-content: center;
   padding: 0 0.5rem;
 }
+ 

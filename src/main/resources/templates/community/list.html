@@ -49,48 +49,15 @@
               >초기화</a
             >
           </div>
-          <div class="d-flex flex-wrap style-filters" style="gap: 8px">
-            <div class="form-check form-check-inline">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                name="styleNames"
-                id="fCasual"
-                value="CASUAL"
-                th:checked="${styleNames != null and styleNames.contains('CASUAL')}"
-              /><label class="form-check-label" for="fCasual">캐주얼</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                name="styleNames"
-                id="fStreet"
-                value="STREET"
-                th:checked="${styleNames != null and styleNames.contains('STREET')}"
-              /><label class="form-check-label" for="fStreet">스트리트</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                name="styleNames"
-                id="fFormal"
-                value="FORMAL"
-                th:checked="${styleNames != null and styleNames.contains('FORMAL')}"
-              /><label class="form-check-label" for="fFormal">포멀</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                name="styleNames"
-                id="fOutdoor"
-                value="OUTDOOR"
-                th:checked="${styleNames != null and styleNames.contains('OUTDOOR')}"
-              /><label class="form-check-label" for="fOutdoor">아웃도어</label>
-            </div>
-          </div>
+<form method="get" action="/community/list">
+  <select class="form-select" name="styleNames">
+    <option value="">스타일</option>
+<option value="CASUAL" th:selected="${styleNames != null and styleNames.contains('CASUAL')}">캐주얼</option>
+<option value="STREET" th:selected="${styleNames != null and styleNames.contains('STREET')}">스트리트</option>
+<option value="FORMAL" th:selected="${styleNames != null and styleNames.contains('FORMAL')}">포멀</option>
+<option value="OUTDOOR" th:selected="${styleNames != null and styleNames.contains('OUTDOOR')}">아웃도어</option>
+  </select>
+</form>      
         </form>
         <a
           href="/community/create"

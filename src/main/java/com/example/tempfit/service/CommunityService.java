@@ -49,6 +49,7 @@ public class CommunityService {
     private String uploadDir;
 
     /* 게시글 등록 + 이미지 저장 */
+    public Long register(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages) throws IOException {
     public Long register(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
             List<SelectedWeatherDTO> weatherList)
             throws IOException {
@@ -61,7 +62,6 @@ public class CommunityService {
                 .build();
         communityRepository.save(community);
 
-        // 2) 이미지 저장
         saveCommunityImage(community, repImage, true);
         if (extraImages != null) {
             for (MultipartFile mf : extraImages) {
@@ -71,7 +71,6 @@ public class CommunityService {
             }
         }
 
-        // 3) 스타일 객체 생성 (builder 에 community() 제거)
         CommunityStyle style = CommunityStyle.builder()
                 .casual(dto.isCasual())
                 .street(dto.isStreet())
@@ -79,6 +78,12 @@ public class CommunityService {
                 .outdoor(dto.isOutdoor())
                 .build();
 
+        // 4) 평균 기온 계산 후 날씨 객체 생성
+        double daySum = 0, nightSum = 0;
+        int dayCount = 0, nightCount = 0;
+
+        style.setCommunity(community);
+        community.setCommunityStyle(style);
         // 4) 평균 기온 계산 후 날씨 객체 생성
         double daySum = 0, nightSum = 0;
         int dayCount = 0, nightCount = 0;
@@ -180,11 +185,25 @@ public class CommunityService {
         community.setRecommendCount(dto.getRecommendCount());
         communityRepository.save(community);
 
+        // 기존 이미지 삭제
         List<CommunityImage> existing = communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(dto.getId());
         if (!existing.isEmpty()) {
             communityImageRepository.deleteAll(existing);
         }
-        saveCommunityImage(community, repImage, true);
+
+        // 대표 이미지 저장 및 DTO 업데이트
+        if (repImage != null && !repImage.isEmpty()) {
+            saveCommunityImage(community, repImage, true);
+            List<CommunityImage> imgs = communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(dto.getId());
+            if (!imgs.isEmpty()) {
+                dto.setRepImageUrl(imgs.get(0).getFileName());
+            }
+        } else {
+            // 대표 이미지 미변경 시 기존 유지
+            dto.setRepImageUrl(existing.isEmpty() ? null : existing.get(0).getFileName());
+        }
+
+        // 추가 이미지 저장
         if (extraImages != null) {
             for (MultipartFile mf : extraImages) {
                 if (!mf.isEmpty()) {
