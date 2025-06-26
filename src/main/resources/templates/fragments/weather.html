@@ -1,5 +1,8 @@
 <div th:fragment="weatherCard" class="col-12 col-lg-6 d-flex flex-column h-100">
-  <div class="card shadow-sm mb-4 flex-grow-1" style="width: 100%">
+  <div
+    class="card shadow-sm mb-4 flex-grow-1"
+    style="width: 100%; height: 546px"
+  >
     <div class="card-body text-center" style="padding-bottom: 0.5rem">
       <div id="weather-location" class="mt-2"></div>
       <div id="weather-icon" style="font-size: 3rem; margin-bottom: 8px"></div>
@@ -27,7 +30,7 @@
     >
       <div class="inner">
         <ul class="ul"></ul>
-        <button class="btn-prev" onclick="prevBtn()"></button>
+        <button class="btn-prev hide" onclick="prevBtn()"></button>
         <button class="btn-next" onclick="nextBtn()"></button>
       </div>
     </div>
