@@ -9,7 +9,7 @@ const ul = document.querySelector(".ul");
 function nextBtn() {
   document.querySelector(".btn-prev").classList.remove("hide");
   ul.scrollBy({ left: 500, behavior: "smooth" });
-  if (ul.scrollLeft == 3000) {
+  if (ul.scrollLeft == 2450 || ul.scrollLeft == 2500) {
     document.querySelector(".btn-next").classList.add("hide");
   } else {
     document.querySelector(".btn-next").classList.remove("hide");
@@ -19,7 +19,7 @@ function nextBtn() {
 function prevBtn() {
   document.querySelector(".btn-next").classList.remove("hide");
   ul.scrollBy({ left: -500, behavior: "smooth" });
-  if (ul.scrollLeft == 500) {
+  if (ul.scrollLeft == 450 || ul.scrollLeft == 500) {
     document.querySelector(".btn-prev").classList.add("hide");
   } else {
     document.querySelector(".btn-prev").classList.remove("hide");

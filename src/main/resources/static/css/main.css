@@ -87,7 +87,8 @@
   margin: -5px 0 0 -2px;
   display: inline-block;
   overflow: hidden;
-  background: url(https://ssl.pstatic.net/sstatic/keypage/outside/scui/weather_new_new/img/sp_icon_v7.png) no-repeat;
+  background: url(https://ssl.pstatic.net/sstatic/keypage/outside/scui/weather_new_new/img/sp_icon_v7.png)
+    no-repeat;
   background-size: 100px 100px;
   vertical-align: top;
   color: transparent;
@@ -104,7 +105,8 @@
   margin: -5px 0 0 -2px;
   display: inline-block;
   overflow: hidden;
-  background: url(https://ssl.pstatic.net/sstatic/keypage/outside/scui/weather_new_new/img/sp_icon_v7.png) no-repeat;
+  background: url(https://ssl.pstatic.net/sstatic/keypage/outside/scui/weather_new_new/img/sp_icon_v7.png)
+    no-repeat;
   background-size: 100px 100px;
   vertical-align: top;
   color: transparent;
@@ -121,7 +123,7 @@
   position: absolute;
   top: 10px;
   left: 28px;
-  width: 500px;
+  width: 87.75%;
   padding-left: 0px;
   line-height: 0;
   overflow-x: hidden;
@@ -258,5 +260,5 @@ footer.py-5.bg-dark {
   font-weight: 500;
   font-size: 1.05em;
   white-space: nowrap;
-  color: #2076ff;        /* ← 여기 추가 */
+  color: #2076ff; /* ← 여기 추가 */
 }

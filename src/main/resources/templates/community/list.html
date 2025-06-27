@@ -51,22 +51,63 @@
           </div>
 
           <!-- 스타일 라디오 버튼 그룹 -->
-          <div class="btn-group" role="group" aria-label="스타일 선택" style="margin-top: 8px;">
-            <input type="radio" class="btn-check" name="styleNames" id="styleCasual" autocomplete="off" value="CASUAL"
-              th:checked="${styleNames != null and styleNames.contains('CASUAL')}" />
-            <label class="btn btn-outline-primary" for="styleCasual">캐주얼</label>
+          <div
+            class="btn-group"
+            role="group"
+            aria-label="스타일 선택"
+            style="margin-top: 8px"
+          >
+            <input
+              type="radio"
+              class="btn-check"
+              name="styleNames"
+              id="styleCasual"
+              autocomplete="off"
+              value="CASUAL"
+              th:checked="${styleNames != null and styleNames.contains('CASUAL')}"
+            />
+            <label class="btn btn-outline-primary" for="styleCasual"
+              >캐주얼</label
+            >
 
-            <input type="radio" class="btn-check" name="styleNames" id="styleStreet" autocomplete="off" value="STREET"
-              th:checked="${styleNames != null and styleNames.contains('STREET')}" />
-            <label class="btn btn-outline-primary" for="styleStreet">스트리트</label>
+            <input
+              type="radio"
+              class="btn-check"
+              name="styleNames"
+              id="styleStreet"
+              autocomplete="off"
+              value="STREET"
+              th:checked="${styleNames != null and styleNames.contains('STREET')}"
+            />
+            <label class="btn btn-outline-primary" for="styleStreet"
+              >스트리트</label
+            >
 
-            <input type="radio" class="btn-check" name="styleNames" id="styleFormal" autocomplete="off" value="FORMAL"
-              th:checked="${styleNames != null and styleNames.contains('FORMAL')}" />
-            <label class="btn btn-outline-primary" for="styleFormal">포멀</label>
+            <input
+              type="radio"
+              class="btn-check"
+              name="styleNames"
+              id="styleFormal"
+              autocomplete="off"
+              value="FORMAL"
+              th:checked="${styleNames != null and styleNames.contains('FORMAL')}"
+            />
+            <label class="btn btn-outline-primary" for="styleFormal"
+              >포멀</label
+            >
 
-            <input type="radio" class="btn-check" name="styleNames" id="styleOutdoor" autocomplete="off" value="OUTDOOR"
-              th:checked="${styleNames != null and styleNames.contains('OUTDOOR')}" />
-            <label class="btn btn-outline-primary" for="styleOutdoor">아웃도어</label>
+            <input
+              type="radio"
+              class="btn-check"
+              name="styleNames"
+              id="styleOutdoor"
+              autocomplete="off"
+              value="OUTDOOR"
+              th:checked="${styleNames != null and styleNames.contains('OUTDOOR')}"
+            />
+            <label class="btn btn-outline-primary" for="styleOutdoor"
+              >아웃도어</label
+            >
           </div>
         </form>
 
@@ -83,16 +124,6 @@
             <span th:text="${#temporals.format(post.createdDate,'yyyy-MM-dd')}"
               >2025-06-15</span
             >
-            <span
-              id="avgTemp"
-              th:if="${post.dayTime}"
-              th:text="${post.dayAvgTemp}"
-            ></span>
-            <span
-              id="avgTemp"
-              th:if="${post.nightTime}"
-              th:text="${post.nightAvgTemp}"
-            ></span>
           </div>
           <a
             th:href="@{/community/detail/{id}(id=${post.id})}"
@@ -111,6 +142,16 @@
             <span th:if="${post.outdoor}" class="badge bg-secondary"
               >아웃도어</span
             >
+            <span
+              th:if="${post.dayTime}"
+              class="badge bg-day day"
+              th:text="${'낮  ' + post.dayAvgTemp + '℃'}"
+            ></span>
+            <span
+              th:if="${post.NightTime}"
+              class="badge bg-night night"
+              th:text="${'밤  ' + post.nightAvgTemp + '℃'}"
+            ></span>
           </div>
           <img
             th:if="${post.repImageUrl != null}"
