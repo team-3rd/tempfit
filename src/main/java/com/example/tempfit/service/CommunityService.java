@@ -259,6 +259,7 @@ public class CommunityService {
 
     /* 삭제 */
     public void remove(Long id) {
+        commentRepository.deleteAll(commentRepository.findByPostIdOrderByCreatedDateAsc(id));
         communityTempRepository.deleteById(id);
         communityStyleRepository.deleteById(id);
         communitySexRepository.deleteById(id);
@@ -291,6 +292,7 @@ public class CommunityService {
         List<CommunityImage> imgs = communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(entity.getId());
         String repImageUrl = (!imgs.isEmpty()) ? imgs.get(0).getFileName() : null;
 
+        CommunitySex sex = communitySexRepository.findById(entity.getId()).orElse(null);
         CommunityStyle style = communityStyleRepository.findById(entity.getId()).orElse(null);
 
         return CommunityDTO.builder()
@@ -300,6 +302,8 @@ public class CommunityService {
                 .content(entity.getContent())
                 .recommendCount(entity.getRecommendCount())
                 .repImageUrl(repImageUrl)
+                .male(sex != null && sex.isMale())
+                .female(sex != null && sex.isFemale())
                 .casual(style != null && style.isCasual())
                 .street(style != null && style.isStreet())
                 .formal(style != null && style.isFormal())

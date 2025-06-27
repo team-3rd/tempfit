@@ -103,12 +103,12 @@ public class CommunityController {
             @RequestParam("repImage") MultipartFile repImage,
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
-            @RequestParam(value = "sexSet", required = false) List<Sex> sexs) throws IOException {
+            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
 
-        if (sexs != null) {
-            dto.setSexSet(sexs);
-            dto.setMale(sexs.contains(Sex.MALE));
-            dto.setFemale(sexs.contains(Sex.FEMALE));
+        if (sexSet != null) {
+            dto.setSexSet(sexSet);
+            dto.setMale(sexSet.contains(Sex.MALE));
+            dto.setFemale(sexSet.contains(Sex.FEMALE));
         }
         // 스타일 처리
         if (styleNames != null) {
@@ -156,11 +156,12 @@ public class CommunityController {
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @RequestParam(value = "removeRepImage", defaultValue = "false") boolean removeRepImage,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
-            @RequestParam(value = "sexSet", required = false) List<Sex> sexs) throws IOException {
-        if (sexs != null) {
-            dto.setSexSet(sexs);
-            dto.setMale(sexs.contains(Sex.MALE));
-            dto.setFemale(sexs.contains(Sex.FEMALE));
+            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
+                
+        if (sexSet != null) {
+            dto.setSexSet(sexSet);
+            dto.setMale(sexSet.contains(Sex.MALE));
+            dto.setFemale(sexSet.contains(Sex.FEMALE));
         }
 
         // 스타일 처리
@@ -170,11 +171,6 @@ public class CommunityController {
             dto.setStreet(styleNames.contains("STREET"));
             dto.setFormal(styleNames.contains("FORMAL"));
             dto.setOutdoor(styleNames.contains("OUTDOOR"));
-        }
-        if (sexs != null) {
-            dto.setSexSet(sexs);
-            dto.setMale(sexs.contains(Sex.MALE));
-            dto.setFemale(sexs.contains(Sex.FEMALE));
         }
     
         Member loginMember = memberRepository.findByEmailAndFromSocial(
