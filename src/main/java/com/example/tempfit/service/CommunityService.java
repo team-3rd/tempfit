@@ -206,7 +206,9 @@ public class CommunityService {
         community.setTitle(dto.getTitle());
         community.setAuthor(currentUser);
         community.setContent(dto.getContent());
-        community.setRecommendCount(dto.getRecommendCount());
+
+        long count = recommendRepository.countByCommunity(community);
+        community.setRecommendCount((int) count);
         communityRepository.save(community);
 
         List<CommunityImage> existing = communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(dto.getId());
