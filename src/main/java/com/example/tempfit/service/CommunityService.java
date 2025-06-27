@@ -11,6 +11,7 @@ import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Recommend;
 import com.example.tempfit.entity.Sex;
 import com.example.tempfit.repository.CommentRepository;
+import com.example.tempfit.entity.TemperatureRange;
 import com.example.tempfit.repository.CommunityImageRepository;
 import com.example.tempfit.repository.CommunityRepository;
 import com.example.tempfit.repository.CommunitySexRepository;
@@ -18,10 +19,13 @@ import com.example.tempfit.repository.CommunityStyleRepository;
 import com.example.tempfit.repository.CommunityTempRepository;
 import com.example.tempfit.repository.RecommendRepository;
 
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -33,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -283,13 +288,22 @@ public class CommunityService {
     }
 
     public CommunityDTO entityToDTO(Community entity) {
+        List<CommunityImage> imgs = communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(entity.getId());
+        String repImageUrl = (!imgs.isEmpty()) ? imgs.get(0).getFileName() : null;
+
+        CommunityStyle style = communityStyleRepository.findById(entity.getId()).orElse(null);
+
         return CommunityDTO.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .author(entity.getAuthor())
                 .content(entity.getContent())
                 .recommendCount(entity.getRecommendCount())
-                .repImageUrl(null)
+                .repImageUrl(repImageUrl)
+                .casual(style != null && style.isCasual())
+                .street(style != null && style.isStreet())
+                .formal(style != null && style.isFormal())
+                .outdoor(style != null && style.isOutdoor())
                 .createdDate(entity.getCreatedDate())
                 .upDateTime(entity.getUpDateTime())
                 .build();
@@ -312,12 +326,49 @@ public class CommunityService {
     }
 
     // 메인 홈페이지에 top 코디들 추가
-    public Map<String, List<Community>> getTopCommunitiesByStyleAndTemperature(int temp) {
-        Map<String, List<Community>> result = new HashMap<>();
-        for (String style : List.of("캐주얼", "포멀", "스트리트", "아웃도어")) {
-            List<Community> posts = communityRepository.findTopCommunitiesByStyleAndTemp(style, temp, 3);
-            result.put(style, posts);
-        }
+    public Map<String, CommunityDTO> getTopBySelectedTemp(int temp) {
+        TemperatureRange range = TemperatureRange.fromTemperature(temp);
+
+        Map<String, String> styleFieldMap = Map.of(
+                "CASUAL", "casual",
+                "FORMAL", "formal",
+                "STREET", "street",
+                "OUTDOOR", "outdoor");
+
+        Map<String, CommunityDTO> result = new LinkedHashMap<>();
+
+        styleFieldMap.forEach((label, fieldName) -> {
+            Specification<Community> spec = (root, query, cb) -> {
+                Join<Community, CommunityStyle> styleJoin = root.join("communityStyle");
+                Join<Community, CommunityTemp> tempJoin = root.join("communityTemp");
+
+                Predicate stylePred = cb.isTrue(styleJoin.get(fieldName));
+                Predicate dayPred = cb.and(
+                        cb.isTrue(tempJoin.get("dayTime")),
+                        cb.between(
+                                tempJoin.get("dayAvgTemp"),
+                                range.getMinTemp(),
+                                range.getMaxTemp()));
+                Predicate nightPred = cb.and(
+                        cb.isTrue(tempJoin.get("nightTime")),
+                        cb.between(
+                                tempJoin.get("nightAvgTemp"),
+                                range.getMinTemp(),
+                                range.getMaxTemp()));
+                Predicate tempPred = cb.or(dayPred, nightPred);
+
+                return cb.and(stylePred, tempPred);
+            };
+
+            Pageable pg = PageRequest.of(0, 1, Sort.by("recommendCount").descending());
+            List<Community> slice = communityRepository.findAll(spec, pg).getContent();
+            List<CommunityDTO> dtos = slice.stream()
+                    .map(this::entityToDTO)
+                    .collect(Collectors.toList());
+
+            result.put(label, dtos.isEmpty() ? null : dtos.get(0));
+        });
+
         return result;
     }
 
