@@ -21,7 +21,7 @@ window.addEventListener("weatherLoaded", (e) => {
     .catch(() => {
       const area = document.getElementById("top-looks-area");
       if (area) {
-        area.innerHTML = "<div class='text-danger'>TOP LOOKS 정보를 가져올 수 없습니다</div>";
+        area.innerHTML = "<div class='text-danger'>※BEST LOOKS 정보를 가져올 수 없습니다!※</div>";
       }
     });
 });
@@ -73,6 +73,7 @@ function renderGuide(divId, data) {
 function renderTopLooks(data) {
   const area = document.getElementById("top-looks-area");
   if (!area) return;
+
   const styleList = [
     { key: "CASUAL", label: "캐주얼" },
     { key: "FORMAL", label: "포멀" },
@@ -82,48 +83,51 @@ function renderTopLooks(data) {
 
   let html = "";
   styleList.forEach(({ key, label }) => {
-    const posts = data[key] || [];
-    html += `
-    <div class="col-md-3 mb-4 d-flex">
-      <div class="card flex-fill h-100">
-        <div class="card-body d-flex flex-column">
-          <h2 class="card-title">${label}</h2>
-          <div class="card-text flex-grow-1" style="font-size:0.97rem;">
-            ${
-              posts.length > 0
-                ? posts
-                    .map(
-                      (post) => `
-                  <div style="margin-bottom:14px;">
-                    <a href="/community/detail/${post.id}" style="font-weight:600;">
-                      ${post.title}
-                    </a><br/>
-                    ${
-                      post.repImageUrl
-                        ? `<img src="/uploads/${post.repImageUrl}"
-                               style="max-width:100%;max-height:80px;
-                                      display:block;
-                                      margin:8px auto 4px auto;
-                                      border-radius:8px;">`
-                        : ""
-                    }
-                    <small style="color:#888;">추천수: ${post.recommendCount}</small>
-                  </div>
-                `
-                    )
-                    .join("")
-                : "<span class='text-muted'>게시글 없음</span>"
-            }
+    const post = data[key];
+    if (post) {
+      html += `
+        <div class="col-md-3 mb-4 d-flex">
+          <div class="card flex-fill h-100">
+            <div class="card-body d-flex flex-column align-items-center">
+              <div class="style-label" style="font-size:1.1rem; font-weight:700; margin-bottom:2px;">${label}</div>
+              <div class="post-title" style="font-size:1.25rem; font-weight:600; margin:6px 0 6px;">${post.title}</div>
+              <div class="badge-list mb-2">
+                ${post.casual ? '<span class="badge bg-secondary me-1">캐주얼</span>' : ''}
+                ${post.formal ? '<span class="badge bg-secondary me-1">포멀</span>' : ''}
+                ${post.street ? '<span class="badge bg-secondary me-1">스트리트</span>' : ''}
+                ${post.outdoor ? '<span class="badge bg-secondary me-1">아웃도어</span>' : ''}
+              </div>
+              ${
+                post.repImageUrl
+                  ? `<img src="/uploads/${post.repImageUrl}" style="max-width:130px;max-height:130px;border-radius:10px; margin-bottom:8px;">`
+                  : '<div style="width:130px;height:130px;border:1px solid #eee;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:18px;margin-bottom:8px;">이미지 없음</div>'
+              }
+              <div class="post-author" style="color:#888; margin-top:8px;">
+                ${post.author && post.author.name ? post.author.name : '익명'}
+              </div>
+              <div style="color:#888;">
+                추천수: ${typeof post.recommendCount === "number" ? post.recommendCount : 0}
+              </div>
+            </div>
+            <div class="card-footer bg-white border-0">
+              <a class="btn btn-primary btn-sm w-100" href="/community/detail/${post.id}">
+                상세보기
+              </a>
+            </div>
           </div>
         </div>
-        <div class="card-footer bg-white border-0">
-          <a class="btn btn-primary btn-sm w-100"
-             href="/community/list?type=&keyword=&styleNames=${encodeURIComponent(key)}">
-            전체보기
-          </a>
+      `;
+    } else {
+      html += `
+        <div class="col-md-3 mb-4 d-flex">
+          <div class="card flex-fill h-100 d-flex flex-column align-items-center justify-content-center" style="min-height:250px;">
+            <div class="post-title" style="font-size:1.2rem; font-weight:600; margin-bottom:12px;">${label}</div>
+            <div class="text-muted">게시글 없음</div>
+          </div>
         </div>
-      </div>
-    </div>`;
+      `;
+    }
   });
-  area.innerHTML = html;
+
+  area.innerHTML = `<div class="row">${html}</div>`;
 }

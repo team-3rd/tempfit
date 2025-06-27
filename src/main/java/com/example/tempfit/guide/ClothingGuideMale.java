@@ -26,11 +26,14 @@ public class ClothingGuideMale {
         imageUrlMap.put("반소매", "/images/guide/top/male/shortsleeve.png");
         imageUrlMap.put("헨리넥 반소매", "/images/guide/top/male/henryneck.png");
         imageUrlMap.put("피케/카라", "/images/guide/top/male/piqueshirt.png");
-        imageUrlMap.put("얇은 니트/스웨터", "/images/guide/top/male/shortsleeveknit.png");
+        imageUrlMap.put("반팔 니트/스웨터", "/images/guide/top/male/shortsleeveknit.png");
         imageUrlMap.put("반팔 셔츠", "/images/guide/top/male/shortsleeveshirts.png");
         imageUrlMap.put("린넨 셔츠", "/images/guide/top/male/linenshirts.png");
         imageUrlMap.put("긴소매", "/images/guide/top/male/longsleeve.png");
         imageUrlMap.put("셔츠", "/images/guide/top/male/shirt.png");
+        imageUrlMap.put("얇은 니트/스웨터", "/images/guide/top/male/thinknitsweater.png");
+        imageUrlMap.put("얇은 가디건", "/images/guide/top/male/thincardigan.png");
+        imageUrlMap.put("바람막이", "/images/guide/top/male/windbreaker.png");
         imageUrlMap.put("가디건", "/images/guide/top/male/cardigan.png");
         imageUrlMap.put("니트/스웨터", "/images/guide/top/male/knitsweater.png");
         imageUrlMap.put("후드티", "/images/guide/top/male/hoodie.png");
@@ -69,28 +72,28 @@ public class ClothingGuideMale {
     static {
         guideMap.put(TemperatureRange.VERY_HOT, // 28 ~ 100
                 new GuideSet(
-                        Arrays.asList("민소매(얇은 가디건)", "반소매","헨리넥 반소매", "피케/카라", "얇은 니트/스웨터", "반팔 셔츠", "린넨 셔츠"),
+                        Arrays.asList("민소매(얇은 가디건)", "반소매","헨리넥 반소매", "피케/카라", "반팔 니트/스웨터", "반팔 셔츠", "린넨 셔츠"),
                         Arrays.asList("면반바지", "데님 반바지", "린넨 팬츠", "얇은 데님", "얇은 슬랙스"),
                         Arrays.asList("샌들/슬리퍼", "크록스","스니커즈")
                 )
         );
         guideMap.put(TemperatureRange.HOT, // 23 ~ 27
                 new GuideSet(
-                        Arrays.asList("반소매", "헨리넥 반소매", "피케/카라", "얇은 니트/스웨터", "반팔 셔츠", "린넨 셔츠"),
+                        Arrays.asList("반소매", "헨리넥 반소매", "피케/카라", "반팔 니트/스웨터", "반팔 셔츠", "린넨 셔츠"),
                         Arrays.asList("얇은 데님", "얇은 슬랙스", "코튼 팬츠"),
                         Arrays.asList("스니커즈", "스포츠화")
                 )
         );
         guideMap.put(TemperatureRange.WARM, // 20 ~ 22
                 new GuideSet(
-                        Arrays.asList("긴소매", "셔츠", "가디건", "얇은 니트/스웨터"),
+                        Arrays.asList("긴소매", "셔츠", "얇은 가디건", "바람막이", "얇은 니트/스웨터", "후드티", "맨투맨"),
                         Arrays.asList("데님", "코튼 팬츠", "슬랙스", "스웨트팬츠"),
                         Arrays.asList("스니커즈", "스포츠화", "구두")
                 )
         );
-        guideMap.put(TemperatureRange.MILD, // 17 ~ 19
+        guideMap.put(TemperatureRange.MILD, // 17 ~ 19 얇은 옷 시작
                 new GuideSet(
-                        Arrays.asList("긴소매", "셔츠", "가디건", "니트/스웨터", "후드티", "맨투맨"),
+                        Arrays.asList("긴소매", "셔츠", "얇은 가디건", "바람막이", "얇은 니트/스웨터", "후드티", "맨투맨"),
                         Arrays.asList("데님", "코튼 팬츠", "슬랙스", "스웨트팬츠"),
                         Arrays.asList("스니커즈", "스포츠화", "구두", "부츠/워커")
                 )

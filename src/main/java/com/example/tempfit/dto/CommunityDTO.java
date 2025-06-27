@@ -59,15 +59,4 @@ public class CommunityDTO {
 
     private LocalDateTime createdDate;
     private LocalDateTime upDateTime;
-
-    public void syncBooleansFromSexSet() {
-        this.male = sexSet != null && sexSet.contains(Sex.MALE);
-        this.female = sexSet != null && sexSet.contains(Sex.FEMALE);
-    }
-
-    public void syncSexSetFromBooleans() {
-        this.sexSet = new ArrayList<>();
-        if (male) sexSet.add(Sex.MALE);
-        if (female) sexSet.add(Sex.FEMALE);
-    }
 }
