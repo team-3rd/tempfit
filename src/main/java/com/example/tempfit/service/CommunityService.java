@@ -179,7 +179,6 @@ public class CommunityService {
     // 1) 페이징된 DTO 리스트
     public Page<CommunityDTO> getPage(int page) {
         Pageable pageable = PageRequest.of(page - 1, 25, Sort.by("id").descending()); // id 내림차순 25개 게시물
-        return communityRepository.list(null, null, null, pageable) // 검색없이 전체 조회기능
         return communityRepository.list(null, null, null, null, pageable) // 검색없이 전체 조회기능
                 .map(this::arrayToDTO); // 프론트 출력
     }
@@ -187,7 +186,6 @@ public class CommunityService {
     // 2) 검색 값이 있을 경우
     public Page<CommunityDTO> searchPage(String type, String keyword, int page) {
         Pageable pageable = PageRequest.of(page - 1, 25, Sort.by("id").descending());
-        return communityRepository.list(type, keyword, null, pageable)
         return communityRepository.list(type, keyword, null, null, pageable)
                 .map(this::arrayToDTO);
     }
