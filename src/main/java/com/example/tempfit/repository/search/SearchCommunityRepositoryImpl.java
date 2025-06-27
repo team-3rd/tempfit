@@ -5,6 +5,7 @@ import com.example.tempfit.entity.QCommunity;
 import com.example.tempfit.entity.QCommunityStyle;
 import com.example.tempfit.entity.QCommunityTemp;
 import com.example.tempfit.entity.QCommunityImage;
+import com.example.tempfit.entity.TemperatureRange;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
@@ -32,110 +33,114 @@ public class SearchCommunityRepositoryImpl
     }
 
     @Override
-    public Page<Object[]> list(String type, String keyword, List<String> styleNames, Pageable pageable) {
+    public Page<Object[]> list(
+            String type,
+            String keyword,
+            List<String> styleNames,
+            TemperatureRange range,
+            Pageable pageable) {
+
         QCommunity community = QCommunity.community;
-        QCommunityStyle style = QCommunityStyle.communityStyle;
-        QCommunityImage image = QCommunityImage.communityImage;
-        QCommunityTemp temp = QCommunityTemp.communityTemp;
+        QCommunityStyle style     = QCommunityStyle.communityStyle;
+        QCommunityImage image     = QCommunityImage.communityImage;
+        QCommunityTemp temp       = QCommunityTemp.communityTemp;
 
         JPQLQuery<Tuple> query = from(community)
-                .leftJoin(style).on(community.id.eq(style.id))
-                .leftJoin(temp).on(community.id.eq(temp.id))
-                .leftJoin(image).on(image.community.id.eq(community.id)
-                        .and(image.isRep.isTrue()))
-                .select(
-                        community.id,
-                        community.title,
-                        community.author,
-                        community.recommendCount,
-                        image.fileName, // repImageUrl
-                        community.createdDate,
-                        style.casual,
-                        style.street,
-                        style.formal,
-                        style.outdoor,
-                        temp.dayAvgTemp,
-                        temp.nightAvgTemp // 변경: style.sports → style.outdoor
-                )
-                .distinct();
+            .leftJoin(style).on(community.id.eq(style.id))
+            .leftJoin(temp).on(community.id.eq(temp.id))
+            .leftJoin(image).on(image.community.id.eq(community.id)
+                    .and(image.isRep.isTrue()))
+            .select(
+                community.id,
+                community.title,
+                community.author,
+                community.recommendCount,
+                image.fileName,
+                community.createdDate,
+                style.casual,
+                style.street,
+                style.formal,
+                style.outdoor,
+                temp.dayAvgTemp,
+                temp.nightAvgTemp
+            )
+            .distinct();
 
         BooleanBuilder builder = new BooleanBuilder();
         builder.and(community.id.gt(0L));
 
+        // (1) 타입·키워드 검색
         if (type != null && keyword != null && !keyword.trim().isEmpty()) {
             BooleanBuilder tb = new BooleanBuilder();
-            if (type.contains("t"))
-                tb.or(community.title.containsIgnoreCase(keyword));
-            if (type.contains("a"))
-                tb.or(community.author.name.containsIgnoreCase(keyword));
-            if (type.contains("c"))
-                tb.or(
-                        community.content.containsIgnoreCase(keyword));
+            if (type.contains("t")) tb.or(community.title.containsIgnoreCase(keyword));
+            if (type.contains("a")) tb.or(community.author.name.containsIgnoreCase(keyword));
+            if (type.contains("c")) tb.or(community.content.containsIgnoreCase(keyword));
             builder.and(tb);
         }
 
+        // (2) 스타일 필터
         if (styleNames != null && !styleNames.isEmpty()) {
             BooleanBuilder sb = new BooleanBuilder();
             for (String s : styleNames) {
                 switch (s.toUpperCase()) {
-                    case "CASUAL":
-                        sb.or(style.casual.isTrue());
-                        break;
-                    case "STREET":
-                        sb.or(style.street.isTrue());
-                        break;
-                    case "FORMAL":
-                        sb.or(style.formal.isTrue());
-                        break;
-                    case "OUTDOOR":
-                        sb.or(style.outdoor.isTrue());
-                        break; // 변경
+                    case "CASUAL":  sb.or(style.casual.isTrue());  break;
+                    case "STREET":  sb.or(style.street.isTrue());  break;
+                    case "FORMAL":  sb.or(style.formal.isTrue());  break;
+                    case "OUTDOOR": sb.or(style.outdoor.isTrue()); break;
                 }
             }
             builder.and(sb);
         }
 
-        query.where(builder);
-
-        for (Sort.Order o : pageable.getSort()) {
-            Order dir = o.isAscending() ? Order.ASC : Order.DESC;
-            PathBuilder<Community> path = new PathBuilder<>(Community.class, "community");
-            query.orderBy(new OrderSpecifier<>(dir,
-                    path.getComparable(o.getProperty(), Comparable.class)));
+        // (3) 온도 범위 필터링
+        if (range != null) {
+            BooleanBuilder tb2 = new BooleanBuilder();
+            tb2.or(temp.dayAvgTemp.between(range.getMinTemp(), range.getMaxTemp()));
+            tb2.or(temp.nightAvgTemp.between(range.getMinTemp(), range.getMaxTemp()));
+            builder.and(tb2);
         }
 
+        query.where(builder);
+
+        // (4) 추천수 내림차순 정렬: 항상 우선 적용
+        query.orderBy(new OrderSpecifier<>(Order.DESC,
+            new PathBuilder<>(Community.class, "community")
+                .getNumber("recommendCount", Integer.class)
+        ));
+
+        // (5) 페이지/페이징
         query.offset(pageable.getOffset());
         query.limit(pageable.getPageSize());
 
+        // 결과 매핑
         List<Tuple> tuples = query.fetch();
         List<Object[]> results = tuples.stream()
-                .map(t -> new Object[] {
-                        t.get(community.id),
-                        t.get(community.title),
-                        t.get(community.author),
-                        t.get(community.recommendCount),
-                        t.get(image.fileName),
-                        t.get(community.createdDate),
-                        t.get(style.casual),
-                        t.get(style.street),
-                        t.get(style.formal),
-                        t.get(style.outdoor),
-                        t.get(temp.dayAvgTemp), // 변경: t.get(style.sports) → t.get(style.outdoor)
-                        t.get(temp.nightAvgTemp) // 변경: t.get(style.sports) → t.get(style.outdoor)
-                })
-                .collect(Collectors.toList());
+            .map(t -> new Object[] {
+                t.get(community.id),
+                t.get(community.title),
+                t.get(community.author),
+                t.get(community.recommendCount),
+                t.get(image.fileName),
+                t.get(community.createdDate),
+                t.get(style.casual),
+                t.get(style.street),
+                t.get(style.formal),
+                t.get(style.outdoor),
+                t.get(temp.dayAvgTemp),
+                t.get(temp.nightAvgTemp)
+            })
+            .collect(Collectors.toList());
 
         long total = from(community)
-                .leftJoin(style).on(community.id.eq(style.id))
-                .leftJoin(temp).on(community.id.eq(temp.id))
-                .leftJoin(image).on(image.community.id.eq(community.id)
-                        .and(image.isRep.isTrue()))
-                .where(builder)
-                .fetchCount();
+            .leftJoin(style).on(community.id.eq(style.id))
+            .leftJoin(temp).on(community.id.eq(temp.id))
+            .leftJoin(image).on(image.community.id.eq(community.id)
+                    .and(image.isRep.isTrue()))
+            .where(builder)
+            .fetchCount();
 
         return new PageImpl<>(results, pageable, total);
     }
-
     @Override
     public Object[] getCommunityByBno(Long id) {
         QCommunity community = QCommunity.community;

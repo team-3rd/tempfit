@@ -87,8 +87,7 @@
   margin: -5px 0 0 -2px;
   display: inline-block;
   overflow: hidden;
-  background: url(https://ssl.pstatic.net/sstatic/keypage/outside/scui/weather_new_new/img/sp_icon_v7.png)
-    no-repeat;
+  background: url(https://ssl.pstatic.net/sstatic/keypage/outside/scui/weather_new_new/img/sp_icon_v7.png) no-repeat;
   background-size: 100px 100px;
   vertical-align: top;
   color: transparent;
@@ -105,8 +104,7 @@
   margin: -5px 0 0 -2px;
   display: inline-block;
   overflow: hidden;
-  background: url(https://ssl.pstatic.net/sstatic/keypage/outside/scui/weather_new_new/img/sp_icon_v7.png)
-    no-repeat;
+  background: url(https://ssl.pstatic.net/sstatic/keypage/outside/scui/weather_new_new/img/sp_icon_v7.png) no-repeat;
   background-size: 100px 100px;
   vertical-align: top;
   color: transparent;
@@ -189,4 +187,76 @@ ul + li {
 }
 .pad-bt {
   padding-bottom: 5px;
+}
+body {
+  min-height: 100vh;
+}
+footer.py-5.bg-dark {
+  height: 56px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.section-gap {
+  margin-top: 48px;
+  margin-bottom: 48px;
+}
+.section-gap-bottom {
+  margin-bottom: 48px;
+}
+.best-looks-title-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1.5px solid #a6a6a6;
+  border-radius: 8px;
+  box-shadow: 0 3px 16px 0 rgba(60, 70, 86, 0.07);
+  padding: 16px 32px;
+  margin: 0 auto 34px;
+  font-size: 1.18rem;
+  font-weight: 600;
+  max-width: 600px;
+  gap: 6px;
+}
+.current-temp-tag {
+  font-weight: 500;
+  font-size: 1.05em;
+  white-space: nowrap;
+}
+.style-best {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #222;
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.best-looks {
+  color: red;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-left: 3px;
+}
+/* 카드 상단 스타일명 헤더 (optional 추가) */
+.card-style-header {
+  background-color: #f0f4f8;
+  border-bottom: 2px solid #ddd;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+}
+.current-temp-tag {
+  font-weight: 500;
+  font-size: 1.05em;
+  white-space: nowrap;
+  color: #2076ff;        /* ← 여기 추가 */
 }

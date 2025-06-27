@@ -10,37 +10,7 @@
     <link href="css/styles.css" rel="stylesheet" />
     <link href="css/main.css" rel="stylesheet" />
     <style>
-      body { min-height: 100vh; }
-      footer.py-5.bg-dark {
-        height: 56px !important;
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-      }
-      .section-gap { margin-top: 48px; margin-bottom: 48px; }
-      .section-gap-bottom { margin-bottom: 48px; }
-      .top-looks-title-box {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: center;
-        background: #fff;
-        border: 1.5px solid gray;
-        border-radius: 8px;
-        box-shadow: 0 3px 16px 0 rgba(60, 70, 86, 0.07);
-        padding: 16px 32px;
-        margin: 0 auto 34px;
-        font-size: 1.18rem;
-        font-weight: 600;
-        max-width: 600px;
-        gap: 6px;
-      }
-      .current-temp-tag { font-weight: 500; font-size: 1.05em; white-space: nowrap; }
-      .style-best { font-size: 1.1em; font-weight: 600; color: #222; margin-left: 8px; display: flex; align-items: center; gap: 5px; }
-      .best-looks { color: red; font-weight: 700; letter-spacing: 1px; margin-left: 3px; }
+      /* main.css */
     </style>
   </head>
   <body>
@@ -48,42 +18,93 @@
     <th:block th:replace="fragments/navbar :: navbar"></th:block>
 
     <div class="container px-4 px-lg-5">
-      <!-- 상단: 날씨/추천코디 -->
+      <!-- 1) 상단: 날씨 카드 + 추천 코디 -->
       <div class="row gx-4 gx-lg-5 align-items-start section-gap">
-        <!-- 분리된 날씨 카드 fragment 호출 -->
+        <!-- 날씨 카드 (fragment 호출) -->
         <th:block th:replace="fragments/weather :: weatherCard"></th:block>
 
-        <!-- 추천 코디 카드 (row 내에서 형제 관계) -->
+        <!-- 오늘의 추천 코디 카드 -->
         <div class="col-12 col-lg-6 d-flex flex-column h-100">
-          <div class="card shadow-sm mb-4 flex-grow-1" style="width: 100%">
-            <div class="card-body d-flex flex-column align-items-center justify-content-start" style="height: 100%">
-              <h2 id="clothing-guide-head" class="mb-2 text-center" style="font-size:1.6rem;font-weight:500;letter-spacing:-1px">
+          <div class="card shadow-sm mb-4 flex-grow-1 w-100">
+            <div class="card-body d-flex flex-column align-items-center justify-content-start h-100">
+              <h2 id="clothing-guide-head"
+                  class="mb-2 text-center"
+                  style="font-size:1.6rem; font-weight:500; letter-spacing:-1px">
                 💡오늘의 추천 코디💡
               </h2>
-              <div class="text-center mb-2" style="font-size:1.1rem;font-weight:600">
+              <div class="text-center mb-2" style="font-size:1.1rem; font-weight:600">
                 <span style="font-size:1.5rem">🧑🏻</span>
-                <span style="font-size:1.1rem;color:#2076ff">남성</span>
+                <span style="font-size:1.1rem; color:#2076ff">남성</span>
               </div>
-              <div id="clothing-guide-male" class="justify-content-center mb-4" style="display:flex;gap:32px"></div>
-              <div class="text-center mb-2" style="font-size:1.1rem;font-weight:600">
+              <div id="clothing-guide-male"
+                   class="d-flex justify-content-center mb-4"
+                   style="gap:32px">
+              </div>
+              <div class="text-center mb-2" style="font-size:1.1rem; font-weight:600">
                 <span style="font-size:1.5rem">👧🏻</span>
-                <span style="font-size:1.1rem;color:#e94382">여성</span>
+                <span style="font-size:1.1rem; color:#e94382">여성</span>
               </div>
-              <div id="clothing-guide-female" class="justify-content-center" style="display:flex;gap:32px"></div>
-              <div style="flex-grow:1"></div>
+              <div id="clothing-guide-female"
+                   class="d-flex justify-content-center"
+                   style="gap:32px">
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- TOP LOOKS 박스 -->
-      <div class="text-center" style="font-size:1.18rem;font-weight:600;margin-bottom:30px">
-        <div class="top-looks-title-box">
-          <span id="current-temp-tag" class="current-temp-tag" style="color:#2076ff">‘현재 온도 기준(℃)’</span>
+      <!-- 2) BEST LOOKS 제목 -->
+      <div class="text-center mb-4">
+        <div class="best-looks-title-box">
+          <span id="current-temp-tag" class="current-temp-tag">‘현재 온도 기준(℃)’</span>
           <span class="style-best">스타일별 <span class="best-looks">BEST LOOKS</span></span>
         </div>
       </div>
-      <div id="top-looks-area" class="row gx-4 gx-lg-5 d-flex align-items-stretch"></div>
+
+      <!-- 3) BEST LOOKS 카드 그리드 -->
+      <div id="best-looks-area" class="row gx-4 gx-lg-5 d-flex align-items-stretch">
+        <th:block th:each="entry : ${postsByStyle}">
+          <div class="col-12 col-sm-6 col-lg-3 mb-4 d-flex align-items-stretch">
+            <div class="card shadow-sm w-100 d-flex flex-column">
+              <!-- 스타일명 헤더 -->
+              <div class="card-style-header" th:text="${entry.key}">STYLE</div>
+              <div class="card-body d-flex flex-column align-items-center justify-content-start flex-grow-1">
+                <div th:if="${entry.value.size() > 0}">
+                  <a th:href="@{/community/detail/{id}(id=${entry.value[0].id})}">
+                    <img th:src="@{/uploads/{f}(f=${entry.value[0].repImageUrl})}"
+                         class="mb-3"
+                         style="max-width:130px; max-height:130px; border-radius:10px;"
+                         alt="코디 이미지"/>
+                  </a>
+                  <div class="post-title mb-2" th:text="${entry.value[0].title}">제목</div>
+                  <div class="badge-list mb-2">
+                    <span th:if="${entry.value[0].casual}"  class="badge bg-secondary me-1">캐주얼</span>
+                    <span th:if="${entry.value[0].formal}"  class="badge bg-secondary me-1">포멀</span>
+                    <span th:if="${entry.value[0].street}"  class="badge bg-secondary me-1">스트리트</span>
+                    <span th:if="${entry.value[0].outdoor}" class="badge bg-secondary me-1">아웃도어</span>
+                  </div>
+                  <div class="text-muted mb-1" th:text="${entry.value[0].author.name}">익명</div>
+                  <div class="text-muted mb-3"
+                       th:text="'추천수: ' + ${entry.value[0].recommendCount}">
+                    추천수: 0
+                  </div>
+                </div>
+                <div th:unless="${entry.value.size() > 0}"
+                     class="d-flex align-items-center justify-content-center flex-grow-1">
+                  <div class="text-muted">게시글 없음</div>
+                </div>
+              </div>
+              <div class="card-footer bg-white border-top-0">
+                <a th:href="@{/community/list(type='',keyword='',styleNames=${entry.key})}"
+                   class="btn btn-primary btn-sm w-100"
+                   th:text="${entry.key} + ' 게시글 보기'">
+                  게시글 보기
+                </a>
+              </div>
+            </div>
+          </div>
+        </th:block>
+      </div>
     </div>
 
     <!-- Footer -->

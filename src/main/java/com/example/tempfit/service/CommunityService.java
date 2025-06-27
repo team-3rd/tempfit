@@ -180,6 +180,7 @@ public class CommunityService {
     public Page<CommunityDTO> getPage(int page) {
         Pageable pageable = PageRequest.of(page - 1, 25, Sort.by("id").descending()); // id 내림차순 25개 게시물
         return communityRepository.list(null, null, null, pageable) // 검색없이 전체 조회기능
+        return communityRepository.list(null, null, null, null, pageable) // 검색없이 전체 조회기능
                 .map(this::arrayToDTO); // 프론트 출력
     }
 
@@ -187,13 +188,14 @@ public class CommunityService {
     public Page<CommunityDTO> searchPage(String type, String keyword, int page) {
         Pageable pageable = PageRequest.of(page - 1, 25, Sort.by("id").descending());
         return communityRepository.list(type, keyword, null, pageable)
+        return communityRepository.list(type, keyword, null, null, pageable)
                 .map(this::arrayToDTO);
     }
 
     // 3) 검색 및 스타일 값이 있을 경우
     public Page<CommunityDTO> searchPageRaw(String type, String keyword, List<String> styleNames, int page) {
         Pageable pageable = PageRequest.of(page - 1, 25, Sort.by("id").descending());
-        return communityRepository.list(type, keyword, styleNames, pageable)
+        return communityRepository.list(type, keyword, styleNames, null,pageable)
                 .map(this::arrayToDTO);
     }
 
@@ -338,54 +340,7 @@ public class CommunityService {
                 .build();
     }
 
-    // 메인 홈페이지에 top 코디들 추가
-    public Map<String, CommunityDTO> getTopBySelectedTemp(int temp) {
-        TemperatureRange range = TemperatureRange.fromTemperature(temp);
-
-        Map<String, String> styleFieldMap = Map.of(
-                "CASUAL", "casual",
-                "FORMAL", "formal",
-                "STREET", "street",
-                "OUTDOOR", "outdoor");
-
-        Map<String, CommunityDTO> result = new LinkedHashMap<>();
-
-        styleFieldMap.forEach((label, fieldName) -> {
-            Specification<Community> spec = (root, query, cb) -> {
-                Join<Community, CommunityStyle> styleJoin = root.join("communityStyle");
-                Join<Community, CommunityTemp> tempJoin = root.join("communityTemp");
-
-                Predicate stylePred = cb.isTrue(styleJoin.get(fieldName));
-                Predicate dayPred = cb.and(
-                        cb.isTrue(tempJoin.get("dayTime")),
-                        cb.between(
-                                tempJoin.get("dayAvgTemp"),
-                                range.getMinTemp(),
-                                range.getMaxTemp()));
-                Predicate nightPred = cb.and(
-                        cb.isTrue(tempJoin.get("nightTime")),
-                        cb.between(
-                                tempJoin.get("nightAvgTemp"),
-                                range.getMinTemp(),
-                                range.getMaxTemp()));
-                Predicate tempPred = cb.or(dayPred, nightPred);
-
-                return cb.and(stylePred, tempPred);
-            };
-
-            Pageable pg = PageRequest.of(0, 1, Sort.by("recommendCount").descending());
-            List<Community> slice = communityRepository.findAll(spec, pg).getContent();
-            List<CommunityDTO> dtos = slice.stream()
-                    .map(this::entityToDTO)
-                    .collect(Collectors.toList());
-
-            result.put(label, dtos.isEmpty() ? null : dtos.get(0));
-        });
-
-        return result;
-    }
-
-    @Transactional
+     @Transactional
     public void recommendPost(Long communityId, Member member) {
         Community community = communityRepository.findById(communityId)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
@@ -406,5 +361,68 @@ public class CommunityService {
             community.setRecommendCount(community.getRecommendCount() - 1);
         }
         communityRepository.save(community);
+    }
+
+    // 메인 홈페이지에 top 코디들 추가
+    public Map<String, List<CommunityDTO>> getPostsByTempAndStyle(int temp, int pageSize) {
+        TemperatureRange range = TemperatureRange.fromTemperature(temp);
+
+        // 스타일 레이블 → CommunityStyle 필드명 매핑
+        Map<String, String> styleFieldMap = Map.of(
+            "CASUAL",  "casual",
+            "FORMAL",  "formal",
+            "STREET",  "street",
+            "OUTDOOR","outdoor"
+        );
+
+        Map<String, List<CommunityDTO>> result = new LinkedHashMap<>();
+
+        styleFieldMap.forEach((label, fieldName) -> {
+            Specification<Community> spec = (root, query, cb) -> {
+                Join<Community, CommunityStyle> styleJoin = root.join("communityStyle");
+                Join<Community, CommunityTemp>   tempJoin  = root.join("communityTemp");
+
+                // 스타일 일치 조건
+                Predicate stylePred = cb.isTrue(styleJoin.get(fieldName));
+
+                // 낮/밤 기온 범위 조건
+                Predicate dayPred = cb.and(
+                    cb.isTrue(tempJoin.get("dayTime")),
+                    cb.between(
+                        tempJoin.get("dayAvgTemp"),
+                        range.getMinTemp(),
+                        range.getMaxTemp()
+                    )
+                );
+                Predicate nightPred = cb.and(
+                    cb.isTrue(tempJoin.get("nightTime")),
+                    cb.between(
+                        tempJoin.get("nightAvgTemp"),
+                        range.getMinTemp(),
+                        range.getMaxTemp()
+                    )
+                );
+                Predicate tempPred = cb.or(dayPred, nightPred);
+
+                return cb.and(stylePred, tempPred);
+            };
+
+            Pageable pg = PageRequest.of(
+                0,
+                pageSize,
+                Sort.by(Sort.Direction.DESC, "recommendCount")
+            );
+
+            List<CommunityDTO> dtos = communityRepository
+                .findAll(spec, pg)
+                .getContent()
+                .stream()
+                .map(this::entityToDTO)
+                .collect(Collectors.toList());
+
+            result.put(label, dtos);
+        });
+
+        return result;
     }
 }

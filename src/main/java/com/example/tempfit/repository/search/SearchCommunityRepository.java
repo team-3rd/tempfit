@@ -2,6 +2,7 @@ package com.example.tempfit.repository.search;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import com.example.tempfit.entity.TemperatureRange;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface SearchCommunityRepository {
      * @param pageable   페이징 정보
      * @return 각 게시글의 Object[] 요약 정보를 담은 Page 객체
      */
-    Page<Object[]> list(String type, String keyword, List<String> styleNames, Pageable pageable);
+    Page<Object[]> list(String type, String keyword, List<String> styleNames, TemperatureRange range, Pageable pageable);
 
     /**
      * 게시글 id로 단건 상세 조회
