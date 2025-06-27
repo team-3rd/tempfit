@@ -67,6 +67,7 @@ public class SearchCommunityRepositoryImpl
             )
             .distinct();
 
+        // 게시글 검색어 입력란 검색기능
         BooleanBuilder builder = new BooleanBuilder();
         builder.and(community.id.gt(0L));
 
@@ -132,6 +133,7 @@ public class SearchCommunityRepositoryImpl
             })
             .collect(Collectors.toList());
 
+        // 조인결과 개수 페이지로 반환
         long total = from(community)
             .leftJoin(style).on(community.id.eq(style.id))
             .leftJoin(temp).on(community.id.eq(temp.id))
@@ -178,7 +180,6 @@ public class SearchCommunityRepositoryImpl
                 t.get(style.casual),
                 t.get(style.street),
                 t.get(style.formal),
-                t.get(style.outdoor) // 변경
                 t.get(style.outdoor) 
         };
     }
