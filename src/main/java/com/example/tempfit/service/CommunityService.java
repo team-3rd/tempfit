@@ -73,11 +73,10 @@ public class CommunityService {
                 .build();
         communityRepository.save(community);
 
-            
         saveCommunityImage(community, repImage, true); // 대표사진 분류
         if (extraImages != null) { // 대표사진 확인
             for (MultipartFile mf : extraImages) { // 추가사진 저장
-                if (!mf.isEmpty()) {    
+                if (!mf.isEmpty()) {
                     saveCommunityImage(community, mf, false); // 저장
                 }
             }
@@ -185,7 +184,7 @@ public class CommunityService {
     }
 
     // 2) 검색 값이 있을 경우
-    public Page<CommunityDTO> searchPage(String type, String keyword, int page) { 
+    public Page<CommunityDTO> searchPage(String type, String keyword, int page) {
         Pageable pageable = PageRequest.of(page - 1, 25, Sort.by("id").descending());
         return communityRepository.list(type, keyword, null, pageable)
                 .map(this::arrayToDTO);
@@ -198,8 +197,6 @@ public class CommunityService {
                 .map(this::arrayToDTO);
     }
 
-    // 수정 + 이미지 업데이트
-    public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages, boolean removeRepImage)
     /* 수정 + 이미지 업데이트 */
     // !! 파라미터에 removeRepImage 추가 !!
     public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,

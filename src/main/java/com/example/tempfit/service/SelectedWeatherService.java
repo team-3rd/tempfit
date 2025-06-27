@@ -34,8 +34,14 @@ public class SelectedWeatherService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
         String apiUrl = "https://apihub.kma.go.kr/api/typ02/openApi/VilageFcstInfoService_2.0/getVilageFcst?pageNo=1&numOfRows=1000&dataType=XML";
-        String base_date = date.minusDays(2).format(formatter);
-        String base_time = "1700";
+
+        String base_date = "";
+        if (date.isAfter(LocalDate.now())) {
+            base_date = LocalDate.now().format(formatter);
+        }
+
+        base_date = date.format(formatter);
+        String base_time = "0500";
 
         // 좌표 얻기
         String nx = dto.getNx();
@@ -66,7 +72,7 @@ public class SelectedWeatherService {
                 }
                 bufferedReader.close();
                 // System.out.println(stringBuffer.toString());
-                return weatherDataParsing(stringBuffer.toString());
+                return weatherDataParsing(stringBuffer.toString(), base_date);
             } else {
                 System.out.println("GET 요청 실패");
                 return null;
@@ -77,7 +83,7 @@ public class SelectedWeatherService {
         }
     }
 
-    public List<SelectedWeatherDTO> weatherDataParsing(String weatherData) {
+    public List<SelectedWeatherDTO> weatherDataParsing(String weatherData, String baseDate) {
         List<SelectedWeatherDTO> weatherList = new ArrayList<>();
 
         try {
@@ -94,14 +100,6 @@ public class SelectedWeatherService {
 
             // 예보자료 카테고리, 예보일, 예보시간, 예보 정보 추출
             for (int i = 0; i < items.getLength(); i++) {
-                LocalTime parseTime = LocalTime.parse(items.item(0).getChildNodes().item(4).getTextContent(),
-                        DateTimeFormatter.ofPattern("HHmm"));
-                if (parseTime.plusHours(1) == LocalTime.now()) {
-                    i = 1;
-                } else if (parseTime.plusHours(2) == LocalTime.now()) {
-                    i = 2;
-                }
-
                 String category = items.item(i).getChildNodes().item(2).getTextContent();
 
                 String fcstDate = items.item(i).getChildNodes().item(3).getTextContent();
@@ -116,6 +114,27 @@ public class SelectedWeatherService {
                     timeList.add(fcstTime);
                 } else
                     continue;
+            }
+
+            LocalDate date = LocalDate.parse(baseDate, DateTimeFormatter.BASIC_ISO_DATE);
+            if (date.minusDays(1) == LocalDate.now()) {
+                for (int i = 0; i < 24; i++) {
+                    tmpList.remove(i);
+                    dateList.remove(i);
+                    timeList.remove(i);
+                }
+            } else if (date.minusDays(2) == LocalDate.now()) {
+                for (int i = 24; i < 48; i++) {
+                    tmpList.remove(i);
+                    dateList.remove(i);
+                    timeList.remove(i);
+                }
+            } else if (date.minusDays(3) == LocalDate.now()) {
+                for (int i = 48; i < 96; i++) {
+                    tmpList.remove(i);
+                    dateList.remove(i);
+                    timeList.remove(i);
+                }
             }
 
             // 모은 리스트의 값을 순서대로 DTO에 저장
