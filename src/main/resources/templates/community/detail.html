@@ -36,6 +36,16 @@
         <span th:if="${post.street}" class="badge bg-secondary">스트리트</span>
         <span th:if="${post.formal}" class="badge bg-secondary">포멀</span>
         <span th:if="${post.outdoor}" class="badge bg-secondary">아웃도어</span>
+        <span
+          th:if="${post.dayTime}"
+          class="badge bg-day day"
+          th:text="${'낮  ' + post.dayAvgTemp + '℃'}"
+        ></span>
+        <span
+          th:if="${post.NightTime}"
+          class="badge bg-night night"
+          th:text="${'밤  ' + post.nightAvgTemp + '℃'}"
+        ></span>
       </div>
 
       <!-- 대표 이미지 -->
@@ -70,9 +80,7 @@
           th:action="@{/community/recommend/{id}(id=${post.id})}"
           method="post"
         >
-          <button type="submit" class="btn btn-outline-primary">
-            추천
-          </button>
+          <button type="submit" class="btn btn-outline-primary">추천</button>
         </form>
         <a
           th:href="@{/community/edit/{id}(id=${post.id})}"
@@ -140,6 +148,6 @@
         </div>
       </div>
     </div>
-        <div th:replace="fragments/footer :: footer"></div>
+    <div th:replace="fragments/footer :: footer"></div>
   </body>
 </html>

@@ -83,7 +83,7 @@ public class CommunityService {
             }
         }
 
-         CommunitySex sex = CommunitySex.builder()
+        CommunitySex sex = CommunitySex.builder()
                 .male(dto.isMale())
                 .female(dto.isFemale())
                 .build();
@@ -168,6 +168,12 @@ public class CommunityService {
             dto.setOutdoor(style.isOutdoor());
         });
 
+        communityTempRepository.findById(id).ifPresent(temp -> {
+            dto.setDayTime(temp.isDayTime());
+            dto.setNightTime(temp.isNightTime());
+            dto.setDayAvgTemp(temp.getDayAvgTemp());
+            dto.setNightAvgTemp(temp.getNightAvgTemp());
+        });
         return dto;
     }
 
@@ -194,6 +200,10 @@ public class CommunityService {
 
     // 수정 + 이미지 업데이트
     public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages, boolean removeRepImage)
+    /* 수정 + 이미지 업데이트 */
+    // !! 파라미터에 removeRepImage 추가 !!
+    public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
+            boolean removeRepImage)
             throws IOException {
         Community community = communityRepository.findById(dto.getId()).orElseThrow();
         community.setTitle(dto.getTitle());

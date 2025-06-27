@@ -42,3 +42,9 @@
 .detail-actions .btn {
   width: 100px;
 }
+.bg-day {
+  background-color: rgb(253, 152, 67);
+}
+.bg-night {
+  background-color: rgb(163, 112, 247);
+}
