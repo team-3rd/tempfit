@@ -55,11 +55,11 @@ public class CommunityService {
     @Value("${upload.path}")
     private String uploadDir;
 
-    /* 게시글 등록 + 이미지 저장 */
+    // 게시글 등록 + 이미지 저장
     public Long register(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
             List<SelectedWeatherDTO> weatherList)
             throws IOException {
-        // 1) Community 먼저 저장
+        // Community 일단 저장
         Community community = Community.builder()
                 .title(dto.getTitle())
                 .author(currentUser)
@@ -68,11 +68,12 @@ public class CommunityService {
                 .build();
         communityRepository.save(community);
 
-        saveCommunityImage(community, repImage, true);
-        if (extraImages != null) {
-            for (MultipartFile mf : extraImages) {
-                if (!mf.isEmpty()) {
-                    saveCommunityImage(community, mf, false);
+            
+        saveCommunityImage(community, repImage, true); // 대표사진 분류
+        if (extraImages != null) { // 대표사진 확인
+            for (MultipartFile mf : extraImages) { // 추가사진 저장
+                if (!mf.isEmpty()) {    
+                    saveCommunityImage(community, mf, false); // 저장
                 }
             }
         }
@@ -89,7 +90,7 @@ public class CommunityService {
                 .outdoor(dto.isOutdoor())
                 .build();
 
-        // 4) 평균 기온 계산 후 날씨 객체 생성
+        // 평균 기온 계산 후 날씨 객체 생성
         double daySum = 0, nightSum = 0;
         int dayCount = 0, nightCount = 0;
 
@@ -125,30 +126,30 @@ public class CommunityService {
                 .nightAvgTemp(dto.getNightAvgTemp())
                 .build();
 
-        // 5) 연관 설정
+        // Join 등을 위한 객체간 명시
         style.setCommunity(community);
         temp.setCommunity(community);
         community.setCommunityStyle(style);
         community.setCommunityTemp(temp);
 
-        // 6) 스타일, 날씨 저장
+        // 스타일, 날씨 저장
         communitySexRepository.save(sex);
         communityStyleRepository.save(style);
         communityTempRepository.save(temp);
 
         communityRepository.save(community);
-
+        // 커뮤니티 저장 후 값 반환
         return community.getId();
     }
 
-    /* 단건 조회 + 이미지/스타일 매핑 */
+    // 단건 조회 및 이미지/스타일 매핑
     public CommunityDTO get(Long id) {
         Community entity = communityRepository.findById(id).orElseThrow();
         CommunityDTO dto = entityToDTO(entity);
 
-        List<CommunityImage> imgs = communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(id);
-        if (!imgs.isEmpty()) {
-            dto.setRepImageUrl(imgs.get(0).getFileName());
+        List<CommunityImage> imgs = communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(id); // 이미지 배열에 담기
+        if (!imgs.isEmpty()) { // 이미지가 존재할 경우
+            dto.setRepImageUrl(imgs.get(0).getFileName()); // 배열 맨 앞 대표이미지 설정
             dto.setExtraImageUrls(imgs.stream()
                     .skip(1)
                     .map(CommunityImage::getFileName)
@@ -165,29 +166,28 @@ public class CommunityService {
         return dto;
     }
 
-    /* 페이징된 DTO 리스트 */
+    // 1) 페이징된 DTO 리스트
     public Page<CommunityDTO> getPage(int page) {
-        Pageable pageable = PageRequest.of(page - 1, 25, Sort.by("id").descending());
-        return communityRepository.list(null, null, null, pageable)
-                .map(this::arrayToDTO);
+        Pageable pageable = PageRequest.of(page - 1, 25, Sort.by("id").descending()); // id 내림차순 25개 게시물
+        return communityRepository.list(null, null, null, pageable) // 검색없이 전체 조회기능
+                .map(this::arrayToDTO); // 프론트 출력
     }
 
-    /* 검색(타입,키워드) + 페이징 */
-    public Page<CommunityDTO> searchPage(String type, String keyword, int page) {
+    // 2) 검색 값이 있을 경우
+    public Page<CommunityDTO> searchPage(String type, String keyword, int page) { 
         Pageable pageable = PageRequest.of(page - 1, 25, Sort.by("id").descending());
         return communityRepository.list(type, keyword, null, pageable)
                 .map(this::arrayToDTO);
     }
 
-    /* 스타일 필터 포함 검색 + 페이징 */
+    // 3) 검색 및 스타일 값이 있을 경우
     public Page<CommunityDTO> searchPageRaw(String type, String keyword, List<String> styleNames, int page) {
         Pageable pageable = PageRequest.of(page - 1, 25, Sort.by("id").descending());
         return communityRepository.list(type, keyword, styleNames, pageable)
                 .map(this::arrayToDTO);
     }
 
-    /* 수정 + 이미지 업데이트 */
-    // !! 파라미터에 removeRepImage 추가 !!
+    // 수정 + 이미지 업데이트
     public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages, boolean removeRepImage)
             throws IOException {
         Community community = communityRepository.findById(dto.getId()).orElseThrow();
