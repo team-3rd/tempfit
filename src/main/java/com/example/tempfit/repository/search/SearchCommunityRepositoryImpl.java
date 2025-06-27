@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
-@Transactional(readOnly = true)
+@Transactional(readOnly = true) // 내부수정 불가
 public class SearchCommunityRepositoryImpl
-        extends QuerydslRepositorySupport
+        extends QuerydslRepositorySupport 
         implements SearchCommunityRepository {
 
     public SearchCommunityRepositoryImpl(EntityManager em) {
@@ -32,6 +32,7 @@ public class SearchCommunityRepositoryImpl
         setEntityManager(em);
     }
 
+    // 오라클 테이블 연결하는 join 기능
     @Override
     public Page<Object[]> list(
             String type,
@@ -160,9 +161,9 @@ public class SearchCommunityRepositoryImpl
                         style.casual,
                         style.street,
                         style.formal,
-                        style.outdoor // 변경
+                        style.outdoor
                 )
-                .where(community.id.eq(id));
+                .where(community.id.eq(id)); // 카테고리 검색 조건 하나
 
         Tuple t = q.fetchOne();
         if (t == null)
@@ -178,6 +179,7 @@ public class SearchCommunityRepositoryImpl
                 t.get(style.street),
                 t.get(style.formal),
                 t.get(style.outdoor) // 변경
+                t.get(style.outdoor) 
         };
     }
 }

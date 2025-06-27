@@ -197,8 +197,7 @@ public class CommunityService {
                 .map(this::arrayToDTO);
     }
 
-    /* 수정 + 이미지 업데이트 */
-    // !! 파라미터에 removeRepImage 추가 !!
+    // 수정 및 이미지 업데이트 기능
     public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
             boolean removeRepImage)
             throws IOException {
@@ -211,16 +210,20 @@ public class CommunityService {
         community.setRecommendCount((int) count);
         communityRepository.save(community);
 
+        // ID에 연결된 이미지 가져오기 단 대표는 내림차순 추가 이미지는 등록순서대 정렬
         List<CommunityImage> existing = communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(dto.getId());
 
-        // 1. 대표 이미지 X버튼 눌렀을 때: 기존 대표사진 삭제
+        // 대표 이미지 X버튼 눌렀을 때: 기존 대표사진 삭제
         if (removeRepImage) {
+            // 리스트에 하나라도 들어있으면 삭제
             if (!existing.isEmpty()) {
                 communityImageRepository.deleteAll(existing);
             }
+            // NULL유지
             dto.setRepImageUrl(null);
         }
-        // 2. 새 대표 이미지 업로드: 기존 대표사진 삭제 후 새 파일 저장
+        // X를 누르지 않더라도 새 대표 이미지 업로드시 기존 대표사진 삭제 후 새 파일 저장
+        // 이미지가 NULL이 아니고 
         else if (repImage != null && !repImage.isEmpty()) {
             if (!existing.isEmpty()) {
                 communityImageRepository.deleteAll(existing);
@@ -266,7 +269,7 @@ public class CommunityService {
         communityRepository.save(community);
     }
 
-    /* 삭제 */
+    // 삭제 기능
     public void remove(Long id) {
         commentRepository.deleteAll(commentRepository.findByPostIdOrderByCreatedDateAsc(id));
         communityTempRepository.deleteById(id);
@@ -276,7 +279,7 @@ public class CommunityService {
         communityRepository.deleteById(id);
     }
 
-    /* 이미지 저장 내부 로직 */
+    // 이미지 저장 기능 
     private void saveCommunityImage(Community community, MultipartFile file, boolean isRep) throws IOException {
         File uploadPathDir = new File(uploadDir);
         if (!uploadPathDir.exists())
