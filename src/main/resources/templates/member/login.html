@@ -10,32 +10,35 @@
       integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
       crossorigin="anonymous"
     />
-    <title>로그인</title>
+    <title>로그인- 템핏 TempFit - 날씨 기반 의상 추천</title>
   </head>
-  <body class="vh-100 py-4 d-flex justify-content-center align-items-center">
-    <div class="form-login w-100 m-auto">
-      <h2 style="margin-bottom: 30px;">로그인</h2>
-      <form th:action="@{/member/login}" method="post">
-        <div class="mb-3 form-floating">
-          <label for="id" class="form-label">Id</label>
-          <input type="text" class="form-control" id="id" aria-describedby="id" name="username" />
+  <body>
+    <th:block th:replace="fragments/navbar :: navbar"></th:block>
+    <div class="vh-100 py-4 d-flex justify-content-center align-items-center">
+      <div class="form-login w-100 m-auto">
+        <h2 style="margin-bottom: 30px;">로그인</h2>
+        <form th:action="@{/member/login}" method="post">
+          <div class="mb-3 form-floating">
+            <label for="id" class="form-label">Id</label>
+            <input type="text" class="form-control" id="id" aria-describedby="id" name="username" />
+          </div>
+          <div class="mb-3 form-floating">
+            <label for="InputPassword" class="form-label">Password</label>
+            <input type="password" class="form-control" id="InputPassword" name="password" />
+          </div>
+          <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1" name="remember-me" />
+            <label class="form-check-label" for="exampleCheck1">Remember me</label>
+          </div>
+           <button type="submit" class="btn btn-primary">로그인</button>
+        </form>
+        <div th:if="${param.error}" class="text-danger">아이디나 비밀번호를 확인해 주세요</div>
+        <div>
+          <a href="/oauth2/authorization/google">구글로그인</a>
         </div>
-        <div class="mb-3 form-floating">
-          <label for="InputPassword" class="form-label">Password</label>
-          <input type="password" class="form-control" id="InputPassword" name="password" />
+        <div>
+          <a href="/member/register">회원가입</a>
         </div>
-        <div class="mb-3 form-check">
-          <input type="checkbox" class="form-check-input" id="exampleCheck1" name="remember-me" />
-          <label class="form-check-label" for="exampleCheck1">Remember me</label>
-        </div>
-        <button type="submit" class="btn btn-primary">로그인</button>
-      </form>
-      <div th:if="${param.error}" class="text-danger">아이디나 비밀번호를 확인해 주세요</div>
-      <div>
-        <a href="/oauth2/authorization/google">구글로그인</a>
-      </div>
-      <div>
-        <a href="/member/register">회원가입</a>
       </div>
     </div>
   </body>

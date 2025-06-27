@@ -41,4 +41,9 @@ public class MemberController {
         memberService.register(dto);
         return "redirect:/member/login";
     }
+
+    @GetMapping("/mypage")
+    public void getMypage(){
+        log.info("Mypage 요청");
+    }
 }

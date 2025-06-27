@@ -9,49 +9,52 @@
       integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
       crossorigin="anonymous"
     />
-    <title>회원가입</title>
+    <title>회원가입 - 템핏 TempFit - 날씨 기반 의상 추천</title>
   </head>
-  <body class="vh-100 py-4 d-flex justify-content-center align-items-center">
-    <div class="container" style="max-width: 500px">
-      <h2 style="margin-bottom: 30px;">회원가입</h2>
-      <form th:action="@{/member/register}" , th:object="${dto}" method="post">
-        <div class="row mb-3 align-items-center">
-          <label for="id" class="col-sm-2 col-form-label">Id</label>
-          <div class="col-sm-9">
-            <input type="text" class="form-control"  id="id" aria-describedby="id" name="email" />
+  <body>
+    <th:block th:replace="fragments/navbar :: navbar"></th:block>
+    <div class="vh-100 py-4 d-flex justify-content-center align-items-center">
+      <div class="container" style="max-width: 500px">
+        <h2 style="margin-bottom: 30px;">회원가입</h2>
+        <form th:action="@{/member/register}" , th:object="${dto}" method="post">
+          <div class="row mb-3 align-items-center">
+            <label for="id" class="col-sm-2 col-form-label">Id</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control"  id="id" aria-describedby="id" name="email" />
+            </div>
           </div>
-        </div>
-        <div class="row mb-3 align-items-center">
-          <label for="InputPassword" class="col-sm-2 col-form-label">Password</label>
-          <div class="col-sm-9">
+          <div class="row mb-3 align-items-center">
+            <label for="InputPassword" class="col-sm-2 col-form-label">Password</label>
+            <div class="col-sm-9">
             <input type="password" class="form-control" id="InputPassword" name="password" />
-          </div>
-        </div>
-        <div class="row mb-3 align-items-center">
-          <label for="name" class="col-sm-2 col-form-label">Name</label>
-          <div class="col-sm-9">
-            <input type="text"  class="form-control" id="name" aria-describedby="id" name="name" />
-          </div>
-        </div>
-        <div class="row mb-3 align-items-center">
-          <label class="col-sm-2 col-form-label">Sex</label>
-          <div class="col-sm-9 d-flex gap-3">
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="sex" id="male" value="MALE" />
-              <label class="form-check-label" for="male">남성</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="sex" id="female" value="FEMALE" />
-              <label class="form-check-label" for="female">여성</label>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-8 offset-sm-1">
-            <button type="submit" class="btn btn-primary w-100">Register</button>
+          <div class="row mb-3 align-items-center">
+            <label for="name" class="col-sm-2 col-form-label">Name</label>
+            <div class="col-sm-9">
+             <input type="text"  class="form-control" id="name" aria-describedby="id" name="name" />
+            </div>
           </div>
-        </div>
-      </form>
+          <div class="row mb-3 align-items-center">
+            <label class="col-sm-2 col-form-label">Sex</label>
+            <div class="col-sm-9 d-flex gap-3">
+             <div class="form-check">
+               <input class="form-check-input" type="radio" name="sex" id="male" value="MALE" />
+               <label class="form-check-label" for="male">남성</label>
+             </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="sex" id="female" value="FEMALE" />
+                <label class="form-check-label" for="female">여성</label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-8 offset-sm-1">
+              <button type="submit" class="btn btn-primary w-100">Register</button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   </body>
 </html>
