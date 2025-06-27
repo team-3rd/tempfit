@@ -116,8 +116,8 @@ public class CommunityService {
             }
         }
 
-        Double dayAvg = dayCount > 0 ? daySum / dayCount : 0;
-        Double nightAvg = nightCount > 0 ? nightSum / nightCount : 0;
+        double dayAvg = Math.round((double) (dayCount > 0 ? daySum / dayCount : 0));
+        double nightAvg = Math.round((double) (nightCount > 0 ? nightSum / nightCount : 0));
 
         dto.setDayAvgTemp(dayAvg);
         dto.setNightAvgTemp(nightAvg);
