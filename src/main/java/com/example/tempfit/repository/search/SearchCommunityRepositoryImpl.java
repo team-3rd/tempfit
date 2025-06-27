@@ -66,6 +66,25 @@ public class SearchCommunityRepositoryImpl
                 temp.nightAvgTemp
             )
             .distinct();
+                .leftJoin(style).on(community.id.eq(style.id))
+                .leftJoin(temp).on(community.id.eq(temp.id))
+                .leftJoin(image).on(image.community.id.eq(community.id)
+                        .and(image.isRep.isTrue()))
+                .select(
+                        community.id,
+                        community.title,
+                        community.author,
+                        community.recommendCount,
+                        image.fileName, 
+                        community.createdDate,
+                        style.casual,
+                        style.street,
+                        style.formal,
+                        style.outdoor,
+                        temp.dayAvgTemp,
+                        temp.nightAvgTemp 
+                )
+                .distinct(); // 중복제거
 
         // 게시글 검색어 입력란 검색기능
         BooleanBuilder builder = new BooleanBuilder();
@@ -81,6 +100,7 @@ public class SearchCommunityRepositoryImpl
         }
 
         // (2) 스타일 필터
+        // 스타일이 값이 있을경우 검색기능
         if (styleNames != null && !styleNames.isEmpty()) {
             BooleanBuilder sb = new BooleanBuilder();
             for (String s : styleNames) {
@@ -89,6 +109,18 @@ public class SearchCommunityRepositoryImpl
                     case "STREET":  sb.or(style.street.isTrue());  break;
                     case "FORMAL":  sb.or(style.formal.isTrue());  break;
                     case "OUTDOOR": sb.or(style.outdoor.isTrue()); break;
+                    case "CASUAL":
+                        sb.or(style.casual.isTrue());
+                        break;
+                    case "STREET":
+                        sb.or(style.street.isTrue());
+                        break;
+                    case "FORMAL":
+                        sb.or(style.formal.isTrue());
+                        break;
+                    case "OUTDOOR":
+                        sb.or(style.outdoor.isTrue());
+                        break; 
                 }
             }
             builder.and(sb);
@@ -132,6 +164,34 @@ public class SearchCommunityRepositoryImpl
                 t.get(temp.nightAvgTemp)
             })
             .collect(Collectors.toList());
+        query.where(builder);
+        for (Sort.Order o : pageable.getSort()) { 
+            Order dir = o.isAscending() ? Order.ASC : Order.DESC; // 정렬 방향
+            PathBuilder<Community> path = new PathBuilder<>(Community.class, "community"); // 경로 객체 생성
+            query.orderBy(new OrderSpecifier<>(dir,
+                    path.getComparable(o.getProperty(), Comparable.class))); // 쿼리 반영
+        }
+
+        query.offset(pageable.getOffset()); 
+        query.limit(pageable.getPageSize()); 
+
+        List<Tuple> tuples = query.fetch(); // 쿼리 결과 담기
+        List<Object[]> results = tuples.stream() // 쿼리 결과 stream으로 배열 자동 정렬
+                .map(t -> new Object[] {
+                        t.get(community.id),
+                        t.get(community.title),
+                        t.get(community.author),
+                        t.get(community.recommendCount),
+                        t.get(image.fileName),
+                        t.get(community.createdDate),
+                        t.get(style.casual),
+                        t.get(style.street),
+                        t.get(style.formal),
+                        t.get(style.outdoor),
+                        t.get(temp.dayAvgTemp), 
+                        t.get(temp.nightAvgTemp) 
+                })
+                .collect(Collectors.toList());
 
         // 조인결과 개수 페이지로 반환
         long total = from(community)
