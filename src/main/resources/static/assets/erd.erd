@@ -4,8 +4,8 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": 0,
-    "scrollLeft": 0,
+    "scrollTop": -100,
+    "scrollLeft": -1,
     "zoomLevel": 1,
     "show": 431,
     "database": 4,
@@ -34,7 +34,8 @@
       "sSdvIU5KtvBQm_CyXiu_6",
       "MKb8-tfR4UCXtgohCga3N",
       "DK_kdjojNnvU3r2YWdFES",
-      "DjhxjLrIjEnnbibP8TjEx"
+      "DjhxjLrIjEnnbibP8TjEx",
+      "QhzggcElPmJom2w8TbedV"
     ],
     "relationshipIds": [],
     "indexIds": [],
@@ -188,6 +189,31 @@
         "meta": {
           "updateAt": 1752821648148,
           "createAt": 1752811343253
+        }
+      },
+      "QhzggcElPmJom2w8TbedV": {
+        "id": "QhzggcElPmJom2w8TbedV",
+        "name": "Gender",
+        "comment": "성별",
+        "columnIds": [
+          "0mT26J5MPSDw7dc26Nv-C",
+          "ueM3REr0lWt5acJOWlXrp"
+        ],
+        "seqColumnIds": [
+          "0mT26J5MPSDw7dc26Nv-C",
+          "ueM3REr0lWt5acJOWlXrp"
+        ],
+        "ui": {
+          "x": 473,
+          "y": 400,
+          "zIndex": 173,
+          "widthName": 60,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1752823858022,
+          "createAt": 1752823823415
         }
       }
     },
@@ -688,8 +714,48 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1752821688235,
+          "updateAt": 1752821688538,
           "createAt": 1752821648148
+        }
+      },
+      "0mT26J5MPSDw7dc26Nv-C": {
+        "id": "0mT26J5MPSDw7dc26Nv-C",
+        "tableId": "QhzggcElPmJom2w8TbedV",
+        "name": "Male",
+        "comment": "남성",
+        "dataType": "BOOLEAN",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1752828171702,
+          "createAt": 1752823850815
+        }
+      },
+      "ueM3REr0lWt5acJOWlXrp": {
+        "id": "ueM3REr0lWt5acJOWlXrp",
+        "tableId": "QhzggcElPmJom2w8TbedV",
+        "name": "Female",
+        "comment": "여성",
+        "dataType": "BOOLEAN",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1752828178766,
+          "createAt": 1752823858022
         }
       }
     },
