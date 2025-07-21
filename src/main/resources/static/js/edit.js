@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const removeFlag  = document.getElementById('removeRepImage');        // 삭제 플래그 hidden input
   const styleChecks = document.querySelectorAll('.style-check');        // 스타일 체크박스 NodeList
   const styleGroup  = document.getElementById('styleGroup');            // 스타일 그룹 div (유효성 피드백용)
+  const sexGroup    = document.getElementById('sexGroup');              // 성별 그룹 div
 
   // 미리보기 리셋 함수: 이미지 숨기기, input 초기화, 플래그 설정, 버튼 숨기기, validation 표시
   function resetPreviewImage() {
@@ -36,10 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const reader = new FileReader();
       reader.onload = ev => {
         previewImg.src           = ev.target.result;    // 읽어온 데이터를 src에 설정
-        previewImg.style.display = '';                 // 이미지 보이기
-        removeFlag.value         = 'false';            // 삭제 플래그 해제
-        xBtn.classList.add('show');                    // X 버튼 보이기
-        repInput.classList.remove('is-invalid');       // validation 해제
+        previewImg.style.display = '';                  // 이미지 보이기
+        removeFlag.value         = 'false';             // 삭제 플래그 해제
+        xBtn.classList.add('show');                     // X 버튼 보이기
+        repInput.classList.remove('is-invalid');        // validation 해제
       };
       reader.readAsDataURL(file);
     } else {
@@ -81,6 +82,19 @@ document.addEventListener('DOMContentLoaded', () => {
       valid = false;
     } else {
       styleGroup.classList.remove('was-validated');
+    }
+
+    // 성별 최소 1개 필수 검사
+    const sexChecks    = document.querySelectorAll("input[name='sexSet']");
+    const checkedSexes = Array.from(sexChecks).filter(c => c.checked);
+    const sexFeedback  = sexGroup.querySelector('.invalid-feedback');
+    if (checkedSexes.length < 1) {
+      sexGroup.classList.add('was-validated');
+      sexFeedback.style.display = 'block';
+      valid = false;
+    } else {
+      sexGroup.classList.remove('was-validated');
+      sexFeedback.style.display = 'none';
     }
 
     // 유효하지 않으면 폼 제출 막기

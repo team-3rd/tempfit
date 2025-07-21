@@ -63,17 +63,8 @@ document.querySelectorAll(".style-check").forEach(function (chk) {
   });
 });
 
-// 성별 체크박스 단일 선택
+// 성별 체크박스 (둘 다 선택 가능)
 const sexChecks = document.querySelectorAll("input[name='sexSet']");
-sexChecks.forEach(chk => {
-  chk.addEventListener("change", () => {
-    if (chk.checked) {
-      sexChecks.forEach(other => {
-        if (other !== chk) other.checked = false;
-      });
-    }
-  });
-});
 
 // 날짜 범위 설정
 const date_now = new Date();
@@ -142,11 +133,11 @@ document.getElementById("communityForm").addEventListener("submit", function (e)
     styleGroup.classList.remove("was-validated");
   }
 
-  // 성별 필수 (단일 선택)
+  // 성별 필수 (최소 1개)
   const checkedSexes = Array.from(sexChecks).filter(chk => chk.checked);
   const sexGroup     = document.getElementById("sexGroup");
   const sexFeedback  = sexGroup.querySelector(".invalid-feedback");
-  if (checkedSexes.length !== 1) {
+  if (checkedSexes.length < 1) {
     sexGroup.classList.add("was-validated");
     sexFeedback.style.display = "block";
     valid = false;
