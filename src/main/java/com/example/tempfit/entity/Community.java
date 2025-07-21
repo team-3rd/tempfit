@@ -75,6 +75,4 @@ public class Community extends Base {
         this.upDateTime = LocalDateTime.now();
     }
 
-    // @Column(name = "temperature")
-    // private Integer temperature;
 }

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
-@Transactional(readOnly = true) // 내부수정 불가
+@Transactional(readOnly = true)
 public class SearchCommunityRepositoryImpl
         extends QuerydslRepositorySupport
         implements SearchCommunityRepository {
@@ -32,7 +32,6 @@ public class SearchCommunityRepositoryImpl
         setEntityManager(em);
     }
 
-    // 오라클 테이블 연결하는 join 기능
     @Override
     public Page<Object[]> list(
             String type,
@@ -68,11 +67,9 @@ public class SearchCommunityRepositoryImpl
                         temp.nightAvgTemp)
                 .distinct();
 
-        // 게시글 검색어 입력란 검색기능
         BooleanBuilder builder = new BooleanBuilder();
         builder.and(community.id.gt(0L));
 
-        // (1) 타입·키워드 검색
         if (type != null && keyword != null && !keyword.trim().isEmpty()) {
             BooleanBuilder tb = new BooleanBuilder();
             if (type.contains("t"))
@@ -84,8 +81,6 @@ public class SearchCommunityRepositoryImpl
             builder.and(tb);
         }
 
-        // (2) 스타일 필터
-        // 스타일이 값이 있을경우 검색기능
         if (styleNames != null && !styleNames.isEmpty()) {
             BooleanBuilder sb = new BooleanBuilder();
             for (String s : styleNames) {
@@ -107,7 +102,6 @@ public class SearchCommunityRepositoryImpl
             builder.and(sb);
         }
 
-        // (3) 온도 범위 필터링
         if (range != null) {
             BooleanBuilder tb2 = new BooleanBuilder();
             tb2.or(temp.dayAvgTemp.between(range.getMinTemp(), range.getMaxTemp()));
@@ -117,16 +111,23 @@ public class SearchCommunityRepositoryImpl
 
         query.where(builder);
 
-        // (4) 추천수 내림차순 정렬: 항상 우선 적용
-        query.orderBy(new OrderSpecifier<>(Order.DESC,
-                new PathBuilder<>(Community.class, "community")
-                        .getNumber("recommendCount", Integer.class)));
+        // ✅ 정렬 처리: pageable 정렬 우선, 없으면 추천순
+        if (pageable.getSort().isSorted()) {
+            for (Sort.Order o : pageable.getSort()) {
+                Order dir = o.isAscending() ? Order.ASC : Order.DESC;
+                PathBuilder<Community> path = new PathBuilder<>(Community.class, "community");
+                query.orderBy(new OrderSpecifier<>(dir,
+                        path.getComparable(o.getProperty(), Comparable.class)));
+            }
+        } else {
+            query.orderBy(new OrderSpecifier<>(Order.DESC,
+                    new PathBuilder<>(Community.class, "community")
+                            .getNumber("recommendCount", Integer.class)));
+        }
 
-        // (5) 페이지/페이징
         query.offset(pageable.getOffset());
         query.limit(pageable.getPageSize());
 
-        // 결과 매핑
         List<Tuple> tuples = query.fetch();
         List<Object[]> results = tuples.stream()
                 .map(t -> new Object[] {
@@ -146,15 +147,7 @@ public class SearchCommunityRepositoryImpl
                         t.get(temp.nightAvgTemp)
                 })
                 .collect(Collectors.toList());
-        query.where(builder);
-        for (Sort.Order o : pageable.getSort()) {
-            Order dir = o.isAscending() ? Order.ASC : Order.DESC; // 정렬 방향
-            PathBuilder<Community> path = new PathBuilder<>(Community.class, "community"); // 경로 객체 생성
-            query.orderBy(new OrderSpecifier<>(dir,
-                    path.getComparable(o.getProperty(), Comparable.class))); // 쿼리 반영
-        }
 
-        // 조인결과 개수 페이지로 반환
         long total = from(community)
                 .leftJoin(style).on(community.id.eq(style.id))
                 .leftJoin(temp).on(community.id.eq(temp.id))
@@ -186,7 +179,7 @@ public class SearchCommunityRepositoryImpl
                         style.street,
                         style.formal,
                         style.outdoor)
-                .where(community.id.eq(id)); // 카테고리 검색 조건 하나
+                .where(community.id.eq(id));
 
         Tuple t = q.fetchOne();
         if (t == null)
