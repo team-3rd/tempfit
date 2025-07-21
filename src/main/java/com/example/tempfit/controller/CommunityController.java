@@ -8,7 +8,6 @@ import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Sex;
 import com.example.tempfit.repository.MemberRepository;
 import com.example.tempfit.security.AuthMemberDTO;
-import com.example.tempfit.security.LoginMemberDetails;
 import com.example.tempfit.service.CommentService;
 import com.example.tempfit.service.CommunityService;
 import com.example.tempfit.service.SelectedWeatherService;
@@ -25,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 @Controller
 @RequestMapping("/community")
@@ -38,7 +36,6 @@ public class CommunityController {
     private final WeatherService weatherService;
     private final SelectedWeatherService selectedWeatherService;
 
-    // 게시글 목록
     @GetMapping("/list")
     public String list(
             @RequestParam(value = "page", defaultValue = "1") int page,
@@ -67,7 +64,6 @@ public class CommunityController {
         return "community/list";
     }
 
-    // 상세 페이지
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable Long id, Model model) {
         var postDto = communityService.get(id);
@@ -77,7 +73,6 @@ public class CommunityController {
         return "community/detail";
     }
 
-    // 댓글 등록 처리 (익명)
     @PostMapping("/detail/{id}/comments")
     public String addComment(
             @PathVariable Long id,
@@ -87,14 +82,12 @@ public class CommunityController {
         return "redirect:/community/detail/" + id;
     }
 
-    // 글쓰기 폼
     @GetMapping("/create")
     public String createForm(Model model) {
         model.addAttribute("communityDTO", new CommunityDTO());
         return "community/create";
     }
 
-    // 글 등록 처리 (대표 이미지 + 추가 이미지)
     @PostMapping("/register")
     public String registerPost(
             @ModelAttribute("communityDTO") CommunityDTO dto,
@@ -103,22 +96,21 @@ public class CommunityController {
             @RequestParam("repImage") MultipartFile repImage,
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
-            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
+            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet
+    ) throws IOException {
 
         if (sexSet != null) {
             dto.setSexSet(sexSet);
             dto.setMale(sexSet.contains(Sex.MALE));
             dto.setFemale(sexSet.contains(Sex.FEMALE));
         }
-        // 스타일 처리
         if (styleNames != null) {
             dto.setStyleNames(styleNames);
             dto.setCasual(styleNames.contains("CASUAL"));
             dto.setStreet(styleNames.contains("STREET"));
             dto.setFormal(styleNames.contains("FORMAL"));
-            dto.setOutdoor(styleNames.contains("OUTDOOR")); // <-- 변경된 부분
+            dto.setOutdoor(styleNames.contains("OUTDOOR"));
         }
-
         if (times != null) {
             dto.setTimes(times);
             dto.setDayTime(times.contains("dayTimes"));
@@ -131,13 +123,15 @@ public class CommunityController {
         coords.setLon(dto.getLon());
         GridDTO grid = weatherService.changeCoords(coords);
 
-        List<SelectedWeatherDTO> weatherList = selectedWeatherService.getWeatherApi(grid, dates);
+        List<SelectedWeatherDTO> weatherList =
+                selectedWeatherService.getWeatherApi(grid, dates);
 
         Member loginMember = memberRepository.findByEmailAndFromSocial(
                 authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
-        // 서비스 호출: 게시글 + 이미지 저장
-        communityService.register(dto, loginMember, repImage, extraImages, weatherList);
-        return "redirect:/community/list";
+
+        // ← 변경: 등록 후 상세 페이지로 리다이렉트
+        Long newId = communityService.register(dto, loginMember, repImage, extraImages, weatherList);
+        return "redirect:/community/detail/" + newId;
     }
 
     @GetMapping("/edit/{id}")
@@ -156,15 +150,14 @@ public class CommunityController {
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @RequestParam(value = "removeRepImage", defaultValue = "false") boolean removeRepImage,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
-            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
-                
+            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet
+    ) throws IOException {
+
         if (sexSet != null) {
             dto.setSexSet(sexSet);
             dto.setMale(sexSet.contains(Sex.MALE));
             dto.setFemale(sexSet.contains(Sex.FEMALE));
         }
-
-        // 스타일 처리
         if (styleNames != null) {
             dto.setStyleNames(styleNames);
             dto.setCasual(styleNames.contains("CASUAL"));
@@ -172,13 +165,12 @@ public class CommunityController {
             dto.setFormal(styleNames.contains("FORMAL"));
             dto.setOutdoor(styleNames.contains("OUTDOOR"));
         }
-    
+
         Member loginMember = memberRepository.findByEmailAndFromSocial(
                 authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
         communityService.modify(dto, loginMember, repImage, extraImages, removeRepImage);
         return "redirect:/community/detail/" + id;
     }
-    
 
     @DeleteMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
@@ -192,7 +184,6 @@ public class CommunityController {
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO) {
         Member member = memberRepository.findByEmailAndFromSocial(
                 authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
-
         communityService.recommendPost(id, member);
         return "redirect:/community/detail/" + id;
     }
