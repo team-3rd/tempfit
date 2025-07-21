@@ -35,8 +35,7 @@
       "MKb8-tfR4UCXtgohCga3N",
       "DK_kdjojNnvU3r2YWdFES",
       "DjhxjLrIjEnnbibP8TjEx",
-      "QhzggcElPmJom2w8TbedV",
-      "gqk8c5YSXhc645Y24QzXe"
+      "PUfRizA2jBof-9HWefI-H"
     ],
     "relationshipIds": [],
     "indexIds": [],
@@ -133,8 +132,7 @@
           "3ExqoIEQKNIGTLFWibeYG",
           "KNJllLhB3SkOZ2HW0-Wig",
           "RcqljLAVclret30Vfq8VB",
-          "_40O8lPbnZzdxqpf36kUM",
-          "tKf1AqKZ96tKJ2Nzd7ehv"
+          "_40O8lPbnZzdxqpf36kUM"
         ],
         "ui": {
           "x": 473,
@@ -145,7 +143,7 @@
           "color": ""
         },
         "meta": {
-          "updateAt": 1753071062680,
+          "updateAt": 1752809675734,
           "createAt": 1752569834532
         }
       },
@@ -218,35 +216,29 @@
           "createAt": 1752823823415
         }
       },
-      "gqk8c5YSXhc645Y24QzXe": {
-        "id": "gqk8c5YSXhc645Y24QzXe",
-        "name": "CommunityTemp",
-        "comment": "커뮤니티 기온",
+      "PUfRizA2jBof-9HWefI-H": {
+        "id": "PUfRizA2jBof-9HWefI-H",
+        "name": "Comment",
+        "comment": "댓글",
         "columnIds": [
-          "3vGd0VDVUG7QiDcTyxLt4",
-          "qk7zvUQGpCD_631u1K_tw",
-          "WskixeQEC3ohNUGEi-wO8",
-          "p861FgmVT4bhowlrh6Zzy",
-          "mqc0JwkdQ5vOsyxR0qUBD"
+          "Zgc1N9eyUmbx9tgxGEtuA",
+          "jQYHoa2schNUhMYoHgdFZ"
         ],
         "seqColumnIds": [
-          "3vGd0VDVUG7QiDcTyxLt4",
-          "qk7zvUQGpCD_631u1K_tw",
-          "WskixeQEC3ohNUGEi-wO8",
-          "p861FgmVT4bhowlrh6Zzy",
-          "mqc0JwkdQ5vOsyxR0qUBD"
+          "Zgc1N9eyUmbx9tgxGEtuA",
+          "jQYHoa2schNUhMYoHgdFZ"
         ],
         "ui": {
-          "x": 11,
-          "y": 437,
-          "zIndex": 174,
-          "widthName": 92,
-          "widthComment": 77,
+          "x": 477,
+          "y": 403,
+          "zIndex": 176,
+          "widthName": 60,
+          "widthComment": 60,
           "color": ""
         },
         "meta": {
-          "updateAt": 1753070910932,
-          "createAt": 1753070287612
+          "updateAt": 1753076177192,
+          "createAt": 1753076119074
         }
       }
     },
@@ -791,12 +783,32 @@
           "createAt": 1752823858022
         }
       },
-      "3vGd0VDVUG7QiDcTyxLt4": {
-        "id": "3vGd0VDVUG7QiDcTyxLt4",
-        "tableId": "gqk8c5YSXhc645Y24QzXe",
-        "name": "dates",
-        "comment": "기준 날짜",
-        "dataType": "DATE",
+      "Zgc1N9eyUmbx9tgxGEtuA": {
+        "id": "Zgc1N9eyUmbx9tgxGEtuA",
+        "tableId": "PUfRizA2jBof-9HWefI-H",
+        "name": "AuthorName",
+        "comment": "작성자",
+        "dataType": "Varchar",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 70,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1753076174860,
+          "createAt": 1753076134009
+        }
+      },
+      "jQYHoa2schNUhMYoHgdFZ": {
+        "id": "jQYHoa2schNUhMYoHgdFZ",
+        "tableId": "PUfRizA2jBof-9HWefI-H",
+        "name": "Content",
+        "comment": "댓글",
+        "dataType": "VARCHAR",
         "default": "",
         "options": 8,
         "ui": {
@@ -807,108 +819,8 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1753070966340,
-          "createAt": 1753070300196
-        }
-      },
-      "qk7zvUQGpCD_631u1K_tw": {
-        "id": "qk7zvUQGpCD_631u1K_tw",
-        "tableId": "gqk8c5YSXhc645Y24QzXe",
-        "name": "day_time",
-        "comment": "낮시간 선택여부",
-        "dataType": "BOOLEAN",
-        "default": "",
-        "options": 8,
-        "ui": {
-          "keys": 0,
-          "widthName": 60,
-          "widthComment": 89,
-          "widthDataType": 60,
-          "widthDefault": 60
-        },
-        "meta": {
-          "updateAt": 1753070966908,
-          "createAt": 1753070711692
-        }
-      },
-      "WskixeQEC3ohNUGEi-wO8": {
-        "id": "WskixeQEC3ohNUGEi-wO8",
-        "tableId": "gqk8c5YSXhc645Y24QzXe",
-        "name": "dat_avg_temp",
-        "comment": "낮시간 평균기온",
-        "dataType": "FLOAT",
-        "default": "",
-        "options": 8,
-        "ui": {
-          "keys": 0,
-          "widthName": 76,
-          "widthComment": 89,
-          "widthDataType": 60,
-          "widthDefault": 60
-        },
-        "meta": {
-          "updateAt": 1753070967412,
-          "createAt": 1753070865892
-        }
-      },
-      "p861FgmVT4bhowlrh6Zzy": {
-        "id": "p861FgmVT4bhowlrh6Zzy",
-        "tableId": "gqk8c5YSXhc645Y24QzXe",
-        "name": "night_time",
-        "comment": "밤시간 선택여부",
-        "dataType": "BOOLEAN",
-        "default": "",
-        "options": 8,
-        "ui": {
-          "keys": 0,
-          "widthName": 60,
-          "widthComment": 89,
-          "widthDataType": 60,
-          "widthDefault": 60
-        },
-        "meta": {
-          "updateAt": 1753070967852,
-          "createAt": 1753070892396
-        }
-      },
-      "mqc0JwkdQ5vOsyxR0qUBD": {
-        "id": "mqc0JwkdQ5vOsyxR0qUBD",
-        "tableId": "gqk8c5YSXhc645Y24QzXe",
-        "name": "night_avg_temp",
-        "comment": "밤시간 평균기",
-        "dataType": "FLOAT",
-        "default": "",
-        "options": 8,
-        "ui": {
-          "keys": 0,
-          "widthName": 86,
-          "widthComment": 77,
-          "widthDataType": 60,
-          "widthDefault": 60
-        },
-        "meta": {
-          "updateAt": 1753070968300,
-          "createAt": 1753070910932
-        }
-      },
-      "tKf1AqKZ96tKJ2Nzd7ehv": {
-        "id": "tKf1AqKZ96tKJ2Nzd7ehv",
-        "tableId": "DK_kdjojNnvU3r2YWdFES",
-        "name": "cummunityTemp",
-        "comment": "평균기온",
-        "dataType": "",
-        "default": "",
-        "options": 8,
-        "ui": {
-          "keys": 0,
-          "widthName": 90,
-          "widthComment": 60,
-          "widthDataType": 60,
-          "widthDefault": 60
-        },
-        "meta": {
-          "updateAt": 1753071059582,
-          "createAt": 1753070971732
+          "updateAt": 1753076196405,
+          "createAt": 1753076177192
         }
       }
     },
@@ -944,23 +856,6 @@
     },
     "indexEntities": {},
     "indexColumnEntities": {},
-    "memoEntities": {
-      "gxrRaZkf1pzWb6MNyM0SO": {
-        "id": "gxrRaZkf1pzWb6MNyM0SO",
-        "value": "",
-        "ui": {
-          "x": 133,
-          "y": 437,
-          "zIndex": 174,
-          "width": 116,
-          "height": 100,
-          "color": ""
-        },
-        "meta": {
-          "updateAt": 1753070285691,
-          "createAt": 1753070282149
-        }
-      }
-    }
+    "memoEntities": {}
   }
 }
