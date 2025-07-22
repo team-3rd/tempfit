@@ -171,19 +171,19 @@ public class CommunityService {
     }
 
     public Page<CommunityDTO> getPage(int page) {
-        Pageable pageable = PageRequest.of(page - 1, 25, Sort.by(Sort.Direction.DESC, "createdDate"));
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createdDate"));
         return communityRepository.list(null, null, null, null, pageable)
                 .map(this::arrayToDTO);
     }
 
     public Page<CommunityDTO> searchPage(String type, String keyword, int page) {
-        Pageable pageable = PageRequest.of(page - 1, 25, Sort.by(Sort.Direction.DESC, "createdDate"));
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createdDate"));
         return communityRepository.list(type, keyword, null, null, pageable)
                 .map(this::arrayToDTO);
     }
 
     public Page<CommunityDTO> searchPageRaw(String type, String keyword, List<String> styleNames, int page) {
-        Pageable pageable = PageRequest.of(page - 1, 25, Sort.by(Sort.Direction.DESC, "createdDate"));
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createdDate"));
         return communityRepository.list(type, keyword, styleNames, null, pageable)
                 .map(this::arrayToDTO);
     }
