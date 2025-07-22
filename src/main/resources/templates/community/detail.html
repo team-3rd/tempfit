@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
   <head>
     <meta charset="UTF-8" />
     <title>게시글 상세</title>
@@ -19,10 +20,9 @@
       <div class="detail-meta">
         작성자: <span th:text="${post.author.name}">관리자</span> &nbsp;|&nbsp;
         등록일:
-        <span
-          th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"
-          >2025-06-15 12:00</span
-        >
+        <span th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}">
+          2025-06-15 12:00
+        </span>
         &nbsp;|&nbsp; 추천: <span th:text="${post.recommendCount}">0</span>
       </div>
 
@@ -31,10 +31,9 @@
         <span th:if="${post.male&&!post.female}" class="badge bg-primary">남성</span>
         <span th:if="${post.female&&!post.male}" class="badge bg-danger">여성</span>
         <span th:if="${post.male&&post.female}" class="badge bg-success">공용</span>
-
-        <span th:if="${post.casual}" class="badge bg-secondary">캐주얼</span>
-        <span th:if="${post.street}" class="badge bg-secondary">스트리트</span>
-        <span th:if="${post.formal}" class="badge bg-secondary">포멀</span>
+        <span th:if="${post.casual}"  class="badge bg-secondary">캐주얼</span>
+        <span th:if="${post.street}"  class="badge bg-secondary">스트리트</span>
+        <span th:if="${post.formal}"  class="badge bg-secondary">포멀</span>
         <span th:if="${post.outdoor}" class="badge bg-secondary">아웃도어</span>
         <span
           th:if="${post.dayTime}"
@@ -57,7 +56,7 @@
         />
       </div>
 
-      <!-- 추가 이미지들 (대표 이미지와 동일 크기) -->
+      <!-- 추가 이미지들 -->
       <div th:if="${post.extraImageUrls != null}" class="mb-3">
         <div th:each="url : ${post.extraImageUrls}" class="mb-3">
           <img
@@ -69,65 +68,67 @@
       </div>
 
       <!-- 본문 내용 -->
-      <div class="detail-content" th:text="${post.content}">게시글 내용</div>
+      <div class="detail-content" th:text="${post.content}">
+        게시글 내용
+      </div>
 
       <!-- 액션 버튼 -->
       <div class="detail-actions">
-        <a th:href="@{/community/list}" class="btn btn-outline-secondary"
-          >목록</a
-        >
-        <form
-          th:action="@{/community/recommend/{id}(id=${post.id})}"
-          method="post"
-        >
+        <a th:href="@{/community/list}" class="btn btn-outline-secondary">목록</a>
+        <form th:action="@{/community/recommend/{id}(id=${post.id})}" method="post" class="d-inline">
           <button type="submit" class="btn btn-outline-primary">추천</button>
         </form>
         <a
           th:href="@{/community/edit/{id}(id=${post.id})}"
           class="btn btn-primary"
-          th:if="${#authentication.name}==${post.author.email}"
-          >수정</a
-        >
+          th:if="${#authentication.name} == ${post.author.email}"
+        >수정</a>
         <form
           th:action="@{/community/delete/{id}(id=${post.id})}"
           method="post"
-          th:if="${#authentication.name}==${post.author.email}"
+          th:if="${#authentication.name} == ${post.author.email}"
           onsubmit="return confirm('정말 삭제하시겠습니까?');"
-          style="display: inline"
+          class="d-inline"
         >
-          <!-- DELETE로 요청 변경 -->
           <input type="hidden" name="_method" value="delete" />
-
-          <!-- 삭제 버튼 -->
           <button type="submit" class="btn btn-danger">삭제</button>
         </form>
       </div>
 
-      <!-- 댓글 작성 폼 -->
-      <form
-        th:action="@{/community/detail/{id}/comments(id=${post.id})}"
-        method="post"
-        class="mt-3 mb-4"
-      >
-        <div class="mb-2">
+      <!-- 댓글 작성 (로그인한 사용자만) -->
+      <div sec:authorize="isAuthenticated()">
+        <form
+          th:action="@{/community/detail/{id}/comments(id=${post.id})}"
+          method="post"
+          class="mt-3 mb-4"
+        >
           <input
-            type="text"
+            type="hidden"
             name="authorName"
-            class="form-control"
-            placeholder="이름 (선택)"
+            th:value="${#authentication.name}"
           />
-        </div>
-        <div class="mb-2">
-          <textarea
-            name="content"
-            class="form-control"
-            rows="3"
-            placeholder="댓글을 입력하세요"
-            required
-          ></textarea>
-        </div>
-        <button type="submit" class="btn btn-sm btn-primary">댓글 등록</button>
-      </form>
+          <div class="mb-2">
+            <textarea
+              name="content"
+              class="form-control"
+              rows="3"
+              placeholder="댓글을 입력하세요"
+              required
+            ></textarea>
+          </div>
+          <button type="submit" class="btn btn-sm btn-primary">
+            댓글 등록
+          </button>
+        </form>
+      </div>
+
+      <!-- 비로그인 시 안내 및 로그인 페이지로 이동 -->
+      <div sec:authorize="!isAuthenticated()" class="mt-3 mb-4 text-center">
+        <p class="text-muted">
+          댓글을 작성하려면
+          <a th:href="@{/member/login}">로그인</a>이 필요합니다.
+        </p>
+      </div>
 
       <!-- 댓글 목록 -->
       <div>
@@ -137,13 +138,11 @@
             class="text-muted"
             th:text="${c.authorName != null && c.authorName.trim().length()>0
                          ? c.authorName : '익명'}"
-            >익명</small
-          >
+          >익명</small>
           &nbsp;
-          <small
-            th:text="${#temporals.format(c.createdDate,'yyyy-MM-dd HH:mm')}"
-            >시간</small
-          >
+          <small th:text="${#temporals.format(c.createdDate,'yyyy-MM-dd HH:mm')}">
+            시간
+          </small>
           <p th:text="${c.content}">댓글 내용</p>
         </div>
       </div>
