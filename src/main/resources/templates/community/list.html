@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -15,12 +17,14 @@
     <link rel="stylesheet" href="/css/list.css" />
   </head>
   <body>
+    <!-- 네비바 -->
     <div th:replace="fragments/navbar :: navbar"></div>
 
     <div class="container px-4 px-lg-5 mt-5">
       <h1 class="mb-4">게시글 목록</h1>
+
+      <!-- 검색 & 스타일 필터 + 글쓰기 버튼 -->
       <div class="d-flex justify-content-between align-items-start mb-3">
-        <!-- 검색 폼 및 스타일 필터 -->
         <form
           class="search-form d-flex flex-column"
           th:action="@{/community/list}"
@@ -28,7 +32,7 @@
           style="gap: 8px"
         >
           <div class="d-flex" style="gap: 8px">
-            <select name="type" class="form-select">
+            <select name="type" class="form-select form-select-sm">
               <option value="">전체</option>
               <option value="t" th:selected="${type == 't'}">제목</option>
               <option value="a" th:selected="${type == 'a'}">작성자</option>
@@ -37,22 +41,19 @@
               type="text"
               name="keyword"
               th:value="${keyword}"
-              class="form-control"
+              class="form-control form-control-sm"
               placeholder="검색어"
             />
-            <button type="submit" class="btn btn-outline-secondary">
+            <button type="submit" class="btn btn-outline-secondary btn-sm">
               검색
             </button>
             <a
               th:href="@{/community/list}"
-              class="btn btn-outline-secondary reset-btn"
-              >초기화</a
-            >
+              class="btn btn-outline-secondary btn-sm reset-btn"
+            >초기화</a>
           </div>
-
-          <!-- 스타일 라디오 버튼 그룹 -->
           <div
-            class="btn-group"
+            class="btn-group btn-group-sm"
             role="group"
             aria-label="스타일 선택"
             style="margin-top: 8px"
@@ -62,47 +63,44 @@
               class="btn-check"
               name="styleNames"
               id="styleCasual"
-              autocomplete="off"
               value="CASUAL"
+              autocomplete="off"
               th:checked="${styleNames != null and styleNames.contains('CASUAL')}"
             />
             <label class="btn btn-outline-primary" for="styleCasual"
               >캐주얼</label
             >
-
             <input
               type="radio"
               class="btn-check"
               name="styleNames"
               id="styleStreet"
-              autocomplete="off"
               value="STREET"
+              autocomplete="off"
               th:checked="${styleNames != null and styleNames.contains('STREET')}"
             />
             <label class="btn btn-outline-primary" for="styleStreet"
               >스트리트</label
             >
-
             <input
               type="radio"
               class="btn-check"
               name="styleNames"
               id="styleFormal"
-              autocomplete="off"
               value="FORMAL"
+              autocomplete="off"
               th:checked="${styleNames != null and styleNames.contains('FORMAL')}"
             />
             <label class="btn btn-outline-primary" for="styleFormal"
               >포멀</label
             >
-
             <input
               type="radio"
               class="btn-check"
               name="styleNames"
               id="styleOutdoor"
-              autocomplete="off"
               value="OUTDOOR"
+              autocomplete="off"
               th:checked="${styleNames != null and styleNames.contains('OUTDOOR')}"
             />
             <label class="btn btn-outline-primary" for="styleOutdoor"
@@ -110,88 +108,81 @@
             >
           </div>
         </form>
-
         <a
           href="/community/create"
-          class="btn btn-primary ms-3 create-btn"
+          class="btn btn-primary btn-sm ms-3 create-btn"
           sec:authorize="isAuthenticated()"
-          >글쓰기</a
-        >
+        >글쓰기</a>
       </div>
+
+      <!-- 게시글 카드 그리드 -->
       <div class="post-grid">
         <div th:each="post : ${list}" class="post-card">
-          <div class="post-date">
-            <span th:text="${#temporals.format(post.createdDate,'yyyy-MM-dd')}"
-              >2025-06-15</span
-            >
+          <!-- 1) 생성일시 (이미지 위) -->
+          <div class="card-time text-center px-3 pt-2">
+            <small class="text-muted"
+                   th:text="${#temporals.format(post.createdDate,'yyyy-MM-dd HH:mm')}">
+              2025-07-21 16:59
+            </small>
           </div>
-          <a
-            th:href="@{/community/detail/{id}(id=${post.id})}"
-            class="post-title"
-            th:text="${post.title}"
-            >제목</a
-          >
-          <div class="badge-list">
-            <span th:if="${post.casual}" class="badge bg-secondary"
-              >캐주얼</span
-            >
-            <span th:if="${post.street}" class="badge bg-secondary"
-              >스트리트</span
-            >
-            <span th:if="${post.formal}" class="badge bg-secondary">포멀</span>
-            <span th:if="${post.outdoor}" class="badge bg-secondary"
-              >아웃도어</span
-            >
-            <span
-              th:if="${post.dayTime}"
-              class="badge bg-day day"
-              th:text="${'낮  ' + post.dayAvgTemp + '℃'}"
-            ></span>
-            <span
-              th:if="${post.NightTime}"
-              class="badge bg-night night"
-              th:text="${'밤  ' + post.nightAvgTemp + '℃'}"
-            ></span>
+          <!-- 2) 이미지 -->
+          <a th:href="@{/community/detail/{id}(id=${post.id})}"
+             class="card-img-link">
+            <img
+              th:if="${post.repImageUrl != null}"
+              th:src="@{'/uploads/' + ${post.repImageUrl}}"
+              alt="대표사진"
+              class="card-img-top"
+            />
+          </a>
+          <!-- 3) 카드 본문 -->
+          <div class="card-body">
+            <h5 class="card-title" th:text="${post.title}">제목</h5>
+            <p class="card-subtitle" th:text="${post.author.name}">작성자</p>
+            <div class="badge-list">
+              <span th:if="${post.casual}"  class="badge bg-secondary">캐주얼</span>
+              <span th:if="${post.street}"  class="badge bg-secondary">스트리트</span>
+              <span th:if="${post.formal}"  class="badge bg-secondary">포멀</span>
+              <span th:if="${post.outdoor}" class="badge bg-secondary">아웃도어</span>
+            </div>
+            <div class="temp-badge-list mt-2">
+              <span th:if="${post.dayTime}"
+                    class="badge bg-day"
+                    th:text="${'낮 ' + post.dayAvgTemp + '℃'}"></span>
+              <span th:if="${post.NightTime}"
+                    class="badge bg-night"
+                    th:text="${'밤 ' + post.nightAvgTemp + '℃'}"></span>
+            </div>
           </div>
-          <img
-            th:if="${post.repImageUrl != null}"
-            th:src="@{'/uploads/' + ${post.repImageUrl}}"
-            alt="대표사진"
-          />
-          <div class="post-author" th:text="${post.author.name}">작성자</div>
         </div>
       </div>
+
+      <!-- 페이징 -->
       <nav class="mt-4">
         <ul class="pagination justify-content-center">
           <li class="page-item" th:if="${startPage > 1}">
-            <a
-              class="page-link"
-              th:href="@{/community/list(page=${startPage - 1}, type=${type}, keyword=${keyword}, styleNames=${styleNames})}"
-              >이전</a
-            >
+            <a class="page-link"
+               th:href="@{/community/list(page=${startPage - 1}, type=${type}, keyword=${keyword}, styleNames=${styleNames})}">
+              이전
+            </a>
           </li>
-          <li
-            class="page-item"
-            th:each="i : ${#numbers.sequence(startPage, endPage)}"
-            th:classappend="${i == currentPage} ? ' active'"
-          >
-            <a
-              class="page-link"
-              th:href="@{/community/list(page=${i}, type=${type}, keyword=${keyword}, styleNames=${styleNames})}"
-              th:text="${i}"
-              >1</a
-            >
+          <li class="page-item"
+              th:each="i : ${#numbers.sequence(startPage, endPage)}"
+              th:classappend="${i == currentPage} ? ' active'">
+            <a class="page-link"
+               th:href="@{/community/list(page=${i}, type=${type}, keyword=${keyword}, styleNames=${styleNames})}"
+               th:text="${i}">1</a>
           </li>
           <li class="page-item" th:if="${endPage < totalPages}">
-            <a
-              class="page-link"
-              th:href="@{/community/list(page=${endPage + 1}, type=${type}, keyword=${keyword}, styleNames=${styleNames})}"
-              >다음</a
-            >
+            <a class="page-link"
+               th:href="@{/community/list(page=${endPage + 1}, type=${type}, keyword=${keyword}, styleNames=${styleNames})}">
+              다음
+            </a>
           </li>
         </ul>
       </nav>
     </div>
+
     <div th:replace="fragments/footer :: footer"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </body>
