@@ -3,8 +3,11 @@ package com.example.tempfit.service;
 import com.example.tempfit.dto.CoordiDTO;
 import com.example.tempfit.entity.CommunityStyle;
 import com.example.tempfit.entity.Coordi;
+import com.example.tempfit.entity.Product;
 import com.example.tempfit.entity.TemperatureRange;
 import com.example.tempfit.repository.CoordiRepository;
+import com.example.tempfit.repository.ProductRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +21,14 @@ import java.util.stream.Collectors;
 public class CoordiService {
 
     private final CoordiRepository coordiRepository;
+    private final ProductRepository productRepository;
+    
+    /**
+     * DB에 저장된 스타일별 Product 목록 조회
+     */
+    public List<Product> getProductsForProductKey(String productKey) {
+        return productRepository.findAllByProductKey(productKey);
+    }
 
     // 게시글 등록
     public Long register(CoordiDTO dto) {

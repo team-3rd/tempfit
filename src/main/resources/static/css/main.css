@@ -264,6 +264,10 @@ footer.py-5.bg-dark {
   border: 1px solid rgb(210, 210, 210);
   color: #6c757d;
 }
+#toggle-gender-btn {
+  border: 1px solid rgb(210, 210, 210);
+  color: #6c757d;
+}
 /* 전역 기본 폰트로 Pretendard Variable 사용 */
 body {
   font-family: 'Pretendard Variable', sans-serif;

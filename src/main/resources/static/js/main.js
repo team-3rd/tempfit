@@ -1,107 +1,187 @@
 // ─── 전역 저장 변수 ───
 let lastTempNum = null;
+let guideData = null;
+let currentGender = "male"; // 'male' 또는 'female'
 
 // ─── ① 의상 가이드만 로드하는 함수 ───
 function loadClothingGuide(tempNum) {
   fetch(`/api/coordi/guide?temp=${tempNum}`)
-    .then(res => res.json())
-    .then(data => {
-      renderGuide("clothing-guide-male", data.male);
-      renderGuide("clothing-guide-female", data.female);
+    .then((res) => res.json())
+    .then((data) => {
+      guideData = data;
+      renderByGender(currentGender);
     })
     .catch(() => {
-      document.getElementById("clothing-guide-male").textContent =
-        "추천 코디 정보를 가져오지 못했습니다";
-      document.getElementById("clothing-guide-female").textContent =
-        "추천 코디 정보를 가져오지 못했습니다";
+      const row1 = document.getElementById("clothing-guide-row1");
+      const row2 = document.getElementById("clothing-guide-row2");
+      row1.textContent = "추천 코디 정보를 가져오지 못했습니다";
+      row2.textContent = "";
     });
 }
 
 // ─── ② BEST LOOKS만 로드하는 함수 ───
 function loadBestLooksData(tempNum) {
   fetch(`/api/community/best?temp=${tempNum}`)
-    .then(res => res.json())
+    .then((res) => res.json())
     .then(renderBestLooks)
     .catch(() => {
       const area = document.getElementById("best-looks-area");
       if (area) {
-        area.innerHTML =
-          "<div class='text-danger'>※BEST LOOKS 정보를 가져올 수 없습니다!※</div>";
+        area.innerHTML = "<div class='text-danger'>※BEST LOOKS 정보를 가져올 수 없습니다!※</div>";
       }
     });
 }
 
 // ─── ③ 날씨 로드 시 — 두 함수 모두 실행 ───
-window.addEventListener("weatherLoaded", e => {
-  lastTempNum = e.detail.tempNum;       // 온도 저장
-  loadClothingGuide(lastTempNum);        // 의상 가이드
-  loadBestLooksData(lastTempNum);        // BEST LOOKS
+window.addEventListener("weatherLoaded", (e) => {
+  lastTempNum = e.detail.tempNum;
+  loadClothingGuide(lastTempNum);
+  loadBestLooksData(lastTempNum);
 });
 
 // ─── ④ DOMContentLoaded 시 — 버튼 클릭 바인딩 ───
 document.addEventListener("DOMContentLoaded", () => {
-  const btn = document.getElementById("refresh-images-btn");
-  if (!btn) return;
+  // 성별 토글 버튼
+  const toggleBtn = document.getElementById("toggle-gender-btn");
+  if (toggleBtn) {
+    toggleBtn.addEventListener("click", () => {
+      currentGender = currentGender === "male" ? "female" : "male";
+      toggleBtn.textContent = currentGender === "male" ? "🧑🏻" : "👧🏻";
+      if (guideData) renderByGender(currentGender);
+    });
+  }
 
-  btn.addEventListener("click", () => {
-    if (lastTempNum == null) {
-      console.warn("아직 날씨 정보가 로드되지 않았습니다.");
-      return;
-    }
-    // 의상 가이드만 재호출
-    loadClothingGuide(lastTempNum);
-  });
+  // 🔄 리프레시 버튼 — 단 하나의 핸들러만 등록
+  const refreshBtn = document.getElementById("refresh-images-btn");
+  if (refreshBtn) {
+    refreshBtn.addEventListener("click", () => {
+      if (lastTempNum == null) return;
+
+      // 현재 성별만 다시 가져오기
+      fetch(`/api/coordi/guide?temp=${lastTempNum}`)
+        .then((res) => res.json())
+        .then((data) => {
+          guideData[currentGender] = data[currentGender];
+          renderByGender(currentGender);
+        })
+        .catch(() => {
+          console.warn("추천 코디 정보를 새로고침하지 못했습니다.");
+        });
+    });
+  }
 });
 
+// ─── ⑤ 성별별 렌더 함수 ───
+function renderByGender(gender) {
+  // 성별 라벨 갱신
+  const genderLabel = document.getElementById("gender-label");
+  const labelText = gender === "male" ? "남성" : "여성";
+  genderLabel.innerHTML = `-${labelText}-`;
 
-// ─── ⑤ 공통 렌더 함수 (코디 가이드) ───
-function renderGuide(divId, data) {
-  const guideDiv = document.getElementById(divId);
-  guideDiv.innerHTML = "";
+  const data = guideData[gender];
+  const row1 = document.getElementById("clothing-guide-row1");
+  const row2 = document.getElementById("clothing-guide-row2");
+  row1.innerHTML = "";
+  row2.innerHTML = "";
 
-  const onePieceTops = ["피케/카라 원피스", "원피스", "동탄미시"];
-  const isFemale = divId === "clothing-guide-female";
-  const isOnePiece = onePieceTops.includes(data.top?.name);
+  // “원피스류” 상의 리스트
+  const onePieceTops = ["피케/카라 원피스", "원피스", "맥시드레스"];
+  const isOnePiece = onePieceTops.includes(data.top.name);
 
-  ["top", "bottom", "shoes"].forEach(part => {
-    if (!data[part]) return;
+  // ─── 위쪽: 아우터 ───
+  if (data.outer && data.outer.name) {
+    renderSlot("outer", data.outer, row1);
+  } else {
+    // 아우터가 빈 문자열이거나 undefined면 “아우터 없음” 표시
+    row1.innerHTML += emptySlotMarkup("아우터");
+  }
 
-    // 여성 & 원피스면 하의 없음 표시
-    if (isFemale && part === "bottom" && isOnePiece) {
-      guideDiv.innerHTML += `
-        <div style="text-align:center;">
-          <div style="
-            width:130px; height:130px;
-            display:flex; align-items:center; justify-content:center;
-            border-radius:10px; border:1px solid #ddd;
-            background:#fafafa; color:#888;
-            font-size:18px; font-weight:600;
-            margin:0 auto 8px auto;
-            box-sizing:border-box;">
-            하의 없음
-          </div>
-          <b>하의</b>
-        </div>`;
-    } else {
-      guideDiv.innerHTML += `
-        <div style="text-align:center;">
-          <img src="${data[part].imageUrl}"
-               alt="${data[part].name}"
-               style="max-width:130px; width:100%; height:auto;
-                      border-radius:10px; border:1px solid #ddd;
-                      background:#fafafa;"/><br/>
-          <b>${
-            part === "top" ? "상의" :
-            part === "bottom" ? "하의" :
-            "신발"
-          }</b><br/>
-          <span style="font-size:18px;">${data[part].name}</span>
-        </div>`;
-    }
-  });
+  // ─── 위쪽: 상의 ───
+  renderSlot("top", data.top, row1);
+
+  // 아래쪽: 하의 · 신발
+  if (gender === "female" && isOnePiece) {
+    // 여성 & 원피스류면 하의 없음
+    row2.innerHTML += emptySlotMarkup("하의");
+  } else if (data.bottom.name) {
+    renderSlot("bottom", data.bottom, row2);
+  } else {
+    row2.innerHTML += emptySlotMarkup("하의");
+  }
+  renderSlot("shoes", data.shoes, row2);
+
+  row1.style.gap = "50px";
+  row2.style.gap = "50px";
+}
+// ─── ⑥ 슬롯 카드 렌더 헬퍼 ───
+function renderSlot(part, item, container) {
+  if (!item.name) return;
+  const labelMap = { outer: "아우터", top: "상의", bottom: "하의", shoes: "신발" };
+  container.innerHTML += `
+    <a href="/coordi/item/${item.productKey}"
+       style="
+         display:inline-block;
+         width:150px;
+         text-align:center;
+         text-decoration:none;
+         color:inherit;
+         margin:0 6px;
+       ">
+      <div style="
+           width:150px;
+           height:150px;
+           border-radius:10px;
+           border:1px solid #ddd;
+           background:#fafafa;
+           display:flex;
+           align-items:center;
+           justify-content:center;
+           overflow:hidden;
+           margin-bottom:6px;
+         ">
+        <img src="${item.imageUrl}"
+             alt="${item.name}"
+             style="
+               width:100%;
+               height:100%;
+               object-fit:cover;
+             "/>
+      </div>
+      <b style="display:block; margin-bottom:2px;">
+        ${labelMap[part]}
+      </b>
+      <span style="font-size:14px; line-height:1.2;">
+        ${item.name}
+      </span>
+    </a>`;
 }
 
-// ─── ⑥ BEST LOOKS 렌더 함수 ───
+// ─── ⑦ 빈 슬롯(없음) 마크업 헬퍼 ───
+function emptySlotMarkup(label) {
+  return `
+    <div style="
+      text-align:center;
+      width:150px;
+      margin:0 6px;
+    ">
+      <div style="
+        width:150px; height:150px;
+        display:flex; align-items:center; justify-content:center;
+        border-radius:10px; border:1px solid #ddd;
+        background:#fafafa; color:#888;
+        font-size:16px; font-weight:600;
+        box-sizing:border-box;
+        margin-bottom:6px;
+      ">
+        ${label} 없음
+      </div>
+      <b style="display:block; margin-bottom:2px;">
+        ${label}
+      </b>
+    </div>`;
+}
+
+// ─── ⑧ BEST LOOKS 렌더 함수 ───
 function renderBestLooks(data) {
   const area = document.getElementById("best-looks-area");
   if (!area) return;

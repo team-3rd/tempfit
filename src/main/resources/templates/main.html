@@ -27,35 +27,43 @@
         <!-- 날씨 카드 (fragment 호출) -->
         <th:block th:replace="fragments/weather :: weatherCard"></th:block>
 
-        <!-- 오늘의 추천 코디 카드 -->
+        <!-- 오늘의 추천 코디 카드 (수정된 부분) -->
         <div class="col-12 col-lg-6 d-flex flex-column h-100">
-          <div class="card shadow-sm mb-4 flex-grow-1 w-100">
+          <div class="card shadow-sm mb-4 flex-grow-1 w-100 position-relative">
             <div class="card-body d-flex flex-column align-items-center justify-content-start h-100">
-              <h2
-                id="clothing-guide-head"
-                class="mb-2 text-center"
-                style="font-size: 1.6rem; font-weight: 500; letter-spacing: -1px"
+              <!-- 토글 버튼 -->
+              <button
+                id="toggle-gender-btn"
+                class="btn btn-outline-secondary btn-sm position-absolute"
+                style="top: 0.5rem; left: 0.5rem; font-size: 1.5rem; padding: 0.25rem 0.35rem"
               >
-                💡오늘의 추천 코디💡
-              </h2>
-              <!-- 이미지 새로고침 버튼 -->
+                🧑🏻
+              </button>
+
+              <!-- 리프레시 버튼 -->
               <button
                 id="refresh-images-btn"
                 class="btn btn-outline-secondary btn-sm position-absolute"
-                style="top: 0.5rem; right: 0.5rem; padding: 0.25rem 0.35rem"
+                style="top: 0.5rem; right: 0.5rem; font-size: 1.5rem; padding: 0.25rem 0.35rem"
               >
                 🔄
               </button>
-              <div class="text-center mb-2" style="font-size: 1.1rem; font-weight: 600">
-                <span style="font-size: 1.5rem">🧑🏻</span>
-                <span style="font-size: 1.1rem; color: #2076ff">남성</span>
+
+              <h2 class="mb-3 text-center" style="font-size: 1.6rem; font-weight: 500; letter-spacing: -1px">
+                < 오늘의 추천 코디 >
+              </h2>
+              <!-- 성별 라벨: JS 에서 동적으로 채워넣음 -->
+              <div id="gender-label" class="text-center mb-2" style="font-size: 1.3rem; font-weight: 600">
+                <!-- 여기에 <남성> 또는 <여성><br/><br/> 이 채워짐 -->
               </div>
-              <div id="clothing-guide-male" class="d-flex justify-content-center mb-4" style="gap: 32px"></div>
-              <div class="text-center mb-2" style="font-size: 1.1rem; font-weight: 600">
-                <span style="font-size: 1.5rem">👧🏻</span>
-                <span style="font-size: 1.1rem; color: #e94382">여성</span>
+              <!-- 2×2 그리드: 위행(outer, top) · 아래행(bottom, shoes) -->
+              <div id="clothing-guide" class="d-flex flex-column" style="gap: 16px">
+                <!-- 위쪽 행: 아우터 · 상의 -->
+                <div id="clothing-guide-row1" class="d-flex justify-content-center" style="gap: 16px"></div>
+
+                <!-- 아래쪽 행: 하의 · 신발 -->
+                <div id="clothing-guide-row2" class="d-flex justify-content-center" style="gap: 16px"></div>
               </div>
-              <div id="clothing-guide-female" class="d-flex justify-content-center" style="gap: 32px"></div>
             </div>
           </div>
         </div>
@@ -68,7 +76,7 @@
             <div class="card-body p-4">
               <div class="text-center mb-4">
                 <div class="best-looks-title-box">
-                  <span id="current-temp-tag" class="current-temp-tag">‘현재 온도 기준(℃)’</span>
+                  <span id="current-temp-tag" class="current-temp-tag">‘🌡현재 온도 기준(℃)’</span>
                   <span class="style-best">스타일별 <span class="best-looks">BEST LOOKS</span></span>
                 </div>
               </div>
