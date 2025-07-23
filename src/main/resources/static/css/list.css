@@ -40,26 +40,42 @@ body {
   margin-top: 40px;
 }
 
-/* ── 카드 컨테이너 ── */
+/* ── 카드 컨테이너 (이제 <a> 태그) ── */
 .post-card {
-  background: #fff;
-  border-radius: 0;            /* 직각으로 변경 */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;            /* 이미지가 모서리 밖으로 안 나오도록 */
   display: flex;
   flex-direction: column;
+  background: #fff;
+  border-radius: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-decoration: none;      /* 링크 밑줄 제거 */
+  color: inherit;             /* 텍스트 색상 상속 */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transform-origin: center center;
 }
+.post-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+/* ── 카드 상단 시간 (생성일시) ── */
 .card-time {
   text-align: center;
+  padding: 8px 16px;
+}
+.card-time small {
+  font-size: 0.75rem;
+  color: #666;
 }
 
 /* ── 카드 상단 이미지 ── */
 .card-img-top {
   width: 100%;
-  height: 180px;               /* 필요에 따라 높이 조절 */
-  object-fit: cover;           /* 비율 유지하며 채우기 */
+  height: 180px;
+  object-fit: cover;
   display: block;
-  border-radius: 0;            /* 직각으로 변경 */
+  border-radius: 0;
 }
 
 /* ── 카드 본문 ── */
@@ -88,11 +104,10 @@ body {
 /* ── 스타일 배지 그룹 ── */
 .badge-list {
   display: flex;
-  flex-wrap: wrap;             /* 여러 배지를 자동으로 다음 줄로 넘김 */
+  flex-wrap: wrap;
   gap: 6px;
-  margin-top: auto;            /* 카드 본문 하단에 붙이기 */
+  margin-top: auto;
 }
-
 .badge-list .badge {
   font-size: 0.75rem;
   padding: 0.25em 0.5em;
@@ -102,9 +117,8 @@ body {
 .temp-badge-list {
   display: flex;
   gap: 6px;
-  margin-top: 8px;             /* 스타일 배지 아래 여백 */
+  margin-top: 8px;
 }
-
 .temp-badge-list .badge {
   font-size: 0.75rem;
   padding: 0.25em 0.5em;
@@ -115,17 +129,17 @@ body {
   background-color: rgb(253, 152, 67);
   color: #fff;
 }
-
 .bg-night {
   background-color: rgb(163, 112, 247);
   color: #fff;
 }
 
-/* ── 카드 푸터 (우측 하단 날짜/시간) ── */
+/* ── (이전 .card-footer 자리였던) ── */
+/* 이제 .card-time 을 쓰므로 필요 없지만, 
+   혹시 다른 곳에서 남아있다면 아래 유지하세요. */
 .card-footer {
   padding: 8px 16px;
 }
-
 .card-footer small {
   font-size: 0.75rem;
   color: #666;

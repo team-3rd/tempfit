@@ -65,11 +65,9 @@
               id="styleCasual"
               value="CASUAL"
               autocomplete="off"
-              th:checked="${styleNames != null and styleNames.contains('CASUAL')}"
-            />
-            <label class="btn btn-outline-primary" for="styleCasual"
-              >캐주얼</label
-            >
+              th:checked="${styleNames != null and styleNames.contains('CASUAL')}"/>
+            <label class="btn btn-outline-primary" for="styleCasual">캐주얼</label>
+
             <input
               type="radio"
               class="btn-check"
@@ -77,11 +75,9 @@
               id="styleStreet"
               value="STREET"
               autocomplete="off"
-              th:checked="${styleNames != null and styleNames.contains('STREET')}"
-            />
-            <label class="btn btn-outline-primary" for="styleStreet"
-              >스트리트</label
-            >
+              th:checked="${styleNames != null and styleNames.contains('STREET')}"/>
+            <label class="btn btn-outline-primary" for="styleStreet">스트리트</label>
+
             <input
               type="radio"
               class="btn-check"
@@ -89,11 +85,9 @@
               id="styleFormal"
               value="FORMAL"
               autocomplete="off"
-              th:checked="${styleNames != null and styleNames.contains('FORMAL')}"
-            />
-            <label class="btn btn-outline-primary" for="styleFormal"
-              >포멀</label
-            >
+              th:checked="${styleNames != null and styleNames.contains('FORMAL')}"/>
+            <label class="btn btn-outline-primary" for="styleFormal">포멀</label>
+
             <input
               type="radio"
               class="btn-check"
@@ -101,11 +95,8 @@
               id="styleOutdoor"
               value="OUTDOOR"
               autocomplete="off"
-              th:checked="${styleNames != null and styleNames.contains('OUTDOOR')}"
-            />
-            <label class="btn btn-outline-primary" for="styleOutdoor"
-              >아웃도어</label
-            >
+              th:checked="${styleNames != null and styleNames.contains('OUTDOOR')}"/>
+            <label class="btn btn-outline-primary" for="styleOutdoor">아웃도어</label>
           </div>
         </form>
         <a
@@ -117,24 +108,24 @@
 
       <!-- 게시글 카드 그리드 -->
       <div class="post-grid">
-        <div th:each="post : ${list}" class="post-card">
-          <!-- 1) 생성일시 (이미지 위) -->
+        <a th:each="post : ${list}"
+           th:href="@{/community/detail/{id}(id=${post.id})}"
+           class="post-card text-decoration-none text-reset">
+          
+          <!-- 1) 생성일시 -->
           <div class="card-time text-center px-3 pt-2">
             <small class="text-muted"
                    th:text="${#temporals.format(post.createdDate,'yyyy-MM-dd HH:mm')}">
               2025-07-21 16:59
             </small>
           </div>
+
           <!-- 2) 이미지 -->
-          <a th:href="@{/community/detail/{id}(id=${post.id})}"
-             class="card-img-link">
-            <img
-              th:if="${post.repImageUrl != null}"
-              th:src="@{'/uploads/' + ${post.repImageUrl}}"
-              alt="대표사진"
-              class="card-img-top"
-            />
-          </a>
+          <img th:if="${post.repImageUrl != null}"
+               th:src="@{'/uploads/' + ${post.repImageUrl}}"
+               alt="대표사진"
+               class="card-img-top" />
+
           <!-- 3) 카드 본문 -->
           <div class="card-body">
             <h5 class="card-title" th:text="${post.title}">제목</h5>
@@ -154,7 +145,7 @@
                     th:text="${'밤 ' + post.nightAvgTemp + '℃'}"></span>
             </div>
           </div>
-        </div>
+        </a>
       </div>
 
       <!-- 페이징 -->
@@ -185,5 +176,17 @@
 
     <div th:replace="fragments/footer :: footer"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.post-card').forEach(card => {
+          card.addEventListener('mouseenter', () => {
+            card.style.transform = 'scale(1.03)';
+          });
+          card.addEventListener('mouseleave', () => {
+            card.style.transform = 'scale(1)';
+          });
+        });
+      });
+    </script>
   </body>
 </html>
