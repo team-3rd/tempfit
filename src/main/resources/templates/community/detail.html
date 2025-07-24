@@ -20,7 +20,7 @@
 
       <!-- 작성자, 날짜, 추천 수 -->
       <div class="detail-meta">
-        작성자: <span th:text="${post.author.name}">관리자</span> &nbsp;|&nbsp;
+        작성자: <span th:text="${post.author.nickname}">관리자</span> &nbsp;|&nbsp;
         등록일:
         <span
           th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"

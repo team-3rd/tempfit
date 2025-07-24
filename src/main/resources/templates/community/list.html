@@ -150,7 +150,7 @@
           <!-- 3) 카드 본문 -->
           <div class="card-body">
             <h5 class="card-title" th:text="${post.title}">제목</h5>
-            <p class="card-subtitle" th:text="${post.author.name}">작성자</p>
+            <p class="card-subtitle" th:text="${post.author.nickname}">작성자</p>
             <div class="badge-list">
               <span th:if="${post.casual}" class="badge bg-secondary"
                 >캐주얼</span
