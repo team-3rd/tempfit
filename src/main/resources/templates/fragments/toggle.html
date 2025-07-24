@@ -1,0 +1,11 @@
+<div th:fragment="toggle">
+  <button class="btn btn-sm btn-secondary" onclick="toggleTheme()">🌙 다크모드 토글</button>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute("data-bs-theme");
+      html.setAttribute("data-bs-theme", current === "dark" ? "light" : "dark");
+    }
+  </script>
+</div>

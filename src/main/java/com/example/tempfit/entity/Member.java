@@ -35,6 +35,9 @@ public class Member {
     @NotNull
     private String name;
 
+    @NotNull
+    private String nickname;
+
     private Sex sex;
 
     private boolean fromSocial;

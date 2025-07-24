@@ -1,5 +1,7 @@
 package com.example.tempfit.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,4 +12,6 @@ public interface MemberRepository extends JpaRepository<Member, String> {
 
     @EntityGraph(attributePaths = {"roleSet"}, type = EntityGraphType.LOAD)
     Member findByEmailAndFromSocial(String email, boolean fromSocial);
+
+    Optional<Member> findByEmail(String email);
 }

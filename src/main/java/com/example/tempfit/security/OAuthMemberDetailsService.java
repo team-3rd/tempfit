@@ -3,6 +3,7 @@ package com.example.tempfit.security;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpEntity;
@@ -61,6 +62,10 @@ public class OAuthMemberDetailsService extends DefaultOAuth2UserService{
             name = email.split("@")[0];
         }
 
+        Random random = new Random();
+
+        String nickname = name + String.format("%04d", random.nextInt(10000));
+
         Sex sex = null;
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
@@ -85,21 +90,22 @@ public class OAuthMemberDetailsService extends DefaultOAuth2UserService{
             }
         }
 
-        Member member = saveSocialMember(email, name, sex);
+        Member member = saveSocialMember(email, name, nickname, sex);
 
-        AuthMemberDTO authMemberDTO = new AuthMemberDTO(member.getEmail(), member.getName(), member.getPassword(), member.isFromSocial(), member.getSex(),
+        AuthMemberDTO authMemberDTO = new AuthMemberDTO(member.getEmail(), member.getName(), member.getNickname(), member.getPassword(), member.isFromSocial(), member.getSex(),
         member.getRoleSet().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())).collect(Collectors.toList()),
         oAuth2User.getAttributes());
 
         return authMemberDTO;
     }
 
-    private Member saveSocialMember(String email, String name, Sex sex){
+    private Member saveSocialMember(String email, String name, String nickname, Sex sex){
         Member member = memberRepository.findByEmailAndFromSocial(email, true);
         if(member == null){
             Member saveMember = Member.builder()
                         .email(email)
                         .name(name)
+                        .nickname(nickname)
                         .password(passwordEncoder.encode("1111"))
                         .sex(sex)
                         .fromSocial(true)

@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.tempfit.entity.Member;
+import com.example.tempfit.entity.Sex;
 
 public class LoginMemberDetails implements UserDetails {
     private final Member member;
@@ -17,6 +18,10 @@ public class LoginMemberDetails implements UserDetails {
 
     public Member getMember() {
         return member;
+    }
+
+     public Sex getSex() {
+        return member.getSex();
     }
 
     @Override
@@ -36,5 +41,13 @@ public class LoginMemberDetails implements UserDetails {
 
     public String getName() {
         return member.getName();
+    }
+
+    public String getNickname() {
+        return member.getNickname();
+    }
+
+    public boolean isFromSocial() {
+        return member.isFromSocial();
     }
 }
