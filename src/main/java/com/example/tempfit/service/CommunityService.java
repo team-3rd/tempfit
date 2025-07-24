@@ -342,6 +342,7 @@ public class CommunityService {
         communityRepository.save(community);
     }
 
+    // 메인화면 스타일별 BEST LOOKS을 avgTemp 기준으로 추천수 많은 게시글부터 가져오기
     public Map<String, List<CommunityDTO>> getPostsByTempAndStyle(int temp, int pageSize) {
         TemperatureRange range = TemperatureRange.fromTemperature(temp);
         Map<String, String> styleFieldMap = Map.of(
@@ -358,13 +359,7 @@ public class CommunityService {
                 Join<Community, CommunityTemp> tempJoin = root.join("communityTemp");
 
                 Predicate stylePred = cb.isTrue(styleJoin.get(fieldName));
-                Predicate dayPred = cb.and(
-                        cb.isTrue(tempJoin.get("dayTime")),
-                        cb.between(tempJoin.get("dayAvgTemp"), range.getMinTemp(), range.getMaxTemp()));
-                Predicate nightPred = cb.and(
-                        cb.isTrue(tempJoin.get("nightTime")),
-                        cb.between(tempJoin.get("nightAvgTemp"), range.getMinTemp(), range.getMaxTemp()));
-                Predicate tempPred = cb.or(dayPred, nightPred);
+                Predicate tempPred = cb.between(tempJoin.get("avgTemp"), range.getMinTemp(), range.getMaxTemp());
 
                 return cb.and(stylePred, tempPred);
             };
