@@ -61,8 +61,6 @@ public class SearchCommunityRepositoryImpl
                         style.street,
                         style.formal,
                         style.outdoor,
-                        temp.mins,
-                        temp.maxs,
                         temp.minTemp,
                         temp.maxTemp,
                         temp.avgTemp)
@@ -141,8 +139,6 @@ public class SearchCommunityRepositoryImpl
                         t.get(style.street),
                         t.get(style.formal),
                         t.get(style.outdoor),
-                        t.get(temp.mins),
-                        t.get(temp.maxs),
                         t.get(temp.minTemp),
                         t.get(temp.maxTemp),
                         t.get(temp.avgTemp)

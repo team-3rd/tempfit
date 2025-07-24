@@ -40,10 +40,7 @@ public class CommunityDTO {
     private boolean outdoor;
 
     /* 평균 기온 관련 값 */
-    private List<String> values;
     private LocalDate dates;
-    private boolean mins;
-    private boolean maxs;
     private double minTemp;
     private double maxTemp;
     private double avgTemp;

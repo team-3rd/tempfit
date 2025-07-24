@@ -46,12 +46,10 @@
         <span th:if="${post.formal}" class="badge bg-secondary">포멀</span>
         <span th:if="${post.outdoor}" class="badge bg-secondary">아웃도어</span>
         <span
-          th:if="${post.maxs}"
           class="badge bg-day day"
           th:text="${'최고  ' + post.maxTemp + '℃'}"
         ></span>
         <span
-          th:if="${post.mins}"
           class="badge bg-night night"
           th:text="${'최저  ' + post.minTemp + '℃'}"
         ></span>

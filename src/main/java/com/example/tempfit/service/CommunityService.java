@@ -102,8 +102,6 @@ public class CommunityService {
 
         CommunityTemp temp = CommunityTemp.builder()
                 .dates(dto.getDates())
-                .mins(dto.isMins())
-                .maxs(dto.isMaxs())
                 .minTemp(dto.getMinTemp())
                 .maxTemp(dto.getMaxTemp())
                 .avgTemp(dto.getAvgTemp())
@@ -143,8 +141,6 @@ public class CommunityService {
         });
 
         communityTempRepository.findById(id).ifPresent(temp -> {
-            dto.setMins(temp.isMins());
-            dto.setMaxs(temp.isMaxs());
             dto.setMinTemp(temp.getMinTemp());
             dto.setMaxTemp(temp.getMaxTemp());
             dto.setAvgTemp(temp.getAvgTemp());
@@ -233,8 +229,6 @@ public class CommunityService {
 
         CommunityTemp temp = communityTempRepository.findById(dto.getId())
                 .orElseGet(() -> CommunityTemp.builder().build());
-        temp.setMins(dto.isMins());
-        temp.setMaxs(dto.isMaxs());
         temp.setMinTemp(dto.getMinTemp());
         temp.setMaxTemp(dto.getMaxTemp());
         temp.setAvgTemp(dto.getAvgTemp());
@@ -312,11 +306,9 @@ public class CommunityService {
                 .street((Boolean) arr[7])
                 .formal((Boolean) arr[8])
                 .outdoor((Boolean) arr[9])
-                .mins((Boolean) arr[10])
-                .maxs((Boolean) arr[11])
-                .minTemp((double) arr[12])
-                .maxTemp((double) arr[13])
-                .avgTemp((double) arr[13])
+                .minTemp((double) arr[10])
+                .maxTemp((double) arr[11])
+                .avgTemp((double) arr[12])
                 .build();
     }
 

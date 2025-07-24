@@ -26,12 +26,6 @@ public class CommunityTemp {
     private LocalDate dates;
 
     @Column(nullable = false)
-    private boolean mins;
-
-    @Column(nullable = false)
-    private boolean maxs;
-
-    @Column(nullable = false)
     private double minTemp;
 
     @Column(nullable = false)

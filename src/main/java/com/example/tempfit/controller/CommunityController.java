@@ -92,7 +92,6 @@ public class CommunityController {
     public String registerPost(
             @ModelAttribute("communityDTO") CommunityDTO dto,
             @RequestParam(value = "styleNames", required = false) List<String> styleNames,
-            @RequestParam(value = "values", required = false) List<String> values,
             @RequestParam("repImage") MultipartFile repImage,
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
@@ -109,11 +108,6 @@ public class CommunityController {
             dto.setStreet(styleNames.contains("STREET"));
             dto.setFormal(styleNames.contains("FORMAL"));
             dto.setOutdoor(styleNames.contains("OUTDOOR"));
-        }
-        if (values != null) {
-            dto.setValues(values);
-            dto.setMins(values.contains("mins"));
-            dto.setMaxs(values.contains("maxs"));
         }
 
         LocalDate dates = dto.getDates();
@@ -144,7 +138,6 @@ public class CommunityController {
             @PathVariable Long id,
             @ModelAttribute("communityDTO") CommunityDTO dto,
             @RequestParam(value = "styleNames", required = false) List<String> styleNames,
-            @RequestParam(value = "values", required = false) List<String> values,
             @RequestParam(value = "repImage", required = false) MultipartFile repImage,
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @RequestParam(value = "removeRepImage", defaultValue = "false") boolean removeRepImage,
@@ -162,11 +155,6 @@ public class CommunityController {
             dto.setStreet(styleNames.contains("STREET"));
             dto.setFormal(styleNames.contains("FORMAL"));
             dto.setOutdoor(styleNames.contains("OUTDOOR"));
-        }
-        if (values != null) {
-            dto.setValues(values);
-            dto.setMins(values.contains("mins"));
-            dto.setMaxs(values.contains("maxs"));
         }
 
         LocalDate dates = dto.getDates();

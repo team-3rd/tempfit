@@ -167,12 +167,10 @@
             </div>
             <div class="temp-badge-list mt-2">
               <span
-                th:if="${post.mins}"
                 class="badge bg-night"
                 th:text="${'최저 ' + post.minTemp + '℃'}"
               ></span>
               <span
-                th:if="${post.maxs}"
                 class="badge bg-day"
                 th:text="${'최고 ' + post.maxTemp + '℃'}"
               ></span>

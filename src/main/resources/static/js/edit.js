@@ -77,19 +77,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   const todayStr = formatDate(date_now);
   const minStr = formatDate(adjustDate(date_now, -2));
-  const maxStr = formatDate(adjustDate(date_now, +4));
+  const maxStr = formatDate(date_now);
   const dateInput = document.getElementById("dates");
   dateInput.value = todayStr;
   dateInput.min = minStr;
   dateInput.max = maxStr;
-
-  // 시간대 체크박스 단일 선택
-  document.querySelectorAll(".time-check").forEach(function (chk) {
-    chk.addEventListener("change", function () {
-      const checked = document.querySelectorAll(".time-check:checked");
-      if (checked.length > 1) this.checked = false;
-    });
-  });
 
   // 좌표 설정
   window.addEventListener("DOMContentLoaded", () => {
