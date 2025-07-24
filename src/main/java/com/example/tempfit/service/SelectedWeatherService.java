@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SelectedWeatherService {
     // 날씨 API
-    public List<SelectedWeatherDTO> getWeatherApi(GridDTO dto, LocalDate date) {
+    public SelectedWeatherDTO getWeatherApi(GridDTO dto, LocalDate date) {
         // API url 설정
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
@@ -41,7 +41,7 @@ public class SelectedWeatherService {
         }
 
         base_date = date.format(formatter);
-        String base_time = "0500";
+        String base_time = "0200";
 
         // 좌표 얻기
         String nx = dto.getNx();
@@ -83,8 +83,8 @@ public class SelectedWeatherService {
         }
     }
 
-    public List<SelectedWeatherDTO> weatherDataParsing(String weatherData, String baseDate) {
-        List<SelectedWeatherDTO> weatherList = new ArrayList<>();
+    public SelectedWeatherDTO weatherDataParsing(String weatherData, String baseDate) {
+        SelectedWeatherDTO selectedweatherDTO = new SelectedWeatherDTO();
 
         try {
             // XML 형식의 데이터 파싱(parsing) - item 태그의 부분(날씨 데이터) 가져오기
@@ -94,7 +94,8 @@ public class SelectedWeatherService {
             NodeList items = document.getElementsByTagName("item");
 
             // 데이터를 임시로 담아둘 리스트 설정
-            List<String> tmpList = new ArrayList<>();
+            List<String> tmnList = new ArrayList<>();
+            List<String> tmxList = new ArrayList<>();
             List<String> dateList = new ArrayList<>();
             List<String> timeList = new ArrayList<>();
 
@@ -108,8 +109,10 @@ public class SelectedWeatherService {
                 String value = items.item(i).getChildNodes().item(5).getTextContent();
 
                 // 예보 정보 코드값 변경 후 리스트에 모으기
-                if (category.equals("TMP")) {
-                    tmpList.add(value);
+                if (category.equals("TMN")) {
+                    tmnList.add(value);
+                } else if (category.equals("TMX")) {
+                    tmxList.add(value);
                     dateList.add(fcstDate);
                     timeList.add(fcstTime);
                 } else
@@ -117,45 +120,46 @@ public class SelectedWeatherService {
             }
 
             LocalDate date = LocalDate.parse(baseDate, DateTimeFormatter.BASIC_ISO_DATE);
+            String tmn = "";
+            String tmx = "";
+            String sdate = "";
+            String stime = "";
             if (date.minusDays(1) == LocalDate.now()) {
-                for (int i = 0; i < 24; i++) {
-                    tmpList.remove(i);
-                    dateList.remove(i);
-                    timeList.remove(i);
-                }
+                tmn = tmnList.get(1);
+                tmx = tmxList.get(1);
+                sdate = dateList.get(1);
+                stime = timeList.get(1);
             } else if (date.minusDays(2) == LocalDate.now()) {
-                for (int i = 24; i < 48; i++) {
-                    tmpList.remove(i);
-                    dateList.remove(i);
-                    timeList.remove(i);
-                }
+                tmn = tmnList.get(2);
+                tmx = tmxList.get(2);
+                sdate = dateList.get(2);
+                stime = timeList.get(2);
             } else if (date.minusDays(3) == LocalDate.now()) {
-                for (int i = 48; i < 96; i++) {
-                    tmpList.remove(i);
-                    dateList.remove(i);
-                    timeList.remove(i);
-                }
+                tmn = tmnList.get(3);
+                tmx = tmxList.get(3);
+                sdate = dateList.get(3);
+                stime = timeList.get(3);
+            } else {
+                tmn = tmnList.get(0);
+                tmx = tmxList.get(0);
+                sdate = dateList.get(0);
+                stime = timeList.get(0);
             }
 
-            // 모은 리스트의 값을 순서대로 DTO에 저장
-            for (int i = 0; i < 24; i++) {
-                SelectedWeatherDTO selectedweatherDTO = new SelectedWeatherDTO();
+            // 예보 날짜 및 시간 파싱 , 기온 평균 구하고 DTO에 저장
+            LocalDate parseDate = LocalDate.parse(sdate, DateTimeFormatter.BASIC_ISO_DATE);
+            LocalTime parseTime = LocalTime.parse(stime, DateTimeFormatter.ofPattern("HHmm"));
 
-                selectedweatherDTO.setTmp(tmpList.get(i));
+            double avgTemp = (Double.parseDouble(tmn) + Double.parseDouble(tmx)) / 2;
 
-                // 예보 날짜 및 시간 파싱
-                LocalDate parseDate = LocalDate.parse(dateList.get(i), DateTimeFormatter.BASIC_ISO_DATE);
-                LocalTime parseTime = LocalTime.parse(timeList.get(i), DateTimeFormatter.ofPattern("HHmm"));
-                selectedweatherDTO.setFcstDate(parseDate);
-                selectedweatherDTO.setFcstTime(parseTime);
-
-                // 리스트에 DTO 값 넣기
-                weatherList.add(selectedweatherDTO);
-            }
+            selectedweatherDTO.setTmn(Double.parseDouble(tmn));
+            selectedweatherDTO.setTmx(Double.parseDouble(tmx));
+            selectedweatherDTO.setAvgTmp(avgTemp);
+            selectedweatherDTO.setFcstDate(parseDate);
+            selectedweatherDTO.setFcstTime(parseTime);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println(weatherList.toString());
-        return weatherList;
+        return selectedweatherDTO;
     }
 }

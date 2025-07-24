@@ -16,7 +16,9 @@ import lombok.ToString;
 @AllArgsConstructor
 public class SelectedWeatherDTO {
 
-    private String tmp;
+    private double tmn;
+    private double tmx;
+    private double avgTmp;
 
     private LocalDate fcstDate;
     private LocalTime fcstTime;

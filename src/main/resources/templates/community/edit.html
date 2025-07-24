@@ -92,14 +92,16 @@
               id="previewImage"
               th:src="@{'/uploads/' + ${communityDTO.repImageUrl}}"
               alt="대표사진"
-              style="max-width: 200px;"
+              style="max-width: 200px"
             />
             <button
               type="button"
               id="repImageXBtn"
               class="x-square-btn show"
               tabindex="-1"
-            >&times;</button>
+            >
+              &times;
+            </button>
           </div>
           <div class="file-row d-flex align-items-center gap-2">
             <input
@@ -115,7 +117,9 @@
               id="repImageXBtn2"
               class="x-square-btn"
               tabindex="-1"
-            >&times;</button>
+            >
+              &times;
+            </button>
           </div>
           <input
             type="hidden"
@@ -143,7 +147,9 @@
               id="extraImagesXBtn"
               class="x-square-btn btn btn-outline-danger"
               tabindex="-1"
-            >&times;</button>
+            >
+              &times;
+            </button>
           </div>
           <div class="form-text">Ctrl 또는 Shift를 눌러 여러 장 선택 가능</div>
         </div>
@@ -186,7 +192,7 @@
             />
             <label class="form-check-label" for="female">여성</label>
           </div>
-          <div class="invalid-feedback" style="display: none;">
+          <div class="invalid-feedback" style="display: none">
             성별을 최소 하나 선택해주세요.
           </div>
         </div>
@@ -245,8 +251,42 @@
           </div>
         </div>
 
+        <!-- 시간대 -->
+        <div id="tempGroup" class="mb-3">
+          <label class="form-label"
+            >시간대 선택 <span class="text-danger">*</span></label
+          >
+          <div class="form-date">
+            <input type="date" name="dates" id="dates" />
+          </div>
+          <div class="form-check dayTime">
+            <input
+              class="form-check-input time-check"
+              type="checkbox"
+              name="values"
+              value="mins"
+              id="mins"
+            />
+            <label class="form-check-label" for="mins">최저기온</label>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input time-check"
+              type="checkbox"
+              name="values"
+              value="maxs"
+              id="maxs"
+            />
+            <label class="form-check-label" for="maxs">최고기온</label>
+          </div>
+          <input type="hidden" name="lat" id="lat" />
+          <input type="hidden" name="lon" id="lon" />
+        </div>
+
         <a href="/community/list" class="btn btn-secondary ms-2">목록</a>
-        <button type="submit" class="btn btn-primary" id="bsubmitBtn">수정</button>
+        <button type="submit" class="btn btn-primary" id="bsubmitBtn">
+          수정
+        </button>
       </form>
     </div>
 

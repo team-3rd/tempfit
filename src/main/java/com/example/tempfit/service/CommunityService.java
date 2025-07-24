@@ -62,7 +62,7 @@ public class CommunityService {
 
     // 게시글 등록 + 이미지 저장
     public Long register(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
-                         List<SelectedWeatherDTO> weatherList)
+            SelectedWeatherDTO weatherData)
             throws IOException {
         Community community = Community.builder()
                 .title(dto.getTitle())
@@ -93,39 +93,20 @@ public class CommunityService {
                 .outdoor(dto.isOutdoor())
                 .build();
 
-        double daySum = 0, nightSum = 0;
-        int dayCount = 0, nightCount = 0;
-
         sex.setCommunity(community);
         community.setCommunitySex(sex);
 
-        for (SelectedWeatherDTO weather : weatherList) {
-            int hour = weather.getFcstTime().getHour();
-            double tmp = Double.parseDouble(weather.getTmp());
-
-            if (hour >= 6 && hour <= 17) {
-                daySum += tmp;
-                dayCount++;
-            }
-
-            if (hour >= 18 || hour <= 5) {
-                nightSum += tmp;
-                nightCount++;
-            }
-        }
-
-        double dayAvg = Math.round(dayCount > 0 ? daySum / dayCount : 0);
-        double nightAvg = Math.round(nightCount > 0 ? nightSum / nightCount : 0);
-
-        dto.setDayAvgTemp(dayAvg);
-        dto.setNightAvgTemp(nightAvg);
+        dto.setMinTemp(weatherData.getTmn());
+        dto.setMaxTemp(weatherData.getTmx());
+        dto.setAvgTemp(weatherData.getAvgTmp());
 
         CommunityTemp temp = CommunityTemp.builder()
                 .dates(dto.getDates())
-                .dayTime(dto.isDayTime())
-                .nightTime(dto.isNightTime())
-                .dayAvgTemp(dto.getDayAvgTemp())
-                .nightAvgTemp(dto.getNightAvgTemp())
+                .mins(dto.isMins())
+                .maxs(dto.isMaxs())
+                .minTemp(dto.getMinTemp())
+                .maxTemp(dto.getMaxTemp())
+                .avgTemp(dto.getAvgTemp())
                 .build();
 
         style.setCommunity(community);
@@ -162,10 +143,11 @@ public class CommunityService {
         });
 
         communityTempRepository.findById(id).ifPresent(temp -> {
-            dto.setDayTime(temp.isDayTime());
-            dto.setNightTime(temp.isNightTime());
-            dto.setDayAvgTemp(temp.getDayAvgTemp());
-            dto.setNightAvgTemp(temp.getNightAvgTemp());
+            dto.setMins(temp.isMins());
+            dto.setMaxs(temp.isMaxs());
+            dto.setMinTemp(temp.getMinTemp());
+            dto.setMaxTemp(temp.getMaxTemp());
+            dto.setAvgTemp(temp.getAvgTemp());
         });
         return dto;
     }
@@ -189,7 +171,7 @@ public class CommunityService {
     }
 
     public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
-                       boolean removeRepImage) throws IOException {
+            boolean removeRepImage, SelectedWeatherDTO weatherData) throws IOException {
         Community community = communityRepository.findById(dto.getId()).orElseThrow();
         community.setTitle(dto.getTitle());
         community.setAuthor(currentUser);
@@ -245,6 +227,21 @@ public class CommunityService {
         community.setCommunityStyle(style);
         communityStyleRepository.save(style);
 
+        dto.setMinTemp(weatherData.getTmn());
+        dto.setMaxTemp(weatherData.getTmx());
+        dto.setAvgTemp(weatherData.getAvgTmp());
+
+        CommunityTemp temp = communityTempRepository.findById(dto.getId())
+                .orElseGet(() -> CommunityTemp.builder().build());
+        temp.setMins(dto.isMins());
+        temp.setMaxs(dto.isMaxs());
+        temp.setMinTemp(dto.getMinTemp());
+        temp.setMaxTemp(dto.getMaxTemp());
+        temp.setAvgTemp(dto.getAvgTemp());
+        temp.setCommunity(community);
+        community.setCommunityTemp(temp);
+        communityTempRepository.save(temp);
+
         communityRepository.save(community);
     }
 
@@ -253,6 +250,7 @@ public class CommunityService {
         communityTempRepository.deleteById(id);
         communityStyleRepository.deleteById(id);
         communitySexRepository.deleteById(id);
+        communityTempRepository.deleteById(id);
         communityImageRepository.deleteAll(communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(id));
         communityRepository.deleteById(id);
     }
@@ -314,10 +312,11 @@ public class CommunityService {
                 .street((Boolean) arr[7])
                 .formal((Boolean) arr[8])
                 .outdoor((Boolean) arr[9])
-                .dayTime((Boolean) arr[10])
-                .nightTime((Boolean) arr[11])
-                .dayAvgTemp((double) arr[12])
-                .nightAvgTemp((double) arr[13])
+                .mins((Boolean) arr[10])
+                .maxs((Boolean) arr[11])
+                .minTemp((double) arr[12])
+                .maxTemp((double) arr[13])
+                .avgTemp((double) arr[13])
                 .build();
     }
 

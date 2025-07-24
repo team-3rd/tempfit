@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
   <head>
     <meta charset="UTF-8" />
     <title>게시글 상세</title>
@@ -20,7 +22,9 @@
       <div class="detail-meta">
         작성자: <span th:text="${post.author.name}">관리자</span> &nbsp;|&nbsp;
         등록일:
-        <span th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}">
+        <span
+          th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"
+        >
           2025-06-15 12:00
         </span>
         &nbsp;|&nbsp; 추천: <span th:text="${post.recommendCount}">0</span>
@@ -28,22 +32,28 @@
 
       <!-- 스타일 배지 -->
       <div class="badge-list mb-3">
-        <span th:if="${post.male&&!post.female}" class="badge bg-primary">남성</span>
-        <span th:if="${post.female&&!post.male}" class="badge bg-danger">여성</span>
-        <span th:if="${post.male&&post.female}" class="badge bg-success">공용</span>
-        <span th:if="${post.casual}"  class="badge bg-secondary">캐주얼</span>
-        <span th:if="${post.street}"  class="badge bg-secondary">스트리트</span>
-        <span th:if="${post.formal}"  class="badge bg-secondary">포멀</span>
+        <span th:if="${post.male&&!post.female}" class="badge bg-primary"
+          >남성</span
+        >
+        <span th:if="${post.female&&!post.male}" class="badge bg-danger"
+          >여성</span
+        >
+        <span th:if="${post.male&&post.female}" class="badge bg-success"
+          >공용</span
+        >
+        <span th:if="${post.casual}" class="badge bg-secondary">캐주얼</span>
+        <span th:if="${post.street}" class="badge bg-secondary">스트리트</span>
+        <span th:if="${post.formal}" class="badge bg-secondary">포멀</span>
         <span th:if="${post.outdoor}" class="badge bg-secondary">아웃도어</span>
         <span
-          th:if="${post.dayTime}"
+          th:if="${post.maxs}"
           class="badge bg-day day"
-          th:text="${'낮  ' + post.dayAvgTemp + '℃'}"
+          th:text="${'최고  ' + post.maxTemp + '℃'}"
         ></span>
         <span
-          th:if="${post.NightTime}"
+          th:if="${post.mins}"
           class="badge bg-night night"
-          th:text="${'밤  ' + post.nightAvgTemp + '℃'}"
+          th:text="${'최저  ' + post.minTemp + '℃'}"
         ></span>
       </div>
 
@@ -68,21 +78,26 @@
       </div>
 
       <!-- 본문 내용 -->
-      <div class="detail-content" th:text="${post.content}">
-        게시글 내용
-      </div>
+      <div class="detail-content" th:text="${post.content}">게시글 내용</div>
 
       <!-- 액션 버튼 -->
       <div class="detail-actions">
-        <a th:href="@{/community/list}" class="btn btn-outline-secondary">목록</a>
-        <form th:action="@{/community/recommend/{id}(id=${post.id})}" method="post" class="d-inline">
+        <a th:href="@{/community/list}" class="btn btn-outline-secondary"
+          >목록</a
+        >
+        <form
+          th:action="@{/community/recommend/{id}(id=${post.id})}"
+          method="post"
+          class="d-inline"
+        >
           <button type="submit" class="btn btn-outline-primary">추천</button>
         </form>
         <a
           th:href="@{/community/edit/{id}(id=${post.id})}"
           class="btn btn-primary"
           th:if="${#authentication.name} == ${post.author.email}"
-        >수정</a>
+          >수정</a
+        >
         <form
           th:action="@{/community/delete/{id}(id=${post.id})}"
           method="post"
@@ -138,9 +153,12 @@
             class="text-muted"
             th:text="${c.authorName != null && c.authorName.trim().length()>0
                          ? c.authorName : '익명'}"
-          >익명</small>
+            >익명</small
+          >
           &nbsp;
-          <small th:text="${#temporals.format(c.createdDate,'yyyy-MM-dd HH:mm')}">
+          <small
+            th:text="${#temporals.format(c.createdDate,'yyyy-MM-dd HH:mm')}"
+          >
             시간
           </small>
           <p th:text="${c.content}">댓글 내용</p>
@@ -150,7 +168,6 @@
     <div th:replace="fragments/footer :: footer"></div>
   </body>
 </html>
-
 
 <!-- 카테고리 성별 온도  -->
 <!-- 최고 최저로 밑에 카테고리 -->

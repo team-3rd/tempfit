@@ -26,16 +26,19 @@ public class CommunityTemp {
     private LocalDate dates;
 
     @Column(nullable = false)
-    private boolean dayTime;
+    private boolean mins;
 
     @Column(nullable = false)
-    private boolean nightTime;
+    private boolean maxs;
 
     @Column(nullable = false)
-    private double dayAvgTemp;
+    private double minTemp;
 
     @Column(nullable = false)
-    private double nightAvgTemp;
+    private double maxTemp;
+
+    @Column(nullable = false)
+    private double avgTemp;
 
     // 연관관계 편의 메서드(필수는 아니지만 있으면 좋음)
     public void setCommunity(Community community) {

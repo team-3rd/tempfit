@@ -92,12 +92,11 @@ public class CommunityController {
     public String registerPost(
             @ModelAttribute("communityDTO") CommunityDTO dto,
             @RequestParam(value = "styleNames", required = false) List<String> styleNames,
-            @RequestParam(value = "times", required = false) List<String> times,
+            @RequestParam(value = "values", required = false) List<String> values,
             @RequestParam("repImage") MultipartFile repImage,
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
-            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet
-    ) throws IOException {
+            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
 
         if (sexSet != null) {
             dto.setSexSet(sexSet);
@@ -111,10 +110,10 @@ public class CommunityController {
             dto.setFormal(styleNames.contains("FORMAL"));
             dto.setOutdoor(styleNames.contains("OUTDOOR"));
         }
-        if (times != null) {
-            dto.setTimes(times);
-            dto.setDayTime(times.contains("dayTimes"));
-            dto.setNightTime(times.contains("nightTimes"));
+        if (values != null) {
+            dto.setValues(values);
+            dto.setMins(values.contains("mins"));
+            dto.setMaxs(values.contains("maxs"));
         }
 
         LocalDate dates = dto.getDates();
@@ -123,14 +122,13 @@ public class CommunityController {
         coords.setLon(dto.getLon());
         GridDTO grid = weatherService.changeCoords(coords);
 
-        List<SelectedWeatherDTO> weatherList =
-                selectedWeatherService.getWeatherApi(grid, dates);
+        SelectedWeatherDTO weatherData = selectedWeatherService.getWeatherApi(grid, dates);
 
         Member loginMember = memberRepository.findByEmailAndFromSocial(
                 authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
 
         // ← 변경: 등록 후 상세 페이지로 리다이렉트
-        Long newId = communityService.register(dto, loginMember, repImage, extraImages, weatherList);
+        Long newId = communityService.register(dto, loginMember, repImage, extraImages, weatherData);
         return "redirect:/community/detail/" + newId;
     }
 
@@ -146,12 +144,12 @@ public class CommunityController {
             @PathVariable Long id,
             @ModelAttribute("communityDTO") CommunityDTO dto,
             @RequestParam(value = "styleNames", required = false) List<String> styleNames,
+            @RequestParam(value = "values", required = false) List<String> values,
             @RequestParam(value = "repImage", required = false) MultipartFile repImage,
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @RequestParam(value = "removeRepImage", defaultValue = "false") boolean removeRepImage,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
-            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet
-    ) throws IOException {
+            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
 
         if (sexSet != null) {
             dto.setSexSet(sexSet);
@@ -165,10 +163,23 @@ public class CommunityController {
             dto.setFormal(styleNames.contains("FORMAL"));
             dto.setOutdoor(styleNames.contains("OUTDOOR"));
         }
+        if (values != null) {
+            dto.setValues(values);
+            dto.setMins(values.contains("mins"));
+            dto.setMaxs(values.contains("maxs"));
+        }
+
+        LocalDate dates = dto.getDates();
+        CoordsDTO coords = new CoordsDTO();
+        coords.setLat(dto.getLat());
+        coords.setLon(dto.getLon());
+        GridDTO grid = weatherService.changeCoords(coords);
+
+        SelectedWeatherDTO weatherData = selectedWeatherService.getWeatherApi(grid, dates);
 
         Member loginMember = memberRepository.findByEmailAndFromSocial(
                 authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
-        communityService.modify(dto, loginMember, repImage, extraImages, removeRepImage);
+        communityService.modify(dto, loginMember, repImage, extraImages, removeRepImage, weatherData);
         return "redirect:/community/detail/" + id;
     }
 

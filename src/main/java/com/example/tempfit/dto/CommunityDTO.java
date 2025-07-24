@@ -27,7 +27,7 @@ public class CommunityDTO {
     private String content;
 
     private int recommendCount;
-    
+
     private List<Sex> sexSet;
     private boolean male;
     private boolean female;
@@ -40,12 +40,13 @@ public class CommunityDTO {
     private boolean outdoor;
 
     /* 평균 기온 관련 값 */
-    private List<String> times;
+    private List<String> values;
     private LocalDate dates;
-    private boolean dayTime;
-    private boolean nightTime;
-    private double dayAvgTemp;
-    private double nightAvgTemp;
+    private boolean mins;
+    private boolean maxs;
+    private double minTemp;
+    private double maxTemp;
+    private double avgTemp;
     private double lat;
     private double lon;
 

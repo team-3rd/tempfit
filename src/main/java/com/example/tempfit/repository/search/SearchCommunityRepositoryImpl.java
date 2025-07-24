@@ -61,10 +61,11 @@ public class SearchCommunityRepositoryImpl
                         style.street,
                         style.formal,
                         style.outdoor,
-                        temp.dayTime,
-                        temp.nightTime,
-                        temp.dayAvgTemp,
-                        temp.nightAvgTemp)
+                        temp.mins,
+                        temp.maxs,
+                        temp.minTemp,
+                        temp.maxTemp,
+                        temp.avgTemp)
                 .distinct();
 
         BooleanBuilder builder = new BooleanBuilder();
@@ -104,8 +105,7 @@ public class SearchCommunityRepositoryImpl
 
         if (range != null) {
             BooleanBuilder tb2 = new BooleanBuilder();
-            tb2.or(temp.dayAvgTemp.between(range.getMinTemp(), range.getMaxTemp()));
-            tb2.or(temp.nightAvgTemp.between(range.getMinTemp(), range.getMaxTemp()));
+            tb2.or(temp.avgTemp.between(range.getMinTemp(), range.getMaxTemp()));
             builder.and(tb2);
         }
 
@@ -141,10 +141,11 @@ public class SearchCommunityRepositoryImpl
                         t.get(style.street),
                         t.get(style.formal),
                         t.get(style.outdoor),
-                        t.get(temp.dayTime),
-                        t.get(temp.nightTime),
-                        t.get(temp.dayAvgTemp),
-                        t.get(temp.nightAvgTemp)
+                        t.get(temp.mins),
+                        t.get(temp.maxs),
+                        t.get(temp.minTemp),
+                        t.get(temp.maxTemp),
+                        t.get(temp.avgTemp)
                 })
                 .collect(Collectors.toList());
 
