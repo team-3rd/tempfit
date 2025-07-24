@@ -37,8 +37,8 @@
       <form th:action="@{/member/mychange}" th:object="${dto}" method="post" novalidate>
         
         <div class="mb-3">
-          <label for="id" class="form-label">ID</label>
-          <input type="text" class="form-control" id="id" name="email" placeholder="아이디" th:field="*{email}" readonly required />
+          <label for="id" class="form-label">이메일 (ID)</label>
+          <input type="text" class="form-control" id="id" name="email" placeholder="이메일 (ID)" th:field="*{email}" readonly required />
         </div>
 
         <div class="mb-3">

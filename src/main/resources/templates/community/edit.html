@@ -77,7 +77,7 @@
             class="form-control"
             id="author"
             name="author"
-            th:value="${#authentication.name}"
+            th:value="${#authentication.principal.nickname}"
             readonly
           />
         </div>

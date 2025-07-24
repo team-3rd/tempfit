@@ -64,3 +64,17 @@ textarea.form-control {
   color: #fff;
   border-color: #dc3545;
 }
+
+/* 전역 기본 폰트로 Pretendard Variable 사용 */
+body {
+  font-family: 'Pretendard Variable', sans-serif;
+}
+
+/* 선택적으로 굵기/스타일별 사용 예시 */
+h1 {
+  font-weight: 700; /* Bold */
+  font-family: 'Pretendard Variable', sans-serif;
+}
+.light-text {
+  font-weight: 300; /* Light */
+}
