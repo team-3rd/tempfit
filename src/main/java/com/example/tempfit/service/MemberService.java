@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Role;
 import com.example.tempfit.repository.MemberRepository;
+import com.example.tempfit.security.AuthMemberDTO;
 import com.example.tempfit.security.LoginMemberDetails;
 import com.example.tempfit.dto.MemberDTO;
 
@@ -53,11 +54,12 @@ public class MemberService {
         memberRepository.save(member);
 
         LoginMemberDetails updatedUserDetails = new LoginMemberDetails(member);
+        AuthMemberDTO authMemberDTO = new AuthMemberDTO(email, updatedUserDetails.getName(), updatedUserDetails.getNickname(), updatedUserDetails.getPassword(), updatedUserDetails.isFromSocial(), updatedUserDetails.getSex(), updatedUserDetails.getAuthorities());
 
         Authentication newAuth = new UsernamePasswordAuthenticationToken(
-        updatedUserDetails,
+        authMemberDTO,
         null,
-        updatedUserDetails.getAuthorities()
+        authMemberDTO.getAuthorities()
         );
 
         SecurityContextHolder.getContext().setAuthentication(newAuth);

@@ -44,6 +44,10 @@ public class AuthMemberDTO extends User implements OAuth2User {
         this.attr = attr;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     @Override
     public Map<String, Object> getAttributes() {
         return this.attr;

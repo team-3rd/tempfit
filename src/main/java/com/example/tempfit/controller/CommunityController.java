@@ -166,7 +166,7 @@ public class CommunityController {
         SelectedWeatherDTO weatherData = selectedWeatherService.getWeatherApi(grid, dates);
 
         Member loginMember = memberRepository.findByEmailAndFromSocial(
-                authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
+                authMemberDTO.getEmail(), authMemberDTO.isFromSocial());
         communityService.modify(dto, loginMember, repImage, extraImages, removeRepImage, weatherData);
         return "redirect:/community/detail/" + id;
     }

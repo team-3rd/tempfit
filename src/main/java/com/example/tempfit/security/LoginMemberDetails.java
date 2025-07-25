@@ -1,9 +1,10 @@
 package com.example.tempfit.security;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.tempfit.entity.Member;
@@ -26,7 +27,7 @@ public class LoginMemberDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return Set.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
