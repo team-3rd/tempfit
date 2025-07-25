@@ -88,6 +88,8 @@ function renderByGender(gender) {
   const onePieceTops = ["피케/카라 원피스", "원피스", "맥시드레스"];
   const isOnePiece = onePieceTops.includes(data.top.name);
 
+  // ─── 위쪽: 상의 ───
+  renderSlot("top", data.top, row1);
   // ─── 위쪽: 아우터 ───
   if (data.outer && data.outer.name) {
     renderSlot("outer", data.outer, row1);
@@ -95,9 +97,6 @@ function renderByGender(gender) {
     // 아우터가 빈 문자열이거나 undefined면 “아우터 없음” 표시
     row1.innerHTML += emptySlotMarkup("아우터");
   }
-
-  // ─── 위쪽: 상의 ───
-  renderSlot("top", data.top, row1);
 
   // 아래쪽: 하의 · 신발
   if (gender === "female" && isOnePiece) {
