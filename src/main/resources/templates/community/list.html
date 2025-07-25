@@ -129,17 +129,24 @@
           th:href="@{/community/detail/{id}(id=${post.id})}"
           class="post-card text-decoration-none text-reset"
         >
-          <!-- 1) 생성일시 -->
-          <div class="card-time text-center px-3 pt-2">
-            <small
-              class="text-muted"
-              th:text="${#temporals.format(post.createdDate,'yyyy-MM-dd HH:mm')}"
-            >
-              2025-07-21 16:59
-            </small>
+          <!-- 시간/상대시간 및 온도 -->
+          <div
+            class="card-time d-flex justify-content-between align-items-center px-3 pt-2"
+          >
+            <small class="text-muted" th:text="${post.displayDate}"></small>
+            <div class="d-flex">
+              <span
+                class="badge bg-day me-1"
+                th:text="${T(java.lang.Math).round(post.maxTemp) + '°'}"
+              ></span>
+              <span
+                class="badge bg-night"
+                th:text="${T(java.lang.Math).round(post.minTemp) + '°'}"
+              ></span>
+            </div>
           </div>
 
-          <!-- 2) 이미지 -->
+          <!-- 대표 이미지 -->
           <img
             th:if="${post.repImageUrl != null}"
             th:src="@{'/uploads/' + ${post.repImageUrl}}"
@@ -147,10 +154,12 @@
             class="card-img-top"
           />
 
-          <!-- 3) 카드 본문 -->
+          <!-- 카드 본문 -->
           <div class="card-body">
             <h5 class="card-title" th:text="${post.title}">제목</h5>
-            <p class="card-subtitle" th:text="${post.author.nickname}">작성자</p>
+            <p class="card-subtitle" th:text="${post.author.nickname}">
+              작성자
+            </p>
             <div class="badge-list">
               <span th:if="${post.casual}" class="badge bg-secondary"
                 >캐주얼</span
@@ -165,16 +174,6 @@
                 >아웃도어</span
               >
             </div>
-            <div class="temp-badge-list mt-2">
-              <span
-                class="badge bg-day"
-                th:text="${'최고 ' + post.maxTemp + '℃'}"
-              ></span>
-              <span
-                class="badge bg-night"
-                th:text="${'최저 ' + post.minTemp + '℃'}"
-              ></span>
-            </div>
           </div>
         </a>
       </div>
@@ -186,9 +185,8 @@
             <a
               class="page-link"
               th:href="@{/community/list(page=${startPage - 1}, type=${type}, keyword=${keyword}, styleNames=${styleNames})}"
+              >이전</a
             >
-              이전
-            </a>
           </li>
           <li
             class="page-item"
@@ -206,9 +204,8 @@
             <a
               class="page-link"
               th:href="@{/community/list(page=${endPage + 1}, type=${type}, keyword=${keyword}, styleNames=${styleNames})}"
+              >다음</a
             >
-              다음
-            </a>
           </li>
         </ul>
       </nav>
