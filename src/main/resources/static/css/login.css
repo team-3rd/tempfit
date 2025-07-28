@@ -1,5 +1,6 @@
 html,
 body {
+  font-family: 'Pretendard Variable', sans-serif;
   height: 100%;
   box-sizing: border-box;
 }
@@ -23,9 +24,4 @@ body {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-}
-
-/* 전역 기본 폰트로 Pretendard Variable 사용 */
-body {
-  font-family: 'Pretendard Variable', sans-serif;
 }

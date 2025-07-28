@@ -6,7 +6,8 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>템핏 TempFit - 날씨 기반 의상 추천</title>
-    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <link href="/css/darkmode.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
     <link href="css/main.css" rel="stylesheet" />
     <!-- Pretendard Variable 웹폰트 (jsDelivr) -->
@@ -20,6 +21,7 @@
   <body>
     <!-- Navbar -->
     <th:block th:replace="fragments/navbar :: navbar"></th:block>
+    <th:block th:replace="fragments/toggle :: toggle"></th:block>
 
     <div class="container px-4 px-lg-5">
       <!-- 1) 상단: 날씨 카드 + 추천 코디 -->

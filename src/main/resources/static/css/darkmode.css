@@ -7,9 +7,27 @@
   color: #e0e0e0;
 }
 
-[data-bs-theme="dark"] .card {
+[data-bs-theme="dark"] body {
+  background-color: #121212 !important;
+  color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] .container {
+  background-color: transparent !important;
+}
+
+[data-bs-theme="dark"] .bg-light {
+  background-color: #121212 !important;
+  color: #e0e0e0
+}
+
+[data-bs-theme="dark"] .card, [data-bs-theme="dark"] .profile-card {
   background-color: #1e1e1e;
   color: #ffffff;
+}
+
+[data-bs-theme="dark"] .profile-label {
+  color: #bebebe;
 }
 
 [data-bs-theme="dark"] .form-control {

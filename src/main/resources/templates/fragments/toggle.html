@@ -1,11 +1,66 @@
 <div th:fragment="toggle">
-  <button class="btn btn-sm btn-secondary" onclick="toggleTheme()">🌙 다크모드 토글</button>
+  <button class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()">
+    <img id="theme-icon" src="/images/moon.png" alt="Toggle Theme" width="50" height="50">
+  </button>
 
   <script>
     function toggleTheme() {
       const html = document.documentElement;
-      const current = html.getAttribute("data-bs-theme");
-      html.setAttribute("data-bs-theme", current === "dark" ? "light" : "dark");
+      const icon = document.getElementById("theme-icon");
+      const current = html.getAttribute("data-bs-theme") || "light";
+      const nextTheme = current === "dark" ? "light" : "dark";
+
+      html.setAttribute("data-bs-theme", nextTheme);
+      icon.src = nextTheme === "dark" ? "/images/Moon.png" : "/images/Sun.png";
     }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const html = document.documentElement;
+      const icon = document.getElementById("theme-icon");
+      const theme = html.getAttribute("data-bs-theme") || "light";
+      icon.src = theme === "dark" ? "/images/Moon.png" : "/images/Sun.png";
+    });
+
+    // ⬇️ 푸터 위까지만 버튼 따라오도록
+    window.addEventListener("scroll", () => {
+      const toggleBtn = document.getElementById("theme-toggle-btn");
+      const footer = document.querySelector("footer");
+
+      if (!footer) return; // footer 없으면 무시
+
+      const footerTop = footer.getBoundingClientRect().top + window.scrollY;
+      const windowBottom = window.scrollY + window.innerHeight;
+      const buffer = 20;
+
+      if (windowBottom > footerTop - buffer) {
+        const overlap = windowBottom - footerTop + buffer;
+        toggleBtn.style.bottom = `${overlap}px`;
+      } else {
+        toggleBtn.style.bottom = "20px";
+      }
+    });
   </script>
+
+  <style>
+    .theme-toggle-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      border: none;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+      z-index: 9999;
+      border-radius: 50%;
+      overflow: hidden;
+      transition: bottom 0.2s ease; /* 부드럽게 위치 이동 */
+    }
+
+    .theme-toggle-btn img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  </style>
 </div>
