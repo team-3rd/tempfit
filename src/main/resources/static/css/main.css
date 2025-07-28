@@ -238,12 +238,12 @@ footer.py-5.bg-dark {
   gap: 5px;
 }
 .best-looks {
-  color: RGB(255,215,0);
+  color: RGB(255, 215, 0);
   font-weight: 700;
   letter-spacing: 1px;
   margin-left: 3px;
   /* text-shadow: 1px 1px 2px RGB(166,124,0); */
-  text-shadow: 1px 1px 2px RGB(0,0,0);
+  text-shadow: 1px 1px 2px RGB(0, 0, 0);
 }
 /* 카드 상단 스타일명 헤더 (optional 추가) */
 .card-style-header {
@@ -272,14 +272,216 @@ footer.py-5.bg-dark {
 }
 /* 전역 기본 폰트로 Pretendard Variable 사용 */
 body {
-  font-family: 'Pretendard Variable', sans-serif;
+  font-family: "Pretendard Variable", sans-serif;
 }
 
 /* 선택적으로 굵기/스타일별 사용 예시 */
 h1 {
   font-weight: 700; /* Bold */
-  font-family: 'Pretendard Variable', sans-serif;
+  font-family: "Pretendard Variable", sans-serif;
 }
 .light-text {
   font-weight: 300; /* Light */
+}
+#weather-location {
+  position: relative;
+  z-index: 2;
+  background-image: url(../images/white-cutted.png);
+  background-position-x: 100%;
+  background-position-y: -200px;
+  background-repeat: repeat-x;
+}
+.address-list {
+  overflow: hidden;
+}
+.list-li-left {
+  float: left;
+  background-position: 0, 0;
+  text-align: center;
+  height: 38px;
+  line-height: 25px;
+  list-style: none;
+}
+.list-li-center {
+  float: left;
+  background-position: 0, -100px;
+  text-align: center;
+  height: 38px;
+  line-height: 25px;
+  list-style: none;
+}
+.list-li-right {
+  float: right;
+  background-position: 0, -200px;
+  text-align: center;
+  height: 38px;
+  list-style: none;
+}
+.loc-btn {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background-image: url(../images/crosshair-24.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 100%;
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
+}
+.do-btn {
+  display: inline-block;
+  height: 16px;
+  padding: 9px 13px 12px 12px;
+  font-size: 1.4rem;
+  color: #333;
+  text-decoration: none;
+}
+.si-btn {
+  display: inline-block;
+  height: 16px;
+  padding: 9px 13px 12px 12px;
+  font-size: 1.4rem;
+  color: #333;
+  text-decoration: none;
+}
+.layer-do {
+  position: absolute;
+  z-index: 10;
+  top: 80px;
+  left: 0;
+  border: 1px solid #eee;
+  border-top: 0;
+  background-color: #fff;
+}
+.layer-si {
+  position: absolute;
+  z-index: 10;
+  top: 80px;
+  left: 0;
+  border: 1px solid #eee;
+  border-top: 0;
+  background-color: #fff;
+}
+.list-do {
+  overflow: hidden;
+  width: 95%;
+  padding-top: 10px;
+}
+.list-si {
+  overflow: hidden;
+  width: 100%;
+  padding-top: 10px;
+}
+.list-li-do {
+  float: left;
+  width: 125px;
+  line-height: 1.4375;
+  list-style: none;
+  text-align: left;
+  padding-right: 15px;
+}
+.list-li-si {
+  float: left;
+  width: 125px;
+  line-height: 1.4375;
+  list-style: none;
+  text-align: left;
+  padding-right: 15px;
+}
+.li-do-btn {
+  font-size: 1.1rem;
+  color: #333;
+  text-decoration: none;
+  width: 100%;
+}
+.li-si-btn {
+  font-size: 1rem;
+  color: #333;
+  text-decoration: none;
+  width: 100%;
+}
+.list-close {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  right: 30px;
+}
+.disabled {
+  pointer-events: none;
+  color: #333;
+  cursor: default;
+  text-decoration: none;
+}
+.mList {
+  margin-top: 8px;
+  line-height: 1.8rem;
+}
+#weather-sky {
+  display: inline-block;
+  vertical-align: top;
+}
+#weather-humid {
+  display: inline-block;
+  vertical-align: top;
+}
+#weather-wind {
+  display: inline-block;
+  vertical-align: top;
+}
+.name {
+  display: inline;
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.8rem;
+  letter-spacing: -0.5px;
+  color: #77777a;
+  margin-right: 3px;
+  vertical-align: top;
+}
+.sky {
+  color: #226be7;
+}
+.vals {
+  display: inline;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.8rem;
+  letter-spacing: -0.3px;
+  vertical-align: top;
+}
+.val {
+  color: #444447;
+}
+.nameSpace::after {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #d8d8d8;
+  margin: 0 8px;
+  vertical-align: 3px;
+}
+.tommorow {
+  color: #0d6efd;
+}
+.after-tommorow {
+  color: #198754;
+}
+.tom-border {
+  border: 1px solid #0d6efd;
+  border-radius: 12px;
+  box-sizing: border-box;
+  height: 24px;
+  letter-spacing: 0.2px;
+  line-height: 22px;
+  bottom: 20px;
+}
+.aft-tom-border {
+  border: 1px solid #198754;
+  border-radius: 12px;
+  box-sizing: border-box;
+  height: 24px;
+  letter-spacing: 0.2px;
+  line-height: 22px;
+  bottom: 20px;
 }

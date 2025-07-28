@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -274,10 +275,11 @@ public class WeatherService {
                 bufferedReader.close();
                 // 받은 좌표값 DTO에 저장
                 String coordData = stringBuffer.toString().replaceAll("\\\\s", "");
-                gridDTO.setNx(coordData.substring(71, 73));
-                gridDTO.setNy(coordData.substring(75, 78));
+                String[] coordArray = coordData.split(",");
+                gridDTO.setNx(coordArray[5].trim());
+                gridDTO.setNy(coordArray[6].trim());
 
-                System.out.println(coordData);
+                System.out.println(coordArray[5] + " " + coordArray[6]);
                 System.out.println(gridDTO.getNx() + "," + gridDTO.getNy());
                 return gridDTO;
             } else {
