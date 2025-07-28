@@ -4,6 +4,7 @@ import com.example.tempfit.dto.CoordiDTO;
 import com.example.tempfit.entity.CommunityStyle;
 import com.example.tempfit.entity.Coordi;
 import com.example.tempfit.entity.Product;
+import com.example.tempfit.entity.Sex;
 import com.example.tempfit.entity.TemperatureRange;
 import com.example.tempfit.repository.CoordiRepository;
 import com.example.tempfit.repository.ProductRepository;
@@ -22,12 +23,11 @@ public class CoordiService {
 
     private final CoordiRepository coordiRepository;
     private final ProductRepository productRepository;
-    
-    /**
-     * DB에 저장된 스타일별 Product 목록 조회
-     */
-    public List<Product> getProductsForProductKey(String productKey) {
-        return productRepository.findAllByProductKey(productKey);
+
+    // DB에 저장된 스타일별 Product 목록 조회
+    public List<Product> getProductsByGenderAndItemName(String gender, String itemName) {
+        Sex sex = "male".equalsIgnoreCase(gender) ? Sex.MALE : Sex.FEMALE;
+        return productRepository.findAllBySexAndItemName(sex, itemName);
     }
 
     // 게시글 등록
@@ -58,33 +58,29 @@ public class CoordiService {
         Map<String, List<CoordiDTO>> result = new LinkedHashMap<>();
 
         result.put("casual",
-            coordiRepository
-                .findTop5ByCommunityStyleCasualTrueAndTemperatureRangeOrderByRecommendCountDesc(range)
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList())
-        );
+                coordiRepository
+                        .findTop5ByCommunityStyleCasualTrueAndTemperatureRangeOrderByRecommendCountDesc(range)
+                        .stream()
+                        .map(this::toDTO)
+                        .collect(Collectors.toList()));
         result.put("street",
-            coordiRepository
-                .findTop5ByCommunityStyleStreetTrueAndTemperatureRangeOrderByRecommendCountDesc(range)
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList())
-        );
+                coordiRepository
+                        .findTop5ByCommunityStyleStreetTrueAndTemperatureRangeOrderByRecommendCountDesc(range)
+                        .stream()
+                        .map(this::toDTO)
+                        .collect(Collectors.toList()));
         result.put("formal",
-            coordiRepository
-                .findTop5ByCommunityStyleFormalTrueAndTemperatureRangeOrderByRecommendCountDesc(range)
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList())
-        );
+                coordiRepository
+                        .findTop5ByCommunityStyleFormalTrueAndTemperatureRangeOrderByRecommendCountDesc(range)
+                        .stream()
+                        .map(this::toDTO)
+                        .collect(Collectors.toList()));
         result.put("outdoor",
-            coordiRepository
-                .findTop5ByCommunityStyleOutdoorTrueAndTemperatureRangeOrderByRecommendCountDesc(range)
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList())
-        );
+                coordiRepository
+                        .findTop5ByCommunityStyleOutdoorTrueAndTemperatureRangeOrderByRecommendCountDesc(range)
+                        .stream()
+                        .map(this::toDTO)
+                        .collect(Collectors.toList()));
 
         return result;
     }

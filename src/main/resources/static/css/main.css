@@ -238,10 +238,12 @@ footer.py-5.bg-dark {
   gap: 5px;
 }
 .best-looks {
-  color: red;
+  color: RGB(255,215,0);
   font-weight: 700;
   letter-spacing: 1px;
   margin-left: 3px;
+  /* text-shadow: 1px 1px 2px RGB(166,124,0); */
+  text-shadow: 1px 1px 2px RGB(0,0,0);
 }
 /* 카드 상단 스타일명 헤더 (optional 추가) */
 .card-style-header {

@@ -20,7 +20,7 @@ public class ClothingGuideFemale {
         }
 
         // 이미지 매핑 (항목명 -> 이미지URL)
-        private static final Map<String, String> imageUrlMap = new HashMap<>();
+        public static final Map<String, String> imageUrlMap = new HashMap<>();
         static {
                 // 상의
                 imageUrlMap.put("나시", "/images/guide/top/female/camisole.png");

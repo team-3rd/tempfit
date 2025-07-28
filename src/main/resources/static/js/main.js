@@ -76,7 +76,7 @@ function renderByGender(gender) {
   // 성별 라벨 갱신
   const genderLabel = document.getElementById("gender-label");
   const labelText = gender === "male" ? "남성" : "여성";
-  genderLabel.innerHTML = `-${labelText}-`;
+  genderLabel.innerHTML = `- ${labelText} -`;
 
   const data = guideData[gender];
   const row1 = document.getElementById("clothing-guide-row1");
@@ -115,9 +115,17 @@ function renderByGender(gender) {
 // ─── ⑥ 슬롯 카드 렌더 헬퍼 ───
 function renderSlot(part, item, container) {
   if (!item.name) return;
+
+  // 1) 공백·슬래시 → 하이픈(-) 하나로
+  const safe = item.name.replace(/\s+/g, '-').replace(/\//g,'+');
+  // 2) 인코딩
+  const slug = encodeURIComponent(safe);
+  // 3) gender 뒤엔 언더바(_)
+  const prefix = currentGender + '_';
+
   const labelMap = { outer: "아우터", top: "상의", bottom: "하의", shoes: "신발" };
   container.innerHTML += `
-    <a href="/coordi/item/${item.productKey}"
+    <a href="/products/${prefix}${slug}"
        style="
          display:inline-block;
          width:150px;
@@ -189,7 +197,7 @@ function renderBestLooks(data) {
     { key: "CASUAL",  label: "캐주얼"  },
     { key: "STREET",  label: "스트리트" },
     { key: "FORMAL",  label: "포멀"    },
-    { key: "OUTDOOR", label: "아웃도어" }
+    { key: "OUTDOOR", label: "기타" }
   ];
 
   let html = "";
@@ -211,7 +219,7 @@ function renderBestLooks(data) {
               ${post.casual  ? '<span class="badge bg-secondary me-1">캐주얼</span>'  : ""}
               ${post.street  ? '<span class="badge bg-secondary me-1">스트리트</span>' : ""}
               ${post.formal  ? '<span class="badge bg-secondary me-1">포멀</span>'    : ""}
-              ${post.outdoor ? '<span class="badge bg-secondary me-1">아웃도어</span>' : ""}
+              ${post.outdoor ? '<span class="badge bg-secondary me-1">기타</span>' : ""}
             </div>
             <a href="/community/detail/${post.id}">
               <img src="/uploads/${post.repImageUrl}"
@@ -219,7 +227,7 @@ function renderBestLooks(data) {
                    style="max-width:130px; max-height:130px; border-radius:10px;"
                    alt="코디 이미지"/>
             </a>
-            <div class="text-muted mb-1">${post.authorName}</div>
+            <div class="text-muted mb-1">${post.authorNickname}</div>
             <div class="text-muted mb-3">
               추천수: ${post.recommendCount}
             </div>`;

@@ -6,7 +6,7 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>템핏 TempFit - 날씨 기반 의상 추천</title>
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
     <link href="css/styles.css" rel="stylesheet" />
     <link href="css/main.css" rel="stylesheet" />
     <!-- Pretendard Variable 웹폰트 (jsDelivr) -->
@@ -50,7 +50,7 @@
               </button>
 
               <h2 class="mb-3 text-center" style="font-size: 1.6rem; font-weight: 500; letter-spacing: -1px">
-                < 오늘의 추천 코디 >
+                【 오늘의 추천 코디 】
               </h2>
               <!-- 성별 라벨: JS 에서 동적으로 채워넣음 -->
               <div id="gender-label" class="text-center mb-2" style="font-size: 1.3rem; font-weight: 600">
@@ -75,9 +75,9 @@
           <div class="card shadow-sm">
             <div class="card-body p-4">
               <div class="text-center mb-4">
-                <div class="best-looks-title-box">
+                <div class="best-looks-title-box" title="일주일마다 초기화 됩니다.">
                   <span id="current-temp-tag" class="current-temp-tag">‘🌡현재 온도 기준(℃)’</span>
-                  <span class="style-best">스타일별 <span class="best-looks">BEST LOOKS</span></span>
+                  <span class="style-best">스타일별 <span class="best-looks">🏆명예의 전당🥇🥈🥉</span></span>
                 </div>
               </div>
               <div id="best-looks-area" class="row g-4 gx-lg-5 mt-4 ms-3">
@@ -101,9 +101,9 @@
                             <span th:if="${entry.value[0].casual}" class="badge bg-secondary me-1">캐주얼</span>
                             <span th:if="${entry.value[0].formal}" class="badge bg-secondary me-1">포멀</span>
                             <span th:if="${entry.value[0].street}" class="badge bg-secondary me-1">스트리트</span>
-                            <span th:if="${entry.value[0].outdoor}" class="badge bg-secondary me-1">아웃도어</span>
+                            <span th:if="${entry.value[0].outdoor}" class="badge bg-secondary me-1">기타</span>
                           </div>
-                          <div class="text-muted mb-1" th:text="${entry.value[0].author.name}">익명</div>
+                          <div class="text-muted mb-1" th:text="${entry.value[0].author.nickname}">익명</div>
                           <div class="text-muted mb-3" th:text="'추천수: ' + ${entry.value[0].recommendCount}">
                             추천수: 0
                           </div>

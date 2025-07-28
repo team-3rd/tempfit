@@ -4,7 +4,6 @@ import com.example.tempfit.dto.CommunityDTO;
 import com.example.tempfit.service.CommunityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import static java.util.stream.Collectors.toMap;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -31,7 +30,7 @@ public class CommunityApiController {
                 m.put("title", dto.getTitle());
                 m.put("repImageUrl", dto.getRepImageUrl());
                 m.put("recommendCount", dto.getRecommendCount());
-                m.put("authorName", dto.getAuthor().getName());
+                m.put("authorNickname", dto.getAuthor().getNickname());
                 m.put("casual", dto.isCasual());
                 m.put("street", dto.isStreet());
                 m.put("formal", dto.isFormal());
