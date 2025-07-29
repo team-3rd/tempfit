@@ -64,6 +64,8 @@ public class SearchCommunityRepositoryImpl
                         temp.minTemp,
                         temp.maxTemp,
                         temp.avgTemp)
+                        temp.avgTemp,
+                        temp.sky)
                 .distinct();
 
         BooleanBuilder builder = new BooleanBuilder();
@@ -142,6 +144,8 @@ public class SearchCommunityRepositoryImpl
                         t.get(temp.minTemp),
                         t.get(temp.maxTemp),
                         t.get(temp.avgTemp)
+                        t.get(temp.avgTemp),
+                        t.get(temp.sky)
                 })
                 .collect(Collectors.toList());
 

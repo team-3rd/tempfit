@@ -150,6 +150,29 @@ function showDo() {
         document.querySelector(".layer-do").classList.add("hide");
         document.querySelector(".list-li-left").classList.remove("unfold");
 
+        if (document.querySelector(".sigungu").textContent != "시·군·구") {
+          document.querySelector(".sigungu").textContent = "";
+
+          document
+            .querySelector(".sigungu")
+            .appendChild(document.createTextNode("시·군·구 "));
+
+          const icon = document.createElement("img");
+          icon.classList.add("img");
+          icon.width = `10`;
+          icon.height = `10`;
+          icon.src = `https://img.icons8.com/ios-filled/10/sort-down.png`;
+          icon.alt = `sort-down`;
+          document.querySelector(".sigungu").appendChild(icon);
+
+          if (document.querySelector(".layer-si").classList.length == 1) {
+            document.querySelector(".layer-si").classList.add("hide");
+            document
+              .querySelector(".list-li-center")
+              .classList.remove("unfold");
+          }
+        }
+
         dosis = clickedText;
 
         if (

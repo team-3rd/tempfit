@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="/css/list.css" />
   </head>
   <body class=" d-flex flex-column min-vh-100">
+  <body class="d-flex flex-column min-vh-100">
     <!-- 네비바 -->
     <div th:replace="fragments/navbar :: navbar"></div>
     <th:block th:replace="fragments/toggle :: toggle"></th:block>
@@ -134,6 +135,12 @@
           <!-- 시간/상대시간 및 온도 -->
           <div
             class="card-time d-flex justify-content-between align-items-center px-3 pt-2"
+        <!-- 게시글 카드 그리드 -->
+        <div class="post-grid">
+          <a
+            th:each="post : ${list}"
+            th:href="@{/community/detail/{id}(id=${post.id})}"
+            class="post-card text-decoration-none text-reset"
           >
             <small class="text-muted" th:text="${post.displayDate}"></small>
             <div class="d-flex">
@@ -145,6 +152,22 @@
                 class="badge bg-night"
                 th:text="${T(java.lang.Math).round(post.minTemp) + '°'}"
               ></span>
+            <!-- 시간/상대시간 및 온도 -->
+            <div
+              class="card-time d-flex justify-content-between align-items-center px-3 pt-2"
+            >
+              <small class="text-muted" th:text="${post.displayDate}"></small>
+              <div class="d-flex">
+                <span class="badge bg-sky me-1" th:text="${post.sky}"></span>
+                <span
+                  class="badge bg-day me-1"
+                  th:text="${post.maxTemp + '°'}"
+                ></span>
+                <span
+                  class="badge bg-night"
+                  th:text="${post.minTemp + '°'}"
+                ></span>
+              </div>
             </div>
           </div>
 
@@ -155,6 +178,13 @@
             alt="대표사진"
             class="card-img-top"
           />
+            <!-- 대표 이미지 -->
+            <img
+              th:if="${post.repImageUrl != null}"
+              th:src="@{'/uploads/' + ${post.repImageUrl}}"
+              alt="대표사진"
+              class="card-img-top"
+            />
 
           <!-- 카드 본문 -->
           <div class="card-body">
@@ -178,10 +208,37 @@
               >
             </div>
             <div class="text-end" style="min-width: 3rem;"><span>♥ [[${post.recommendCount}]]</span></div>
+            <!-- 카드 본문 -->
+            <div class="card-body">
+              <h5 class="card-title" th:text="${post.title}">제목</h5>
+              <p class="card-subtitle" th:text="${post.author.nickname}">
+                작성자
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="badge-list">
+                  <span th:if="${post.casual}" class="badge bg-secondary"
+                    >캐주얼</span
+                  >
+                  <span th:if="${post.street}" class="badge bg-secondary"
+                    >스트리트</span
+                  >
+                  <span th:if="${post.formal}" class="badge bg-secondary"
+                    >포멀</span
+                  >
+                  <span th:if="${post.outdoor}" class="badge bg-secondary"
+                    >아웃도어</span
+                  >
+                </div>
+                <div class="text-end" style="min-width: 3rem">
+                  <span>♥ [[${post.recommendCount}]]</span>
+                </div>
+              </div>
             </div>
             
           </div>
         </a>
+          </a>
+        </div>
       </div>
     </div>
 

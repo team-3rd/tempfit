@@ -50,6 +50,8 @@ body {
   overflow: hidden;
   text-decoration: none;      /* 링크 밑줄 제거 */
   color: inherit;             /* 텍스트 색상 상속 */
+  text-decoration: none; /* 링크 밑줄 제거 */
+  color: inherit; /* 텍스트 색상 상속 */
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   transform-origin: center center;
 }
@@ -131,6 +133,10 @@ body {
 }
 .bg-night {
   background-color: rgb(163, 112, 247);
+  color: #fff;
+}
+.bg-sky {
+  background-color: #0dcaf0;
   color: #fff;
 }
 

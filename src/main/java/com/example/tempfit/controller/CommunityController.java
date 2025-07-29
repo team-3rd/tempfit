@@ -97,6 +97,7 @@ public class CommunityController {
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
             @RequestParam(value = "sexSet", required = false) List<Sex> sexSet
     ) throws IOException {
+            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
 
         if (sexSet != null) {
             dto.setSexSet(sexSet);
@@ -117,6 +118,7 @@ public class CommunityController {
         coords.setLon(dto.getLon());
         GridDTO grid = weatherService.changeCoords(coords);
         SelectedWeatherDTO weatherData = selectedWeatherService.getWeatherApi(grid, dates);
+        List<SelectedWeatherDTO> weatherData = selectedWeatherService.getWeatherApi(grid, dates);
 
         Member loginMember = memberRepository.findByEmailAndFromSocial(
                 authMemberDTO.getEmail(), authMemberDTO.isFromSocial());
@@ -143,6 +145,7 @@ public class CommunityController {
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
             @RequestParam(value = "sexSet", required = false) List<Sex> sexSet
     ) throws IOException {
+            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
 
         if (sexSet != null) {
             dto.setSexSet(sexSet);
@@ -163,6 +166,7 @@ public class CommunityController {
         coords.setLon(dto.getLon());
         GridDTO grid = weatherService.changeCoords(coords);
         SelectedWeatherDTO weatherData = selectedWeatherService.getWeatherApi(grid, dates);
+        List<SelectedWeatherDTO> weatherData = selectedWeatherService.getWeatherApi(grid, dates);
 
         Member loginMember = memberRepository.findByEmailAndFromSocial(
                 authMemberDTO.getUsername(), authMemberDTO.isFromSocial());

@@ -202,15 +202,6 @@ public class WeatherService {
                     case "3":
                         weatherDTO.setPty("눈");
                         break;
-                    case "5":
-                        weatherDTO.setPty("이슬비");
-                        break;
-                    case "6":
-                        weatherDTO.setPty("이슬비 또는 싸라기눈");
-                        break;
-                    case "7":
-                        weatherDTO.setPty("싸라기눈");
-                        break;
                 }
 
                 switch (skyList.get(i)) {

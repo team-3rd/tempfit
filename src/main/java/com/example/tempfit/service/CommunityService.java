@@ -36,6 +36,8 @@ import java.util.Set;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -63,6 +65,7 @@ public class CommunityService {
     // 게시글 등록 + 이미지 저장
     public Long register(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
             SelectedWeatherDTO weatherData)
+            List<SelectedWeatherDTO> weatherData)
             throws IOException {
         Community community = Community.builder()
                 .title(dto.getTitle())
@@ -99,12 +102,39 @@ public class CommunityService {
         dto.setMinTemp(weatherData.getTmn());
         dto.setMaxTemp(weatherData.getTmx());
         dto.setAvgTemp(weatherData.getAvgTmp());
+        List<Integer> tmps = new ArrayList<>();
+        List<String> ptys = new ArrayList<>();
+        List<String> skys = new ArrayList<>();
+        for (int i = 0; i < weatherData.size(); i++) {
+            tmps.add((int) weatherData.get(i).getTmp());
+            ptys.add(weatherData.get(i).getPty());
+            skys.add(weatherData.get(i).getSky());
+        }
+
+        for (int i = 0; i < skys.size(); i++) {
+            if (skys.get(i) == "맑음") {
+                dto.setSky("맑음");
+            } else if (skys.get(i) == "구름 많음") {
+                dto.setSky("구름 많음");
+            } else if (skys.get(i) == "흐림" && ptys.get(i) == "강수없음") {
+                dto.setSky("흐림");
+            } else if (ptys.get(i) == "비") {
+                dto.setSky("비");
+            }
+        }
+
+        int mins = tmps.stream().mapToInt(Integer::intValue).min().orElse(Integer.MIN_VALUE);
+        int maxs = tmps.stream().mapToInt(Integer::intValue).max().orElse(Integer.MAX_VALUE);
+        dto.setMinTemp(mins);
+        dto.setMaxTemp(maxs);
+        dto.setAvgTemp((int) ((mins + maxs) / 2));
 
         CommunityTemp temp = CommunityTemp.builder()
                 .dates(dto.getDates())
                 .minTemp(dto.getMinTemp())
                 .maxTemp(dto.getMaxTemp())
                 .avgTemp(dto.getAvgTemp())
+                .sky(dto.getSky())
                 .build();
 
         style.setCommunity(community);
@@ -144,6 +174,7 @@ public class CommunityService {
             dto.setMinTemp(temp.getMinTemp());
             dto.setMaxTemp(temp.getMaxTemp());
             dto.setAvgTemp(temp.getAvgTemp());
+            dto.setSky(temp.getSky());
         });
         return dto;
     }
@@ -168,6 +199,7 @@ public class CommunityService {
 
     public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
             boolean removeRepImage, SelectedWeatherDTO weatherData) throws IOException {
+            boolean removeRepImage, List<SelectedWeatherDTO> weatherData) throws IOException {
         Community community = communityRepository.findById(dto.getId()).orElseThrow();
         community.setTitle(dto.getTitle());
         community.setAuthor(currentUser);
@@ -226,12 +258,39 @@ public class CommunityService {
         dto.setMinTemp(weatherData.getTmn());
         dto.setMaxTemp(weatherData.getTmx());
         dto.setAvgTemp(weatherData.getAvgTmp());
+        List<Integer> tmps = new ArrayList<>();
+        List<String> ptys = new ArrayList<>();
+        List<String> skys = new ArrayList<>();
+        for (int i = 0; i < weatherData.size(); i++) {
+            tmps.add((int) weatherData.get(i).getTmp());
+            ptys.add(weatherData.get(i).getPty());
+            skys.add(weatherData.get(i).getSky());
+        }
+
+        for (int i = 0; i < ptys.size(); i++) {
+            if (skys.get(i).equals("맑음")) {
+                dto.setSky("맑음");
+            } else if (skys.get(i).equals("구름 많음")) {
+                dto.setSky("구름 많음");
+            } else if (skys.get(i).equals("흐림") && ptys.get(i).equals("강수없음")) {
+                dto.setSky("흐림");
+            } else if (ptys.get(i).equals("비")) {
+                dto.setSky("비");
+            }
+        }
+
+        int mins = tmps.stream().mapToInt(Integer::intValue).min().orElse(Integer.MIN_VALUE);
+        int maxs = tmps.stream().mapToInt(Integer::intValue).max().orElse(Integer.MAX_VALUE);
+        dto.setMinTemp(mins);
+        dto.setMaxTemp(maxs);
+        dto.setAvgTemp((int) ((mins + maxs) / 2));
 
         CommunityTemp temp = communityTempRepository.findById(dto.getId())
                 .orElseGet(() -> CommunityTemp.builder().build());
         temp.setMinTemp(dto.getMinTemp());
         temp.setMaxTemp(dto.getMaxTemp());
         temp.setAvgTemp(dto.getAvgTemp());
+        temp.setSky(dto.getSky());
         temp.setCommunity(community);
         community.setCommunityTemp(temp);
         communityTempRepository.save(temp);
@@ -309,6 +368,10 @@ public class CommunityService {
                 .minTemp((double) arr[10])
                 .maxTemp((double) arr[11])
                 .avgTemp((double) arr[12])
+                .minTemp((int) arr[10])
+                .maxTemp((int) arr[11])
+                .avgTemp((int) arr[12])
+                .sky((String) arr[13])
                 .build();
     }
 

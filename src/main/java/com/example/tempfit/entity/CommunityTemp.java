@@ -27,12 +27,18 @@ public class CommunityTemp {
 
     @Column(nullable = false)
     private double minTemp;
+    private int minTemp;
 
     @Column(nullable = false)
     private double maxTemp;
+    private int maxTemp;
 
     @Column(nullable = false)
     private double avgTemp;
+    private int avgTemp;
+
+    @Column(nullable = false)
+    private String sky;
 
     // 연관관계 편의 메서드(필수는 아니지만 있으면 좋음)
     public void setCommunity(Community community) {

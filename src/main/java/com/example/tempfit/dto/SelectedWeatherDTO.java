@@ -19,6 +19,9 @@ public class SelectedWeatherDTO {
     private double tmn;
     private double tmx;
     private double avgTmp;
+    private double tmp;
+    private String pty;
+    private String sky;
 
     private LocalDate fcstDate;
     private LocalTime fcstTime;

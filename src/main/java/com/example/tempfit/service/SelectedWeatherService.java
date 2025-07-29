@@ -16,12 +16,14 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import com.example.tempfit.dto.GridDTO;
 import com.example.tempfit.dto.SelectedWeatherDTO;
+import com.example.tempfit.dto.WeatherDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class SelectedWeatherService {
     // 날씨 API
     public SelectedWeatherDTO getWeatherApi(GridDTO dto, LocalDate date) {
+    public List<SelectedWeatherDTO> getWeatherApi(GridDTO dto, LocalDate date) {
         // API url 설정
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
@@ -41,6 +44,7 @@ public class SelectedWeatherService {
         }
 
         base_date = date.format(formatter);
+        String base_date = date.format(formatter);
         String base_time = "0200";
 
         // 좌표 얻기
@@ -85,6 +89,9 @@ public class SelectedWeatherService {
 
     public SelectedWeatherDTO weatherDataParsing(String weatherData, String baseDate) {
         SelectedWeatherDTO selectedweatherDTO = new SelectedWeatherDTO();
+    public List<SelectedWeatherDTO> weatherDataParsing(String weatherData, String baseDate) {
+        List<SelectedWeatherDTO> selectedweather = new ArrayList<>();
+        SelectedWeatherDTO selectedWeatherDTO = new SelectedWeatherDTO();
 
         try {
             // XML 형식의 데이터 파싱(parsing) - item 태그의 부분(날씨 데이터) 가져오기
@@ -96,6 +103,9 @@ public class SelectedWeatherService {
             // 데이터를 임시로 담아둘 리스트 설정
             List<String> tmnList = new ArrayList<>();
             List<String> tmxList = new ArrayList<>();
+            List<String> tmpList = new ArrayList<>();
+            List<String> ptyList = new ArrayList<>();
+            List<String> skyList = new ArrayList<>();
             List<String> dateList = new ArrayList<>();
             List<String> timeList = new ArrayList<>();
 
@@ -115,6 +125,48 @@ public class SelectedWeatherService {
                     tmxList.add(value);
                     dateList.add(fcstDate);
                     timeList.add(fcstTime);
+                LocalDate date = LocalDate.parse(baseDate, DateTimeFormatter.BASIC_ISO_DATE);
+                LocalDate parseDate = LocalDate.parse(fcstDate, DateTimeFormatter.BASIC_ISO_DATE);
+
+                if (date.plusDays(2).equals(LocalDate.now())) {
+                    if (parseDate.equals(LocalDate.now().minusDays(2))) {
+                        if (category.equals("TMP")) {
+                            tmpList.add(value);
+                        } else if (category.equals("PTY")) {
+                            ptyList.add(value);
+                        } else if (category.equals("SKY")) {
+                            skyList.add(value);
+                            dateList.add(fcstDate);
+                            timeList.add(fcstTime);
+                        } else
+                            continue;
+                    }
+                } else if (date.plusDays(1).equals(LocalDate.now())) {
+                    if (parseDate.equals(LocalDate.now().minusDays(1))) {
+                        if (category.equals("TMP")) {
+                            tmpList.add(value);
+                        } else if (category.equals("PTY")) {
+                            ptyList.add(value);
+                        } else if (category.equals("SKY")) {
+                            skyList.add(value);
+                            dateList.add(fcstDate);
+                            timeList.add(fcstTime);
+                        } else
+                            continue;
+                    }
+                } else if (date.equals(LocalDate.now())) {
+                    if (parseDate.equals(LocalDate.now())) {
+                        if (category.equals("TMP")) {
+                            tmpList.add(value);
+                        } else if (category.equals("PTY")) {
+                            ptyList.add(value);
+                        } else if (category.equals("SKY")) {
+                            skyList.add(value);
+                            dateList.add(fcstDate);
+                            timeList.add(fcstTime);
+                        } else
+                            continue;
+                    }
                 } else
                     continue;
             }
@@ -149,8 +201,47 @@ public class SelectedWeatherService {
             // 예보 날짜 및 시간 파싱 , 기온 평균 구하고 DTO에 저장
             LocalDate parseDate = LocalDate.parse(sdate, DateTimeFormatter.BASIC_ISO_DATE);
             LocalTime parseTime = LocalTime.parse(stime, DateTimeFormatter.ofPattern("HHmm"));
+            for (int i = 0; i < ptyList.size(); i++) {
+                LocalDate parseDate = LocalDate.parse(dateList.get(i), DateTimeFormatter.BASIC_ISO_DATE);
+                LocalTime parseTime = LocalTime.parse(timeList.get(i), DateTimeFormatter.ofPattern("HHmm"));
+
+                switch (ptyList.get(i)) {
+                    case "0":
+                        selectedWeatherDTO.setPty("강수없음");
+                        break;
+                    case "1":
+                        selectedWeatherDTO.setPty("비");
+                        break;
+                    case "2":
+                        selectedWeatherDTO.setPty("비 또는 눈");
+                        break;
+                    case "3":
+                        selectedWeatherDTO.setPty("눈");
+                        break;
+                    case "4":
+                        selectedWeatherDTO.setPty("소나기");
+                }
 
             double avgTemp = (Double.parseDouble(tmn) + Double.parseDouble(tmx)) / 2;
+                switch (skyList.get(i)) {
+                    case "1":
+                        selectedWeatherDTO.setSky("맑음");
+                        break;
+                    case "3":
+                        selectedWeatherDTO.setSky("구름 많음");
+                        break;
+                    case "4":
+                        selectedWeatherDTO.setSky("흐림");
+                        break;
+                }
+
+                selectedWeatherDTO.setTmp(Double.parseDouble(tmpList.get(i)));
+
+                selectedWeatherDTO.setFcstDate(parseDate);
+                selectedWeatherDTO.setFcstTime(parseTime);
+
+                selectedweather.add(selectedWeatherDTO);
+            }
 
             selectedweatherDTO.setTmn(Double.parseDouble(tmn));
             selectedweatherDTO.setTmx(Double.parseDouble(tmx));
@@ -161,5 +252,7 @@ public class SelectedWeatherService {
             e.printStackTrace();
         }
         return selectedweatherDTO;
+        System.out.println(selectedweather);
+        return selectedweather;
     }
 }
