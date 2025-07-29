@@ -2,6 +2,7 @@ package com.example.tempfit.service;
 
 import com.example.tempfit.entity.Comment;
 import com.example.tempfit.entity.Community;
+import com.example.tempfit.entity.Member;
 import com.example.tempfit.repository.CommentRepository;
 import com.example.tempfit.repository.CommunityRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +19,12 @@ public class CommentService {
     private final CommunityRepository postRepo;
 
     @Transactional
-    public Comment addComment(Long postId, String authorName, String content) {
+    public Comment addComment(Long postId, Member author, String content) {
         Community post = postRepo.findById(postId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
         Comment comment = Comment.builder()
             .post(post)
-            .authorName(authorName)
+            .author(author)
             .content(content)
             .build();
         return commentRepo.save(comment);

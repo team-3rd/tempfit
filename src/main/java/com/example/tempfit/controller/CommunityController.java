@@ -74,10 +74,9 @@ public class CommunityController {
     @PostMapping("/detail/{id}/comments")
     public String addComment(
             @PathVariable Long id,
-            @RequestParam(required = false) String authorName,
-            @RequestParam String content
-    ) {
-        commentService.addComment(id, authorName, content);
+            @RequestParam(required = false) Member author,
+            @RequestParam String content) {
+        commentService.addComment(id, author, content);
         return "redirect:/community/detail/" + id;
     }
 
