@@ -95,8 +95,6 @@ public class CommunityController {
             @RequestParam("repImage") MultipartFile repImage,
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
-            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet
-    ) throws IOException {
             @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
 
         if (sexSet != null) {
@@ -117,7 +115,6 @@ public class CommunityController {
         coords.setLat(dto.getLat());
         coords.setLon(dto.getLon());
         GridDTO grid = weatherService.changeCoords(coords);
-        SelectedWeatherDTO weatherData = selectedWeatherService.getWeatherApi(grid, dates);
         List<SelectedWeatherDTO> weatherData = selectedWeatherService.getWeatherApi(grid, dates);
 
         Member loginMember = memberRepository.findByEmailAndFromSocial(
@@ -143,8 +140,6 @@ public class CommunityController {
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @RequestParam(value = "removeRepImage", defaultValue = "false") boolean removeRepImage,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
-            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet
-    ) throws IOException {
             @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
 
         if (sexSet != null) {
@@ -165,7 +160,6 @@ public class CommunityController {
         coords.setLat(dto.getLat());
         coords.setLon(dto.getLon());
         GridDTO grid = weatherService.changeCoords(coords);
-        SelectedWeatherDTO weatherData = selectedWeatherService.getWeatherApi(grid, dates);
         List<SelectedWeatherDTO> weatherData = selectedWeatherService.getWeatherApi(grid, dates);
 
         Member loginMember = memberRepository.findByEmailAndFromSocial(

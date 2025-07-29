@@ -26,15 +26,12 @@ public class CommunityTemp {
     private LocalDate dates;
 
     @Column(nullable = false)
-    private double minTemp;
     private int minTemp;
 
     @Column(nullable = false)
-    private double maxTemp;
     private int maxTemp;
 
     @Column(nullable = false)
-    private double avgTemp;
     private int avgTemp;
 
     @Column(nullable = false)

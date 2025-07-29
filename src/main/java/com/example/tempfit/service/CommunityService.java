@@ -64,7 +64,6 @@ public class CommunityService {
 
     // 게시글 등록 + 이미지 저장
     public Long register(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
-            SelectedWeatherDTO weatherData)
             List<SelectedWeatherDTO> weatherData)
             throws IOException {
         Community community = Community.builder()
@@ -99,9 +98,6 @@ public class CommunityService {
         sex.setCommunity(community);
         community.setCommunitySex(sex);
 
-        dto.setMinTemp(weatherData.getTmn());
-        dto.setMaxTemp(weatherData.getTmx());
-        dto.setAvgTemp(weatherData.getAvgTmp());
         List<Integer> tmps = new ArrayList<>();
         List<String> ptys = new ArrayList<>();
         List<String> skys = new ArrayList<>();
@@ -198,7 +194,6 @@ public class CommunityService {
     }
 
     public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
-            boolean removeRepImage, SelectedWeatherDTO weatherData) throws IOException {
             boolean removeRepImage, List<SelectedWeatherDTO> weatherData) throws IOException {
         Community community = communityRepository.findById(dto.getId()).orElseThrow();
         community.setTitle(dto.getTitle());
@@ -255,9 +250,6 @@ public class CommunityService {
         community.setCommunityStyle(style);
         communityStyleRepository.save(style);
 
-        dto.setMinTemp(weatherData.getTmn());
-        dto.setMaxTemp(weatherData.getTmx());
-        dto.setAvgTemp(weatherData.getAvgTmp());
         List<Integer> tmps = new ArrayList<>();
         List<String> ptys = new ArrayList<>();
         List<String> skys = new ArrayList<>();
@@ -365,9 +357,6 @@ public class CommunityService {
                 .street((Boolean) arr[7])
                 .formal((Boolean) arr[8])
                 .outdoor((Boolean) arr[9])
-                .minTemp((double) arr[10])
-                .maxTemp((double) arr[11])
-                .avgTemp((double) arr[12])
                 .minTemp((int) arr[10])
                 .maxTemp((int) arr[11])
                 .avgTemp((int) arr[12])

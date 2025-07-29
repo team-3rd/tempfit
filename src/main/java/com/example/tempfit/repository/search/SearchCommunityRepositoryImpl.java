@@ -63,7 +63,6 @@ public class SearchCommunityRepositoryImpl
                         style.outdoor,
                         temp.minTemp,
                         temp.maxTemp,
-                        temp.avgTemp)
                         temp.avgTemp,
                         temp.sky)
                 .distinct();
@@ -143,7 +142,6 @@ public class SearchCommunityRepositoryImpl
                         t.get(style.outdoor),
                         t.get(temp.minTemp),
                         t.get(temp.maxTemp),
-                        t.get(temp.avgTemp)
                         t.get(temp.avgTemp),
                         t.get(temp.sky)
                 })

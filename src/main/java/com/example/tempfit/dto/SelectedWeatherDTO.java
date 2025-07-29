@@ -16,9 +16,6 @@ import lombok.ToString;
 @AllArgsConstructor
 public class SelectedWeatherDTO {
 
-    private double tmn;
-    private double tmx;
-    private double avgTmp;
     private double tmp;
     private String pty;
     private String sky;

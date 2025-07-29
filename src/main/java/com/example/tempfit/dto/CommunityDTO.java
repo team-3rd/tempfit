@@ -10,7 +10,6 @@ import com.example.tempfit.entity.Sex;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;                // ← 추가된 import
 import java.time.LocalDate; // ← 추가된 import
 import java.time.LocalDateTime;
 import java.time.Duration;
@@ -39,10 +38,6 @@ public class CommunityDTO {
     private boolean formal;
     private boolean outdoor;
 
-    private LocalDate dates;               // LocalDate 타입 사용
-    private double minTemp;
-    private double maxTemp;
-    private double avgTemp;
     private LocalDate dates; // LocalDate 타입 사용
     private int minTemp;
     private int maxTemp;
