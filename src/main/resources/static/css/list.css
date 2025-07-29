@@ -96,7 +96,7 @@ body {
 
 /* ── 작성자 (파란 텍스트) ── */
 .card-subtitle {
-  margin: 0 0 12px;
+  margin: 0 0 2px;
   font-size: 0.85rem;
   color: #007bff;
 }

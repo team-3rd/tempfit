@@ -162,7 +162,8 @@
             <p class="card-subtitle" th:text="${post.author.nickname}">
               작성자
             </p>
-            <div class="badge-list">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="badge-list">
               <span th:if="${post.casual}" class="badge bg-secondary"
                 >캐주얼</span
               >
@@ -176,6 +177,9 @@
                 >아웃도어</span
               >
             </div>
+            <div class="text-end" style="min-width: 3rem;"><span>♥ [[${post.recommendCount}]]</span></div>
+            </div>
+            
           </div>
         </a>
       </div>
