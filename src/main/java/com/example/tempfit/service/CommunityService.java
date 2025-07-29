@@ -1,7 +1,9 @@
 package com.example.tempfit.service;
 
+import com.example.tempfit.entity.TemperatureRange;
 import com.example.tempfit.dto.CommunityDTO;
 import com.example.tempfit.dto.SelectedWeatherDTO;
+import com.example.tempfit.entity.Board;
 import com.example.tempfit.entity.Community;
 import com.example.tempfit.entity.CommunityImage;
 import com.example.tempfit.entity.CommunitySex;
@@ -11,35 +13,34 @@ import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Recommend;
 import com.example.tempfit.entity.Sex;
 import com.example.tempfit.repository.CommentRepository;
-import com.example.tempfit.entity.TemperatureRange;
 import com.example.tempfit.repository.CommunityImageRepository;
 import com.example.tempfit.repository.CommunityRepository;
 import com.example.tempfit.repository.CommunitySexRepository;
 import com.example.tempfit.repository.CommunityStyleRepository;
 import com.example.tempfit.repository.CommunityTempRepository;
 import com.example.tempfit.repository.RecommendRepository;
-
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
-import java.util.Set;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -61,14 +62,18 @@ public class CommunityService {
     private String uploadDir;
 
     // 게시글 등록 + 이미지 저장
-    public Long register(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
-            SelectedWeatherDTO weatherData)
+    public Long register(CommunityDTO dto,
+                         Member currentUser,
+                         MultipartFile repImage,
+                         List<MultipartFile> extraImages,
+                         SelectedWeatherDTO weatherData)
             throws IOException {
         Community community = Community.builder()
                 .title(dto.getTitle())
                 .author(currentUser)
                 .content(dto.getContent())
                 .recommendCount(dto.getRecommendCount())
+                .board(dto.getBoard())
                 .build();
         communityRepository.save(community);
 
@@ -93,13 +98,6 @@ public class CommunityService {
                 .outdoor(dto.isOutdoor())
                 .build();
 
-        sex.setCommunity(community);
-        community.setCommunitySex(sex);
-
-        dto.setMinTemp(weatherData.getTmn());
-        dto.setMaxTemp(weatherData.getTmx());
-        dto.setAvgTemp(weatherData.getAvgTmp());
-
         CommunityTemp temp = CommunityTemp.builder()
                 .dates(dto.getDates())
                 .minTemp(dto.getMinTemp())
@@ -107,8 +105,10 @@ public class CommunityService {
                 .avgTemp(dto.getAvgTemp())
                 .build();
 
+        sex.setCommunity(community);
         style.setCommunity(community);
         temp.setCommunity(community);
+        community.setCommunitySex(sex);
         community.setCommunityStyle(style);
         community.setCommunityTemp(temp);
 
@@ -120,64 +120,69 @@ public class CommunityService {
         return community.getId();
     }
 
+    // 단일 게시글 조회
     public CommunityDTO get(Long id) {
-        Community entity = communityRepository.findById(id).orElseThrow();
-        CommunityDTO dto = entityToDTO(entity);
-
-        List<CommunityImage> imgs = communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(id);
-        if (!imgs.isEmpty()) {
-            dto.setRepImageUrl(imgs.get(0).getFileName());
-            dto.setExtraImageUrls(imgs.stream()
-                    .skip(1)
-                    .map(CommunityImage::getFileName)
-                    .collect(Collectors.toList()));
-        }
-
-        communityStyleRepository.findById(id).ifPresent(style -> {
-            dto.setCasual(style.isCasual());
-            dto.setStreet(style.isStreet());
-            dto.setFormal(style.isFormal());
-            dto.setOutdoor(style.isOutdoor());
-        });
-
-        communityTempRepository.findById(id).ifPresent(temp -> {
-            dto.setMinTemp(temp.getMinTemp());
-            dto.setMaxTemp(temp.getMaxTemp());
-            dto.setAvgTemp(temp.getAvgTemp());
-        });
-        return dto;
+        Community entity = communityRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+        return entityToDTO(entity);
     }
 
+    // 전체 페이징 조회 (기본 리스트)
     public Page<CommunityDTO> getPage(int page) {
-        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createdDate"));
+        Pageable pageable = PageRequest.of(page - 1, 10,
+                Sort.by(Sort.Direction.DESC, "createdDate"));
         return communityRepository.list(null, null, null, null, pageable)
                 .map(this::arrayToDTO);
     }
 
+    // 보드 타입별 페이징 조회
+    public Page<CommunityDTO> getPageByBoard(Board board, int page) {
+        Pageable pageable = PageRequest.of(page - 1, 10,
+                Sort.by(Sort.Direction.DESC, "createdDate"));
+        return communityRepository.findByBoard(board, pageable)
+                                  .map(this::entityToDTO);
+    }
+
+    // 키워드 검색 페이징
     public Page<CommunityDTO> searchPage(String type, String keyword, int page) {
-        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createdDate"));
+        Pageable pageable = PageRequest.of(page - 1, 10,
+                Sort.by(Sort.Direction.DESC, "createdDate"));
         return communityRepository.list(type, keyword, null, null, pageable)
                 .map(this::arrayToDTO);
     }
 
-    public Page<CommunityDTO> searchPageRaw(String type, String keyword, List<String> styleNames, int page) {
-        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createdDate"));
+    // 스타일 필터+검색 페이징
+    public Page<CommunityDTO> searchPageRaw(String type,
+                                            String keyword,
+                                            List<String> styleNames,
+                                            int page) {
+        Pageable pageable = PageRequest.of(page - 1, 10,
+                Sort.by(Sort.Direction.DESC, "createdDate"));
         return communityRepository.list(type, keyword, styleNames, null, pageable)
                 .map(this::arrayToDTO);
     }
 
-    public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
-            boolean removeRepImage, SelectedWeatherDTO weatherData) throws IOException {
-        Community community = communityRepository.findById(dto.getId()).orElseThrow();
+    // 게시글 수정
+    public void modify(CommunityDTO dto,
+                       Member currentUser,
+                       MultipartFile repImage,
+                       List<MultipartFile> extraImages,
+                       boolean removeRepImage,
+                       SelectedWeatherDTO weatherData)
+            throws IOException {
+        Community community = communityRepository.findById(dto.getId())
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
         community.setTitle(dto.getTitle());
         community.setAuthor(currentUser);
         community.setContent(dto.getContent());
+        community.setBoard(dto.getBoard());
 
         long count = recommendRepository.countByCommunity(community);
         community.setRecommendCount((int) count);
         communityRepository.save(community);
 
-        List<CommunityImage> existing = communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(dto.getId());
+        List<CommunityImage> existing = communityImageRepository
+                .findByCommunity_IdOrderByIsRepDescIdAsc(dto.getId());
 
         if (removeRepImage) {
             if (!existing.isEmpty()) {
@@ -189,12 +194,14 @@ public class CommunityService {
                 communityImageRepository.deleteAll(existing);
             }
             saveCommunityImage(community, repImage, true);
-            List<CommunityImage> imgs = communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(dto.getId());
+            List<CommunityImage> imgs = communityImageRepository
+                    .findByCommunity_IdOrderByIsRepDescIdAsc(dto.getId());
             if (!imgs.isEmpty()) {
                 dto.setRepImageUrl(imgs.get(0).getFileName());
             }
         } else {
-            dto.setRepImageUrl(existing.isEmpty() ? null : existing.get(0).getFileName());
+            dto.setRepImageUrl(existing.isEmpty() ? null
+                    : existing.get(0).getFileName());
         }
 
         if (extraImages != null) {
@@ -223,12 +230,9 @@ public class CommunityService {
         community.setCommunityStyle(style);
         communityStyleRepository.save(style);
 
-        dto.setMinTemp(weatherData.getTmn());
-        dto.setMaxTemp(weatherData.getTmx());
-        dto.setAvgTemp(weatherData.getAvgTmp());
-
         CommunityTemp temp = communityTempRepository.findById(dto.getId())
                 .orElseGet(() -> CommunityTemp.builder().build());
+        temp.setDates(dto.getDates());
         temp.setMinTemp(dto.getMinTemp());
         temp.setMaxTemp(dto.getMaxTemp());
         temp.setAvgTemp(dto.getAvgTemp());
@@ -239,20 +243,24 @@ public class CommunityService {
         communityRepository.save(community);
     }
 
+    // 게시글 삭제
     public void remove(Long id) {
-        commentRepository.deleteAll(commentRepository.findByPostIdOrderByCreatedDateAsc(id));
+        commentRepository.deleteAll(
+                commentRepository.findByPostIdOrderByCreatedDateAsc(id));
         communityTempRepository.deleteById(id);
         communityStyleRepository.deleteById(id);
         communitySexRepository.deleteById(id);
-        communityTempRepository.deleteById(id);
-        communityImageRepository.deleteAll(communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(id));
+        communityImageRepository.deleteAll(
+                communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(id));
         communityRepository.deleteById(id);
     }
 
-    private void saveCommunityImage(Community community, MultipartFile file, boolean isRep) throws IOException {
+    // 이미지 파일 저장
+    private void saveCommunityImage(Community community,
+                                    MultipartFile file,
+                                    boolean isRep) throws IOException {
         File uploadPathDir = new File(uploadDir);
-        if (!uploadPathDir.exists())
-            uploadPathDir.mkdirs();
+        if (!uploadPathDir.exists()) uploadPathDir.mkdirs();
 
         String uuid = UUID.randomUUID().toString();
         String ext = StringUtils.getFilenameExtension(file.getOriginalFilename());
@@ -269,31 +277,33 @@ public class CommunityService {
         communityImageRepository.save(img);
     }
 
+    // Entity → DTO 변환
     public CommunityDTO entityToDTO(Community entity) {
-        List<CommunityImage> imgs = communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(entity.getId());
-        String repImageUrl = (!imgs.isEmpty()) ? imgs.get(0).getFileName() : null;
+        List<CommunityImage> imgs = communityImageRepository
+                .findByCommunity_IdOrderByIsRepDescIdAsc(entity.getId());
+        String repUrl = (!imgs.isEmpty()) ? imgs.get(0).getFileName() : null;
 
-        CommunitySex sex = communitySexRepository.findById(entity.getId()).orElse(null);
-        CommunityStyle style = communityStyleRepository.findById(entity.getId()).orElse(null);
-
-        return CommunityDTO.builder()
+        CommunityDTO dto = CommunityDTO.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .author(entity.getAuthor())
+                .board(entity.getBoard())
                 .content(entity.getContent())
                 .recommendCount(entity.getRecommendCount())
-                .repImageUrl(repImageUrl)
-                .male(sex != null && sex.isMale())
-                .female(sex != null && sex.isFemale())
-                .casual(style != null && style.isCasual())
-                .street(style != null && style.isStreet())
-                .formal(style != null && style.isFormal())
-                .outdoor(style != null && style.isOutdoor())
+                .repImageUrl(repUrl)
+                .male(entity.getCommunitySex() != null && entity.getCommunitySex().isMale())
+                .female(entity.getCommunitySex() != null && entity.getCommunitySex().isFemale())
+                .casual(entity.getCommunityStyle() != null && entity.getCommunityStyle().isCasual())
+                .street(entity.getCommunityStyle() != null && entity.getCommunityStyle().isStreet())
+                .formal(entity.getCommunityStyle() != null && entity.getCommunityStyle().isFormal())
+                .outdoor(entity.getCommunityStyle() != null && entity.getCommunityStyle().isOutdoor())
                 .createdDate(entity.getCreatedDate())
                 .upDateTime(entity.getUpDateTime())
                 .build();
+        return dto;
     }
 
+    // Native Query 결과 배열 → DTO 변환
     private CommunityDTO arrayToDTO(Object[] arr) {
         return CommunityDTO.builder()
                 .id((Long) arr[0])
@@ -301,7 +311,7 @@ public class CommunityService {
                 .author((Member) arr[2])
                 .recommendCount((Integer) arr[3])
                 .repImageUrl((String) arr[4])
-                .createdDate((java.time.LocalDateTime) arr[5])
+                .createdDate((LocalDateTime) arr[5])
                 .casual((Boolean) arr[6])
                 .street((Boolean) arr[7])
                 .formal((Boolean) arr[8])
@@ -312,29 +322,28 @@ public class CommunityService {
                 .build();
     }
 
+    // 추천/취소
     @Transactional
     public void recommendPost(Long communityId, Member member) {
         Community community = communityRepository.findById(communityId)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 
-        boolean alreadyRecommended = recommendRepository.existsByMemberAndCommunity(member, community);
         Optional<Recommend> existRec = recommendRepository.findByMemberAndCommunity(member, community);
-
-        if (!alreadyRecommended) {
+        if (existRec.isPresent()) {
+            recommendRepository.delete(existRec.get());
+            community.setRecommendCount(community.getRecommendCount() - 1);
+        } else {
             Recommend rec = Recommend.builder()
                     .community(community)
                     .member(member)
                     .build();
             recommendRepository.save(rec);
             community.setRecommendCount(community.getRecommendCount() + 1);
-        } else {
-            recommendRepository.delete(existRec.get());
-            community.setRecommendCount(community.getRecommendCount() - 1);
         }
         communityRepository.save(community);
     }
 
-    // 메인화면 스타일별 BEST LOOKS을 avgTemp 기준으로 추천수 많은 게시글부터 가져오기
+    // BEST LOOKS 기능
     public Map<String, List<CommunityDTO>> getPostsByTempAndStyle(int temp, int pageSize) {
         TemperatureRange range = TemperatureRange.fromTemperature(temp);
         Map<String, String> styleFieldMap = Map.of(
@@ -344,30 +353,23 @@ public class CommunityService {
                 "OUTDOOR", "outdoor");
 
         Map<String, List<CommunityDTO>> result = new LinkedHashMap<>();
-
         styleFieldMap.forEach((label, fieldName) -> {
             Specification<Community> spec = (root, query, cb) -> {
                 Join<Community, CommunityStyle> styleJoin = root.join("communityStyle");
                 Join<Community, CommunityTemp> tempJoin = root.join("communityTemp");
-
                 Predicate stylePred = cb.isTrue(styleJoin.get(fieldName));
                 Predicate tempPred = cb.between(tempJoin.get("avgTemp"), range.getMinTemp(), range.getMaxTemp());
-
                 return cb.and(stylePred, tempPred);
             };
 
             Pageable pg = PageRequest.of(0, pageSize, Sort.by(Sort.Direction.DESC, "recommendCount"));
-
-            List<CommunityDTO> dtos = communityRepository
-                    .findAll(spec, pg)
+            List<CommunityDTO> dtos = communityRepository.findAll(spec, pg)
                     .getContent()
                     .stream()
                     .map(this::entityToDTO)
                     .collect(Collectors.toList());
-
             result.put(label, dtos);
         });
-
         return result;
     }
 }

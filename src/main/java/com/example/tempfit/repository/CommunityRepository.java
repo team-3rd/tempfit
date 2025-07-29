@@ -1,8 +1,11 @@
 package com.example.tempfit.repository;
 
+import com.example.tempfit.entity.Board;
 import com.example.tempfit.entity.Community;
 import com.example.tempfit.repository.search.SearchCommunityRepository;
-
+import com.example.tempfit.repository.CustomCommunityRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -11,8 +14,13 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  * - 기본 CRUD + 커스텀 검색(SearchCommunityRepository) 확장
  */
 public interface CommunityRepository
-        extends JpaRepository<Community, Long>, SearchCommunityRepository, CustomCommunityRepository, JpaSpecificationExecutor<Community>{
-    // JpaRepository: 기본 CRUD 제공
-    // SearchCommunityRepository: QueryDSL 등 커스텀 검색 확장
+        extends JpaRepository<Community, Long>,
+                SearchCommunityRepository,
+                CustomCommunityRepository,
+                JpaSpecificationExecutor<Community> {
 
+    /**
+     * board 타입별로 페이징 조회
+     */
+    Page<Community> findByBoard(Board board, Pageable pageable);
 }

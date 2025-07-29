@@ -19,27 +19,59 @@
     <link href="/css/darkmode.css" rel="stylesheet" />
     <link rel="stylesheet" href="/css/list.css" />
   </head>
-  <body class=" d-flex flex-column min-vh-100">
+  <body class="d-flex flex-column min-vh-100">
     <!-- 네비바 -->
     <div th:replace="fragments/navbar :: navbar"></div>
     <th:block th:replace="fragments/toggle :: toggle"></th:block>
 
     <div class="container px-4 px-lg-5 mt-5 flex-grow-1">
-      <h1 class="mb-4">게시글 목록</h1>
+      <!-- 중앙 정렬된 제목 -->
+      <h1 class="text-center mb-4">게시글 목록</h1>
+
+      <!-- 게시판 링크 섹션 (제목 바로 아래) -->
+      <div class="row justify-content-center text-center mb-4">
+        <div class="col-auto mb-2">
+          <a
+            th:href="@{/community/list(board='TEMP_FIT')}"
+            class="btn btn-outline-primary btn-sm"
+            th:classappend="${board == 'TEMP_FIT'} ? ' active'"
+            >TempFit 게시판</a
+          >
+        </div>
+        <div class="col-auto mb-2">
+          <a
+            th:href="@{/community/list(board='QUERY')}"
+            class="btn btn-outline-primary btn-sm"
+            th:classappend="${board == 'QUERY'} ? ' active'"
+            >질의게시판</a
+          >
+        </div>
+        <div class="col-auto mb-2">
+          <a
+            th:href="@{/community/list(board='FREE')}"
+            class="btn btn-outline-primary btn-sm"
+            th:classappend="${board == 'FREE'} ? ' active'"
+            >자유게시판</a
+          >
+        </div>
+      </div>
 
       <!-- 검색 & 스타일 필터 + 글쓰기 버튼 -->
-      <div class="d-flex justify-content-between align-items-start mb-3">
+      <div class="d-flex justify-content-between align-items-start mb-3 w-100">
         <form
           class="search-form d-flex flex-column"
           th:action="@{/community/list}"
           method="get"
-          style="gap: 8px"
+          style="gap: 8px; max-width: 600px; width: 100%;"
         >
+          <!-- 현재 board 파라미터 유지 -->
+          <input type="hidden" name="board" th:value="${board}" />
+
           <div class="d-flex" style="gap: 8px">
             <select name="type" class="form-select form-select-sm">
               <option value="">전체</option>
-              <option value="t" th:selected="${type == 't'}">제목</option>
-              <option value="a" th:selected="${type == 'a'}">작성자</option>
+              <option value="t" th:selected="${type=='t'}">제목</option>
+              <option value="a" th:selected="${type=='a'}">작성자</option>
             </select>
             <input
               type="text"
@@ -52,7 +84,7 @@
               검색
             </button>
             <a
-              th:href="@{/community/list}"
+              th:href="@{/community/list(board=${board})}"
               class="btn btn-outline-secondary btn-sm reset-btn"
               >초기화</a
             >
@@ -112,26 +144,44 @@
               th:checked="${styleNames != null and styleNames.contains('OUTDOOR')}"
             />
             <label class="btn btn-outline-primary" for="styleOutdoor"
-              >아웃도어</label
+              >기타</label
             >
           </div>
         </form>
         <a
-          href="/community/create"
+          th:href="@{/community/create(board=${board})}"
           class="btn btn-primary btn-sm ms-3 create-btn"
           sec:authorize="isAuthenticated()"
           >글쓰기</a
         >
       </div>
-      <div th:fragment="postGrid(posts)">
-      <!-- 게시글 카드 그리드 -->
-      <div class="post-grid">
+
+      <!-- 렌더링 분기: 자유게시판은 줄글, 그 외는 카드 그리드 -->
+      <div th:if="${board == 'FREE'}">
+        <ul class="list-group mb-4">
+          <li
+            th:each="post : ${list}"
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            <a
+              th:href="@{/community/detail/{id}(id=${post.id})}"
+              th:text="${post.title}"
+            ></a>
+            <small class="text-muted" th:text="${post.displayDate}"></small>
+          </li>
+        </ul>
+      </div>
+      <div
+        th:if="${board != 'FREE'}"
+        class="post-grid mx-auto mb-4"
+        style="max-width: 1200px;"
+      >
         <a
           th:each="post : ${list}"
           th:href="@{/community/detail/{id}(id=${post.id})}"
           class="post-card text-decoration-none text-reset"
         >
-          <!-- 시간/상대시간 및 온도 -->
+          <!-- 시간/온도 -->
           <div
             class="card-time d-flex justify-content-between align-items-center px-3 pt-2"
           >
@@ -139,24 +189,20 @@
             <div class="d-flex">
               <span
                 class="badge bg-day me-1"
-                th:text="${T(java.lang.Math).round(post.maxTemp) + '°'}"
+                th:text="${T(java.lang.Math).round(post.maxTemp)} + '°'"
               ></span>
               <span
                 class="badge bg-night"
-                th:text="${T(java.lang.Math).round(post.minTemp) + '°'}"
+                th:text="${T(java.lang.Math).round(post.minTemp)} + '°'"
               ></span>
             </div>
           </div>
-
-          <!-- 대표 이미지 -->
           <img
-            th:if="${post.repImageUrl != null}"
+            th:if="${post.repImageUrl}"
             th:src="@{'/uploads/' + ${post.repImageUrl}}"
             alt="대표사진"
             class="card-img-top"
           />
-
-          <!-- 카드 본문 -->
           <div class="card-body">
             <h5 class="card-title" th:text="${post.title}">제목</h5>
             <p class="card-subtitle" th:text="${post.author.nickname}">
@@ -164,26 +210,26 @@
             </p>
             <div class="d-flex justify-content-between align-items-center">
               <div class="badge-list">
-              <span th:if="${post.casual}" class="badge bg-secondary"
-                >캐주얼</span
-              >
-              <span th:if="${post.street}" class="badge bg-secondary"
-                >스트리트</span
-              >
-              <span th:if="${post.formal}" class="badge bg-secondary"
-                >포멀</span
-              >
-              <span th:if="${post.outdoor}" class="badge bg-secondary"
-                >아웃도어</span
-              >
+                <span th:if="${post.casual}" class="badge bg-secondary"
+                  >캐주얼</span
+                >
+                <span th:if="${post.street}" class="badge bg-secondary"
+                  >스트리트</span
+                >
+                <span th:if="${post.formal}" class="badge bg-secondary"
+                  >포멀</span
+                >
+                <span th:if="${post.outdoor}" class="badge bg-secondary"
+                  >기타</span
+                >
+              </div>
+              <div class="text-end" style="min-width: 3rem;">
+                <span>♥ [[${post.recommendCount}]]</span>
+              </div>
             </div>
-            <div class="text-end" style="min-width: 3rem;"><span>♥ [[${post.recommendCount}]]</span></div>
-            </div>
-            
           </div>
         </a>
       </div>
-    </div>
 
       <!-- 페이징 -->
       <nav class="mt-4">
@@ -191,7 +237,13 @@
           <li class="page-item" th:if="${startPage > 1}">
             <a
               class="page-link"
-              th:href="@{/community/list(page=${startPage - 1}, type=${type}, keyword=${keyword}, styleNames=${styleNames})}"
+              th:href="@{/community/list(
+                            board=${board},
+                            page=${startPage-1},
+                            type=${type},
+                            keyword=${keyword},
+                            styleNames=${styleNames}
+                          )}"
               >이전</a
             >
           </li>
@@ -202,7 +254,13 @@
           >
             <a
               class="page-link"
-              th:href="@{/community/list(page=${i}, type=${type}, keyword=${keyword}, styleNames=${styleNames})}"
+              th:href="@{/community/list(
+                            board=${board},
+                            page=${i},
+                            type=${type},
+                            keyword=${keyword},
+                            styleNames=${styleNames}
+                          )}"
               th:text="${i}"
               >1</a
             >
@@ -210,7 +268,13 @@
           <li class="page-item" th:if="${endPage < totalPages}">
             <a
               class="page-link"
-              th:href="@{/community/list(page=${endPage + 1}, type=${type}, keyword=${keyword}, styleNames=${styleNames})}"
+              th:href="@{/community/list(
+                            board=${board},
+                            page=${endPage+1},
+                            type=${type},
+                            keyword=${keyword},
+                            styleNames=${styleNames}
+                          )}"
               >다음</a
             >
           </li>
@@ -218,6 +282,7 @@
       </nav>
     </div>
 
+    <!-- 푸터 -->
     <div th:replace="fragments/footer :: footer"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
