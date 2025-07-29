@@ -1,5 +1,6 @@
 package com.example.tempfit.dto;
 
+import java.util.List;
 import com.example.tempfit.entity.Sex;
 
 import jakarta.validation.constraints.NotBlank;
@@ -24,4 +25,14 @@ public class MemberDTO {
     @NotBlank
     private String nickname;
     private Sex sex;
+    private List<CommunityDTO> myPosts;
+    private List<CommentDTO> myComments;
+
+    public int getPostCount() {
+        return myPosts != null ? myPosts.size() : 0;
+    }
+
+    public int getCommentCount() {
+        return myComments != null ? myComments.size() : 0;
+    }
 }

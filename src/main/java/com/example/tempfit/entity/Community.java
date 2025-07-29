@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "COMMUNITY")
@@ -29,14 +27,21 @@ public class Community extends Base {
     private String title;
 
     /* author도 비워둘 수 있게 nullable=true (기본값) */
-    @JoinColumn(name = "author_id")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
     private Member author;
 
     /** content 역시 nullable=true (기본값), CLOB 매핑 유지 */
     @Lob
     @Column(columnDefinition = "CLOB")
     private String content;
+
+    /**
+     * 게시판 구분 (TEMP_FIT, QUERY, FREE)
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "board", nullable = false)
+    private Board board;
 
     @Column(nullable = false)
     private int recommendCount;
@@ -74,5 +79,4 @@ public class Community extends Base {
     public void preUpdate() {
         this.upDateTime = LocalDateTime.now();
     }
-
 }

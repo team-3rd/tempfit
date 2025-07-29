@@ -55,7 +55,18 @@
           <span th:if="${dto.sex.name() == 'MALE'}">남성</span>
           <span th:if="${dto.sex.name() == 'FEMALE'}">여성</span>
         </div>
-
+        <ul>
+    <li>
+      <a href="/mypage/posts">
+        내가 쓴 글 ([[dto.postCount]] 건)
+      </a>
+    </li>
+    <li>
+      <a href="/mypage/comments">
+        내가 쓴 댓글 ([[dto.commentCount]] 건)
+      </a>
+    </li>
+  </ul>
         <div class="text-center mt-4">
           <a th:href="@{/member/mychange}" class="btn btn-primary px-5">정보 수정</a>
         </div>

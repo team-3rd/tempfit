@@ -4,6 +4,7 @@ import com.example.tempfit.dto.CommunityDTO;
 import com.example.tempfit.dto.CoordsDTO;
 import com.example.tempfit.dto.GridDTO;
 import com.example.tempfit.dto.SelectedWeatherDTO;
+import com.example.tempfit.entity.Board; // ← import 추가
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Sex;
 import com.example.tempfit.repository.MemberRepository;
@@ -12,9 +13,8 @@ import com.example.tempfit.service.CommentService;
 import com.example.tempfit.service.CommunityService;
 import com.example.tempfit.service.SelectedWeatherService;
 import com.example.tempfit.service.WeatherService;
-
 import lombok.RequiredArgsConstructor;
-
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,49 +36,46 @@ public class CommunityController {
     private final WeatherService weatherService;
     private final SelectedWeatherService selectedWeatherService;
 
+    /**
+     * 게시판별 리스트 조회
+     */
     @GetMapping("/list")
     public String list(
+            @RequestParam(value = "board", defaultValue = "FREE") Board board, // ← 추가
             @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "type", required = false) String type,
-            @RequestParam(value = "keyword", required = false) String keyword,
-            @RequestParam(value = "styleNames", required = false) List<String> styleNames,
-            @RequestParam(value = "sexs", required = false) List<String> sexs,
             Model model) {
-        var result = communityService.searchPageRaw(type, keyword, styleNames, page);
+        Page<CommunityDTO> pageData = communityService.getPageByBoard(board, page);
+
         int currentPage = page;
-        int totalPages = result.getTotalPages();
+        int totalPages = pageData.getTotalPages();
         int pageBlock = 10;
         int startPage = ((currentPage - 1) / pageBlock) * pageBlock + 1;
-        int endPage = Math.max(1, Math.min(startPage + pageBlock - 1, totalPages));
+        int endPage = Math.min(startPage + pageBlock - 1, totalPages);
 
-        model.addAttribute("list", result.getContent());
-        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("list", pageData.getContent());
         model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
-        model.addAttribute("type", type);
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("styleNames", styleNames);
-        model.addAttribute("sexs", sexs);
+        model.addAttribute("board", board); // 뷰에서 분기 렌더링에 사용
 
         return "community/list";
     }
 
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable Long id, Model model) {
-        var postDto = communityService.get(id);
-        var comments = commentService.getComments(id);
+        CommunityDTO postDto = communityService.get(id);
         model.addAttribute("post", postDto);
-        model.addAttribute("comments", comments);
+        model.addAttribute("comments", commentService.getComments(id));
         return "community/detail";
     }
 
     @PostMapping("/detail/{id}/comments")
     public String addComment(
             @PathVariable Long id,
-            @RequestParam(required = false) String authorName,
+            @RequestParam(required = false) Member author,
             @RequestParam String content) {
-        commentService.addComment(id, authorName, content);
+        commentService.addComment(id, author, content);
         return "redirect:/community/detail/" + id;
     }
 
@@ -96,7 +93,6 @@ public class CommunityController {
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
             @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
-
         if (sexSet != null) {
             dto.setSexSet(sexSet);
             dto.setMale(sexSet.contains(Sex.MALE));
@@ -111,9 +107,7 @@ public class CommunityController {
         }
 
         LocalDate dates = dto.getDates();
-        CoordsDTO coords = new CoordsDTO();
-        coords.setLat(dto.getLat());
-        coords.setLon(dto.getLon());
+        CoordsDTO coords = new CoordsDTO(dto.getLat(), dto.getLon());
         GridDTO grid = weatherService.changeCoords(coords);
         List<SelectedWeatherDTO> weatherData = selectedWeatherService.getWeatherApi(grid, dates);
 
@@ -141,7 +135,6 @@ public class CommunityController {
             @RequestParam(value = "removeRepImage", defaultValue = "false") boolean removeRepImage,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
             @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
-
         if (sexSet != null) {
             dto.setSexSet(sexSet);
             dto.setMale(sexSet.contains(Sex.MALE));
@@ -156,9 +149,7 @@ public class CommunityController {
         }
 
         LocalDate dates = dto.getDates();
-        CoordsDTO coords = new CoordsDTO();
-        coords.setLat(dto.getLat());
-        coords.setLon(dto.getLon());
+        CoordsDTO coords = new CoordsDTO(dto.getLat(), dto.getLon());
         GridDTO grid = weatherService.changeCoords(coords);
         List<SelectedWeatherDTO> weatherData = selectedWeatherService.getWeatherApi(grid, dates);
 

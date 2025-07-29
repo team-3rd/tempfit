@@ -50,8 +50,16 @@ public class Member {
     //@OneToMany(mappedBy = "member")
     @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
-    private Set<String> dibsList = new HashSet<>(); //String -> Coordi
-    
+    private Set<Community> dibsList = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Community> myPosts = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Comment> myComments = new HashSet<>();
+
     @Builder.Default
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Recommend> RecommendSet = new HashSet<>();

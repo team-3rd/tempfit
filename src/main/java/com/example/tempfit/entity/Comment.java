@@ -21,9 +21,9 @@ public class Comment {
     @JoinColumn(name = "post_id", nullable = false)
     private Community post;
 
-    // 익명 댓글용 작성자 이름
-    @Column(length = 50)
-    private String authorName;
+    @JoinColumn(name = "author_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member author;
 
     // Oracle CLOB 매핑
     @Lob
