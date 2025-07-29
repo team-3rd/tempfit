@@ -6,9 +6,17 @@
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
     <link href="/css/styles.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Pretendard Variable 웹폰트 (jsDelivr) -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link
+      href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/variable/pretendardvariable.css"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <th:block th:replace="fragments/navbar :: navbar"></th:block>
+    <th:block th:replace="fragments/toggle :: toggle"></th:block>
 
     <div class="container py-4">
       <div class="d-flex align-items-center mb-4">
@@ -20,35 +28,294 @@
         />
         <h2 class="mb-0" th:text="|${genderLabel} ${itemName}|">상품 보기</h2>
       </div>
+      <div class="text-center mt-2">
+        <a href="/" class="btn btn-outline-secondary">뒤로 가기</a>
+      </div>
+    </div>
 
-      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-        <div th:each="prod : ${products}" class="col">
-          <div class="card h-100 shadow-sm">
-            <!-- 1) 이미지 클릭 시 내부 상세로 -->
-            <div class="ratio ratio-1x1">
-              <a th:href="@{/coordi/item/{key}(key=${prod.productKey})}">
-                <img th:src="${prod.imageUrl}" class="img-fluid" style="object-fit: cover" alt="상품 이미지" />
-              </a>
-            </div>
-            <div class="card-body">
-              <!-- 2) 텍스트 클릭 시에도 내부 상세로 -->
-              <a th:href="@{/coordi/item/{key}(key=${prod.productKey})}" style="text-decoration: none; color: inherit">
-                <h5 class="card-title" th:text="${prod.brandName}">브랜드명</h5>
-                <p class="card-text" th:text="${prod.productName}">상품명</p>
-              </a>
-            </div>
-            <div class="card-footer bg-white border-top-0">
-              <!-- 3) 외부 원본 상세 보기 -->
-              <a th:if="${prod.linkUrl}" th:href="${prod.linkUrl}" class="btn btn-primary btn-sm w-100" target="_blank">
-                원본 보기
-              </a>
+    <!-- 카드 전체 그리드 컨테이너 -->
+    <div class="container py-5">
+      <div class="row row-cols-5 g-5">
+
+        <a href="https://www.musinsa.com/products/4769163" class="col text-decoration-none text-reset">
+          <div class="card border shadow-sm" style="border-radius: 0">
+            <img
+              src="https://image.msscdn.net/thumbnails/images/goods_img/20250207/4769163/4769163_17389185437328_big.jpg"
+              alt="리메인세컨드 이미지"
+              class="card-img-top"
+              style="height: 200px; object-fit: contain; border-radius: 0"
+            />
+            <div class="card-body p-2">
+              <p class="mb-1 fw-bold" style="font-size: 16px">일꼬르소</p>
+              <p
+                class="mb-0 card-text"
+                style="
+                  font-size: 14px;
+                  color: #000;
+                  overflow: hidden;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
+                  min-height: 3em;
+                "
+              >
+                에센셜 카라 반팔 니트 콘크리트그레이 IESW5E501CG
+              </p>
             </div>
           </div>
-        </div>
-      </div>
+        </a>
 
-      <div class="text-center mt-4">
-        <a href="/" class="btn btn-outline-secondary">← 뒤로 가기</a>
+        <a href="https://www.musinsa.com/products/3971331" class="col text-decoration-none text-reset">
+          <div class="card border shadow-sm" style="border-radius: 0">
+            <img
+              src="https://image.msscdn.net/thumbnails/images/goods_img/20240320/3971331/3971331_17173783430395_big.jpg  "
+              alt="리메인세컨드 이미지"
+              class="card-img-top"
+              style="height: 200px; object-fit: contain; border-radius: 0"
+            />
+            <div class="card-body p-2">
+              <p class="mb-1 fw-bold" style="font-size: 16px">토피</p>
+              <p
+                class="mb-0 card-text"
+                style="
+                  font-size: 14px;
+                  color: #000;
+                  overflow: hidden;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
+                  min-height: 3em;
+                "
+              >
+                [2PACK] 쿨 케이블 카라 하프 니트
+              </p>
+            </div>
+          </div>
+        </a>
+
+        <a href="https://www.musinsa.com/products/4291283" class="col text-decoration-none text-reset">
+          <div class="card border shadow-sm" style="border-radius: 0">
+            <img
+              src="https://image.msscdn.net/thumbnails/images/goods_img/20240802/4291283/4291283_17225607001637_big.jpg"
+              alt="리메인세컨드 이미지"
+              class="card-img-top"
+              style="height: 200px; object-fit: contain; border-radius: 0"
+            />
+            <div class="card-body p-2">
+              <p class="mb-1 fw-bold" style="font-size: 16px">마인드브릿지</p>
+              <p
+                class="mb-0 card-text"
+                style="
+                  font-size: 14px;
+                  color: #000;
+                  overflow: hidden;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
+                  min-height: 3em;
+                "
+              >
+                샤키리바카라티셔츠 - 3color MXT3106
+              </p>
+            </div>
+          </div>
+        </a>
+
+        <a href="https://www.musinsa.com/products/4927171" class="col text-decoration-none text-reset">
+          <div class="card border shadow-sm" style="border-radius: 0">
+            <img
+              src="https://image.msscdn.net/thumbnails/images/goods_img/20250321/4927171/4927171_17447615091278_big.jpg"
+              alt="리메인세컨드 이미지"
+              class="card-img-top"
+              style="height: 200px; object-fit: contain; border-radius: 0"
+            />
+            <div class="card-body p-2">
+              <p class="mb-1 fw-bold" style="font-size: 16px">지오다노</p>
+              <p
+                class="mb-0 card-text"
+                style="
+                  font-size: 14px;
+                  color: #000;
+                  overflow: hidden;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
+                  min-height: 3em;
+                "
+              >
+                스티치 폴로 반팔 니트(12GG) 055523 [6color]
+              </p>
+            </div>
+          </div>
+        </a>
+
+        <a href="https://www.musinsa.com/products/1959696" class="col text-decoration-none text-reset">
+          <div class="card border shadow-sm" style="border-radius: 0">
+            <img
+              src="https://image.msscdn.net/thumbnails/images/goods_img/20210520/1959696/1959696_16819694709230_big.jpg"
+              alt="리메인세컨드 이미지"
+              class="card-img-top"
+              style="height: 200px; object-fit: contain; border-radius: 0"
+            />
+            <div class="card-body p-2">
+              <p class="mb-1 fw-bold" style="font-size: 16px">에스피오나지</p>
+              <p
+                class="mb-0 card-text"
+                style="
+                  font-size: 14px;
+                  color: #000;
+                  overflow: hidden;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
+                  min-height: 3em;
+                "
+              >
+                Over Pique Polo Shirt Navy
+              </p>
+            </div>
+          </div>
+        </a>
+
+        <a href="https://www.musinsa.com/products/4963859" class="col text-decoration-none text-reset">
+          <div class="card border shadow-sm" style="border-radius: 0">
+            <img
+              src="https://image.msscdn.net/thumbnails/images/goods_img/20250331/4963859/4963859_17443318575014_big.jpg"
+              alt="리메인세컨드 이미지"
+              class="card-img-top"
+              style="height: 200px; object-fit: contain; border-radius: 0"
+            />
+            <div class="card-body p-2">
+              <p class="mb-1 fw-bold" style="font-size: 16px">리메인세컨드</p>
+              <p
+                class="mb-0 card-text"
+                style="
+                  font-size: 14px;
+                  color: #000;
+                  overflow: hidden;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
+                  min-height: 3em;
+                "
+              >
+                린넨 라이크 오버핏 워셔블 카라넥 반팔 니트
+              </p>
+            </div>
+          </div>
+        </a>
+
+                <a href="https://www.musinsa.com/products/4963859" class="col text-decoration-none text-reset">
+          <div class="card border shadow-sm" style="border-radius: 0">
+            <img
+              src="https://image.msscdn.net/thumbnails/images/goods_img/20250331/4963859/4963859_17443318575014_big.jpg"
+              alt="리메인세컨드 이미지"
+              class="card-img-top"
+              style="height: 200px; object-fit: contain; border-radius: 0"
+            />
+            <div class="card-body p-2">
+              <p class="mb-1 fw-bold" style="font-size: 16px">리메인세컨드</p>
+              <p
+                class="mb-0 card-text"
+                style="
+                  font-size: 14px;
+                  color: #000;
+                  overflow: hidden;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
+                  min-height: 3em;
+                "
+              >
+                린넨 라이크 오버핏 워셔블 카라넥 반팔 니트
+              </p>
+            </div>
+          </div>
+        </a>
+
+                <a href="https://www.musinsa.com/products/4963859" class="col text-decoration-none text-reset">
+          <div class="card border shadow-sm" style="border-radius: 0">
+            <img
+              src="https://image.msscdn.net/thumbnails/images/goods_img/20250331/4963859/4963859_17443318575014_big.jpg"
+              alt="리메인세컨드 이미지"
+              class="card-img-top"
+              style="height: 200px; object-fit: contain; border-radius: 0"
+            />
+            <div class="card-body p-2">
+              <p class="mb-1 fw-bold" style="font-size: 16px">리메인세컨드</p>
+              <p
+                class="mb-0 card-text"
+                style="
+                  font-size: 14px;
+                  color: #000;
+                  overflow: hidden;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
+                  min-height: 3em;
+                "
+              >
+                린넨 라이크 오버핏 워셔블 카라넥 반팔 니트
+              </p>
+            </div>
+          </div>
+        </a>
+
+        <a href="https://www.musinsa.com/products/4963859" class="col text-decoration-none text-reset">
+          <div class="card border shadow-sm" style="border-radius: 0">
+            <img
+              src="https://image.msscdn.net/thumbnails/images/goods_img/20250331/4963859/4963859_17443318575014_big.jpg"
+              alt="리메인세컨드 이미지"
+              class="card-img-top"
+              style="height: 200px; object-fit: contain; border-radius: 0"
+            />
+            <div class="card-body p-2">
+              <p class="mb-1 fw-bold" style="font-size: 16px">리메인세컨드</p>
+              <p
+                class="mb-0 card-text"
+                style="
+                  font-size: 14px;
+                  color: #000;
+                  overflow: hidden;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
+                  min-height: 3em;
+                "
+              >
+                린넨 라이크 오버핏 워셔블 카라넥 반팔 니트
+              </p>
+            </div>
+          </div>
+        </a>
+
+        <a href="https://www.musinsa.com/products/4963859" class="col text-decoration-none text-reset">
+          <div class="card border shadow-sm" style="border-radius: 0">
+            <img
+              src="https://image.msscdn.net/thumbnails/images/goods_img/20250331/4963859/4963859_17443318575014_big.jpg"
+              alt="리메인세컨드 이미지"
+              class="card-img-top"
+              style="height: 200px; object-fit: contain; border-radius: 0"
+            />
+            <div class="card-body p-2">
+              <p class="mb-1 fw-bold" style="font-size: 16px">리메인세컨드</p>
+              <p
+                class="mb-0 card-text"
+                style="
+                  font-size: 14px;
+                  color: #000;
+                  overflow: hidden;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
+                  min-height: 3em;
+                "
+              >
+                린넨 라이크 오버핏 워셔블 카라넥 반팔 니트
+              </p>
+            </div>
+          </div>
+        </a>
       </div>
     </div>
 
