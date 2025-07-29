@@ -17,7 +17,7 @@
     />
     <title>로그인 - 템핏 TempFit</title>
   </head>
-  <body class="bg-light">
+  <body class="bg-light d-flex flex-column min-vh-100">
     <th:block th:replace="fragments/navbar :: navbar"></th:block>
 
     <th:block th:replace="fragments/toggle :: toggle"></th:block>
@@ -28,7 +28,7 @@
 
         <form th:action="@{/member/login}" method="post">
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="id" name="username" placeholder=" " required />
+            <input type="text" class="form-control" id="id" name="username" placeholder=" " spellcheck="false" required />
             <label for="id">이메일 (ID)</label>
           </div>
 
@@ -58,7 +58,7 @@
         </div>
       </div>
     </div>
-
+    <th:block th:replace="fragments/footer :: footer"></th:block>
     <!-- Bootstrap Icons (for Google logo if needed) -->
     <link
       rel="stylesheet"

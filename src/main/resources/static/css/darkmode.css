@@ -2,6 +2,30 @@
   color-scheme: light dark;
 }
 
+/* Light Theme */
+[data-bs-theme="light"] .form-control {
+  background-color: #fff;
+  color: #212529;
+}
+
+[data-bs-theme="light"] .form-control::placeholder {
+  color: #6c757d;
+}
+
+[data-bs-theme="light"] .form-floating > .form-control:not(:placeholder-shown),
+[data-bs-theme="light"] .form-floating > .form-control:focus {
+   background-color: transparent !important;
+  color: #212529 !important;
+}
+
+[data-bs-theme="light"] .form-floating > .form-control:not(:placeholder-shown) ~ label,
+[data-bs-theme="light"] .form-floating > .form-control:focus ~ label {
+   background-color: transparent !important;
+  color: #6c757d !important;
+}
+
+
+/* Dark Theme */
 [data-bs-theme="dark"] {
   background-color: #121212;
   color: #e0e0e0;
@@ -18,10 +42,11 @@
 
 [data-bs-theme="dark"] .bg-light {
   background-color: #121212 !important;
-  color: #e0e0e0
+  color: #e0e0e0;
 }
 
-[data-bs-theme="dark"] .card, [data-bs-theme="dark"] .profile-card {
+[data-bs-theme="dark"] .card,
+[data-bs-theme="dark"] .profile-card {
   background-color: #1e1e1e;
   color: #ffffff;
 }
@@ -31,13 +56,25 @@
 }
 
 [data-bs-theme="dark"] .form-control {
-  background-color: #2c2c2c;
-  color: #ffffff;
-  border-color: #444;
+  background-color: #2c2c2c !important;
+  color: #ffffff !important;
+  border-color: #444 !important;
 }
 
 [data-bs-theme="dark"] .form-control::placeholder {
   color: #aaa;
+}
+
+[data-bs-theme="dark"] .form-floating > .form-control:not(:placeholder-shown),
+[data-bs-theme="dark"] .form-floating > .form-control:focus {
+   background-color: transparent !important;
+  color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .form-floating > .form-control:not(:placeholder-shown) ~ label,
+[data-bs-theme="dark"] .form-floating > .form-control:focus ~ label {
+   background-color: transparent !important;
+  color: #ccc !important;
 }
 
 [data-bs-theme="dark"] .btn-primary {
@@ -54,3 +91,26 @@
   background-color: #f87171;
   color: #fff;
 }
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  -webkit-text-fill-color: #212529 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* 라이트모드 자동완성 input 스타일 */
+[data-bs-theme="light"] input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #212529 !important;
+  caret-color: #212529;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* 다크모드 자동완성 input 스타일 */
+[data-bs-theme="dark"] input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #2c2c2c inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff;
+  transition: background-color 5000s ease-in-out 0s;
+}
+

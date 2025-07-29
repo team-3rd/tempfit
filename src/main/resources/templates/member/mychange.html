@@ -15,6 +15,7 @@
     <style>
       .edit-profile-container {
         max-width: 600px;
+        width: 100%; 
         margin: 3rem auto;
         padding: 2.5rem;
         box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
@@ -23,6 +24,7 @@
       }
       [data-bs-theme="dark"] .edit-profile-container {
         max-width: 600px;
+        width: 100%; 
         margin: 3rem auto;
         padding: 2.5rem;
         box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
@@ -43,12 +45,12 @@
       }
     </style>
   </head>
-  <body>
+  <body class="d-flex flex-column min-vh-100">
     <!-- Navbar -->
     <th:block th:replace="fragments/navbar :: navbar"></th:block>
     
     <th:block th:replace="fragments/toggle :: toggle"></th:block>
-    <main class="edit-profile-container">
+    <main class="edit-profile-container flex-grow-1">
       <h2 class="text-center mb-4">개인정보 수정</h2>
       <form th:action="@{/member/mychange}" th:object="${dto}" method="post" novalidate>
         
@@ -97,7 +99,7 @@
         <button type="submit" class="btn btn-primary btn-submit">개인정보 변경</button>
       </form>
     </main>
-
+    <th:block th:replace="fragments/footer :: footer"></th:block>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

@@ -19,13 +19,13 @@
     />
     <title>회원가입 - 템핏 TempFit</title>
   </head>
-  <body>
+  <body class="d-flex flex-column min-vh-100">
     <!-- Navbar -->
     <th:block th:replace="fragments/navbar :: navbar"></th:block>
 
     <th:block th:replace="fragments/toggle :: toggle"></th:block>
 
-    <div class="container py-5">
+    <div class="container py-5 flex-grow-1">
       <div class="row justify-content-center">
         <div class="col-md-6">
           <div class="card shadow-lg p-4">
@@ -33,7 +33,7 @@
 
             <form th:action="@{/member/register}" th:object="${dto}" method="post">
               <div class="form-floating mb-3">
-                <input type="text" class="form-control" th:field="*{email}" id="email" placeholder="이메일" required />
+                <input type="text" class="form-control" th:field="*{email}" id="email" placeholder="이메일" spellcheck="false" required />
                 <label for="email">이메일 (ID)</label>
               </div>
 
@@ -70,7 +70,7 @@
         </div>
       </div>
     </div>
-
+    <th:block th:replace="fragments/footer :: footer"></th:block>
     <!-- Bootstrap JS (Optional) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
   </body>

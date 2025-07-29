@@ -31,13 +31,13 @@
       }
     </style>
   </head>
-  <body>
+  <body class="d-flex flex-column min-vh-100">
     <!-- Navbar -->
     <th:block th:replace="fragments/navbar :: navbar"></th:block>
     
     <th:block th:replace="fragments/toggle :: toggle"></th:block>
 
-    <main class="container">
+    <main class="container flex-grow-1">
       <div class="profile-card">
         <h2 class="mb-4 text-center">마이페이지</h2>
 
@@ -61,7 +61,7 @@
         </div>
       </div>
     </main>
-
+    <th:block th:replace="fragments/footer :: footer"></th:block>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

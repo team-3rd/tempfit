@@ -153,6 +153,7 @@
               name="sexSet"
               id="male"
               value="MALE"
+              th:check="${#authentication.principal.sex.name() == 'MALE'}"
             />
             <label class="form-check-label" for="male">남성</label>
           </div>
@@ -163,6 +164,7 @@
               name="sexSet"
               id="female"
               value="FEMALE"
+              th:check="${#authentication.principal.sex.name() == 'FEMALE'}"
             />
             <label class="form-check-label" for="female">여성</label>
           </div>

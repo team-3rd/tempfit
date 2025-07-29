@@ -19,12 +19,12 @@
     <link href="/css/darkmode.css" rel="stylesheet" />
     <link rel="stylesheet" href="/css/list.css" />
   </head>
-  <body>
+  <body class=" d-flex flex-column min-vh-100">
     <!-- 네비바 -->
     <div th:replace="fragments/navbar :: navbar"></div>
     <th:block th:replace="fragments/toggle :: toggle"></th:block>
 
-    <div class="container px-4 px-lg-5 mt-5">
+    <div class="container px-4 px-lg-5 mt-5 flex-grow-1">
       <h1 class="mb-4">게시글 목록</h1>
 
       <!-- 검색 & 스타일 필터 + 글쓰기 버튼 -->
