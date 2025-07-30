@@ -107,7 +107,7 @@ public class CommunityController {
         }
 
         LocalDate dates = dto.getDates();
-        CoordsDTO coords = new CoordsDTO(dto.getLat(), dto.getLon());
+        CoordsDTO coords = new CoordsDTO(dto.getLon(), dto.getLat());
         GridDTO grid = weatherService.changeCoords(coords);
         List<SelectedWeatherDTO> weatherData = selectedWeatherService.getWeatherApi(grid, dates);
 
@@ -149,7 +149,7 @@ public class CommunityController {
         }
 
         LocalDate dates = dto.getDates();
-        CoordsDTO coords = new CoordsDTO(dto.getLat(), dto.getLon());
+        CoordsDTO coords = new CoordsDTO(dto.getLon(), dto.getLat());
         GridDTO grid = weatherService.changeCoords(coords);
         List<SelectedWeatherDTO> weatherData = selectedWeatherService.getWeatherApi(grid, dates);
 

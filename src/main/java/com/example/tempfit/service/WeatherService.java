@@ -266,6 +266,7 @@ public class WeatherService {
                 bufferedReader.close();
                 // 받은 좌표값 DTO에 저장
                 String coordData = stringBuffer.toString().replaceAll("\\\\s", "");
+                System.out.println(coordData);
                 String[] coordArray = coordData.split(",");
                 gridDTO.setNx(coordArray[5].trim());
                 gridDTO.setNy(coordArray[6].trim());
