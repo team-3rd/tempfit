@@ -75,7 +75,7 @@ public class CommunityService {
                 .author(currentUser)
                 .content(dto.getContent())
                 .recommendCount(dto.getRecommendCount())
-                .board(dto.getBoard()) // 반드시 board 세팅
+                .board(dto.getBoard())
                 .build();
         communityRepository.save(community);
 
@@ -384,6 +384,7 @@ public class CommunityService {
                 .sky(temp != null ? temp.getSky() : "")
                 .createdDate(entity.getCreatedDate())
                 .upDateTime(entity.getUpDateTime())
+                .viewCount(entity.getViewCount()) // ★ 이 한줄만 추가하면 해결!
                 .build();
     }
 
@@ -456,5 +457,13 @@ public class CommunityService {
             result.put(label, dtos);
         });
         return result;
+    }
+
+    @Transactional
+    public void increaseViewCount(Long id) {
+        Community community = communityRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+        community.setViewCount(community.getViewCount() + 1);
+        communityRepository.save(community);
     }
 }

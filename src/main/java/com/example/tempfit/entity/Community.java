@@ -46,6 +46,10 @@ public class Community extends Base {
     @Column(nullable = false)
     private int recommendCount;
 
+    // ★ 조회수 필드 추가 (초기값 0)
+    @Column(name = "view_count", nullable = false)
+    private int viewCount = 0;
+
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "gender_id")
     private CommunitySex communitySex;

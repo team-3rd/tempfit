@@ -1,6 +1,6 @@
 package com.example.tempfit.dto;
 
-import com.example.tempfit.entity.Board; // ← 추가된 import
+import com.example.tempfit.entity.Board;
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Sex;
 import lombok.AllArgsConstructor;
@@ -9,11 +9,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate; // ← 추가된 import
-import java.time.LocalDateTime;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -27,7 +25,7 @@ public class CommunityDTO {
     private String title;
 
     private Member author;
-    private Board board; // ← 추가된 필드
+    private Board board;
 
     private String content;
     private int recommendCount;
@@ -42,7 +40,7 @@ public class CommunityDTO {
     private boolean formal;
     private boolean outdoor;
 
-    private LocalDate dates; // LocalDate 타입 사용
+    private LocalDate dates;
     private int minTemp;
     private int maxTemp;
     private int avgTemp;
@@ -59,6 +57,8 @@ public class CommunityDTO {
 
     private LocalDateTime createdDate;
     private LocalDateTime upDateTime;
+
+    private int viewCount; // ★★★ 조회수 필드 추가!
 
     /**
      * 상대 시간 표시:

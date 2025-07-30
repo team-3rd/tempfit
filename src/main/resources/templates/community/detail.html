@@ -11,6 +11,22 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/css/detail.css" />
+    <style>
+      .view-icon {
+        width: 1.2em;
+        height: 1.2em;
+        vertical-align: middle;
+        margin-bottom: 2px;
+        margin-left: 4px;
+        margin-right: 2px;
+      }
+      .recommend-icon {
+        color: #e94e77;
+        margin-right: 2px;
+        font-size: 1.1em;
+        vertical-align: middle;
+      }
+    </style>
   </head>
   <body>
     <div th:replace="fragments/navbar :: navbar"></div>
@@ -18,41 +34,40 @@
       <!-- 제목 -->
       <div class="detail-title" th:text="${post.title}">게시글 제목</div>
 
-      <!-- 작성자, 날짜, 추천 수 -->
+      <!-- 작성자, 날짜, 추천 수, 조회수 -->
       <div class="detail-meta">
-        작성자: <span th:text="${post.author.nickname}">관리자</span> &nbsp;|&nbsp;
-        등록일:
-        <span
-          th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"
-        >
+        작성자: <span th:text="${post.author.nickname}">관리자</span>
+        &nbsp;|&nbsp; 등록일:
+        <span th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}">
           2025-06-15 12:00
         </span>
-        &nbsp;|&nbsp; 추천: <span th:text="${post.recommendCount}">0</span>
+        &nbsp;|&nbsp;
+        <span>
+          <span class="recommend-icon">♥</span>
+          <span th:text="${post.recommendCount}">0</span>
+        </span>
+        &nbsp;|&nbsp;
+        <span>
+          <!-- 눈 SVG 아이콘 -->
+          <svg class="view-icon" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288C13.881 11.332 12.12 12.5 10 12.5c-2.12 0-3.88-1.168-5.168-2.457A13.133 13.133 0 0 1 1.172 8z"/>
+            <path d="M8 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0 1a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/>
+          </svg>
+          <span th:text="${post.viewCount}">0</span>
+        </span>
       </div>
 
       <!-- 스타일 배지 -->
       <div class="badge-list mb-3">
-        <span th:if="${post.male&&!post.female}" class="badge bg-primary"
-          >남성</span
-        >
-        <span th:if="${post.female&&!post.male}" class="badge bg-danger"
-          >여성</span
-        >
-        <span th:if="${post.male&&post.female}" class="badge bg-success"
-          >공용</span
-        >
+        <span th:if="${post.male&&!post.female}" class="badge bg-primary">남성</span>
+        <span th:if="${post.female&&!post.male}" class="badge bg-danger">여성</span>
+        <span th:if="${post.male&&post.female}" class="badge bg-success">공용</span>
         <span th:if="${post.casual}" class="badge bg-secondary">캐주얼</span>
         <span th:if="${post.street}" class="badge bg-secondary">스트리트</span>
         <span th:if="${post.formal}" class="badge bg-secondary">포멀</span>
         <span th:if="${post.outdoor}" class="badge bg-secondary">아웃도어</span>
-        <span
-          class="badge bg-day day"
-          th:text="${'최고  ' + post.maxTemp + '℃'}"
-        ></span>
-        <span
-          class="badge bg-night night"
-          th:text="${'최저  ' + post.minTemp + '℃'}"
-        ></span>
+        <span class="badge bg-day day" th:text="${'최고  ' + post.maxTemp + '℃'}"></span>
+        <span class="badge bg-night night" th:text="${'최저  ' + post.minTemp + '℃'}"></span>
       </div>
 
       <!-- 대표 이미지 -->
@@ -80,9 +95,7 @@
 
       <!-- 액션 버튼 -->
       <div class="detail-actions">
-        <a th:href="@{/community/list}" class="btn btn-outline-secondary"
-          >목록</a
-        >
+        <a th:href="@{/community/list}" class="btn btn-outline-secondary">목록</a>
         <form
           th:action="@{/community/recommend/{id}(id=${post.id})}"
           method="post"
@@ -166,6 +179,3 @@
     <div th:replace="fragments/footer :: footer"></div>
   </body>
 </html>
-
-<!-- 카테고리 성별 온도  -->
-<!-- 최고 최저로 밑에 카테고리 -->

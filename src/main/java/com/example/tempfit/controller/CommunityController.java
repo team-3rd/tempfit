@@ -36,9 +36,6 @@ public class CommunityController {
     private final WeatherService weatherService;
     private final SelectedWeatherService selectedWeatherService;
 
-    /**
-     * 게시판별 리스트 조회
-     */
     @GetMapping("/list")
     public String list(
             @RequestParam(value = "board", defaultValue = "TEMP_FIT") Board board,
@@ -74,6 +71,7 @@ public class CommunityController {
 
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable Long id, Model model) {
+        // 조회수 증가 X (AJAX로 대체)
         CommunityDTO postDto = communityService.get(id);
         model.addAttribute("post", postDto);
         model.addAttribute("comments", commentService.getComments(id));
@@ -89,9 +87,6 @@ public class CommunityController {
         return "redirect:/community/detail/" + id;
     }
 
-    /**
-     * 글쓰기 폼 진입 (게시판값 받기, default: TEMP_FIT)
-     */
     @GetMapping("/create")
     public String createForm(
             @RequestParam(value = "board", defaultValue = "TEMP_FIT") Board board,
@@ -104,7 +99,7 @@ public class CommunityController {
     @PostMapping("/register")
     public String registerPost(
             @ModelAttribute("communityDTO") CommunityDTO dto,
-            @RequestParam("board") Board board, // 반드시 board 파라미터 받기
+            @RequestParam("board") Board board,
             @RequestParam(value = "styleNames", required = false) List<String> styleNames,
             @RequestParam("repImage") MultipartFile repImage,
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
@@ -142,7 +137,7 @@ public class CommunityController {
     public String editPost(@PathVariable Long id, Model model) {
         CommunityDTO dto = communityService.get(id);
         model.addAttribute("communityDTO", dto);
-        model.addAttribute("board", dto.getBoard()); // 수정폼에서도 board 전달
+        model.addAttribute("board", dto.getBoard());
         return "community/edit";
     }
 
@@ -156,9 +151,8 @@ public class CommunityController {
             @RequestParam(value = "removeRepImage", defaultValue = "false") boolean removeRepImage,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
             @RequestParam(value = "sexSet", required = false) List<Sex> sexSet,
-            @RequestParam(value = "board", required = false) Board board // 수정 시에도 board 받기
+            @RequestParam(value = "board", required = false) Board board
     ) throws IOException {
-        // board null 아니면 set (안주면 그대로)
         if (board != null) {
             dto.setBoard(board);
         }

@@ -6,18 +6,12 @@
 >
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>TempFit 커뮤니티</title>
-    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link href="/css/darkmode.css" rel="stylesheet" />
-    <link rel="stylesheet" href="/css/list.css" />
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/css/darkmode.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/css/list.css"/>
   </head>
   <body class="d-flex flex-column min-vh-100">
     <!-- 네비바 -->
@@ -31,129 +25,42 @@
       <!-- 게시판 링크 섹션 (제목 바로 아래) -->
       <div class="row justify-content-center text-center mb-4">
         <div class="col-auto mb-2">
-          <a
-            th:href="@{/community/list(board='TEMP_FIT')}"
-            class="btn btn-outline-primary btn-sm"
-            th:classappend="${board == 'TEMP_FIT'} ? ' active'"
-            >TempFit 게시판</a
-          >
+          <a th:href="@{/community/list(board='TEMP_FIT')}" class="btn btn-outline-primary btn-sm" th:classappend="${board == 'TEMP_FIT'} ? ' active'">TempFit 게시판</a>
         </div>
         <div class="col-auto mb-2">
-          <a
-            th:href="@{/community/list(board='QUERY')}"
-            class="btn btn-outline-primary btn-sm"
-            th:classappend="${board == 'QUERY'} ? ' active'"
-            >질의게시판</a
-          >
+          <a th:href="@{/community/list(board='QUERY')}" class="btn btn-outline-primary btn-sm" th:classappend="${board == 'QUERY'} ? ' active'">질의게시판</a>
         </div>
         <div class="col-auto mb-2">
-          <a
-            th:href="@{/community/list(board='FREE')}"
-            class="btn btn-outline-primary btn-sm"
-            th:classappend="${board == 'FREE'} ? ' active'"
-            >자유게시판</a
-          >
+          <a th:href="@{/community/list(board='FREE')}" class="btn btn-outline-primary btn-sm" th:classappend="${board == 'FREE'} ? ' active'">자유게시판</a>
         </div>
       </div>
 
       <!-- 검색 & 스타일 필터 + 글쓰기 버튼 -->
       <div class="d-flex justify-content-between align-items-start mb-3 w-100">
-        <form
-          class="search-form d-flex flex-column"
-          th:action="@{/community/list}"
-          method="get"
-          style="gap: 8px; max-width: 600px; width: 100%"
-        >
-          <!-- 현재 board 파라미터 유지 -->
-          <input type="hidden" name="board" th:value="${board}" />
-
+        <form class="search-form d-flex flex-column" th:action="@{/community/list}" method="get" style="gap: 8px; max-width: 600px; width: 100%">
+          <input type="hidden" name="board" th:value="${board}"/>
           <div class="d-flex" style="gap: 8px">
             <select name="type" class="form-select form-select-sm">
               <option value="">전체</option>
               <option value="t" th:selected="${type=='t'}">제목</option>
               <option value="a" th:selected="${type=='a'}">작성자</option>
             </select>
-            <input
-              type="text"
-              name="keyword"
-              th:value="${keyword}"
-              class="form-control form-control-sm"
-              placeholder="검색어"
-            />
-            <button type="submit" class="btn btn-outline-secondary btn-sm">
-              검색
-            </button>
-            <a
-              th:href="@{/community/list(board=${board})}"
-              class="btn btn-outline-secondary btn-sm reset-btn"
-              >초기화</a
-            >
+            <input type="text" name="keyword" th:value="${keyword}" class="form-control form-control-sm" placeholder="검색어"/>
+            <button type="submit" class="btn btn-outline-secondary btn-sm">검색</button>
+            <a th:href="@{/community/list(board=${board})}" class="btn btn-outline-secondary btn-sm reset-btn">초기화</a>
           </div>
-          <div
-            class="btn-group btn-group-sm"
-            role="group"
-            aria-label="스타일 선택"
-            style="margin-top: 8px"
-          >
-            <input
-              type="radio"
-              class="btn-check"
-              name="styleNames"
-              id="styleCasual"
-              value="CASUAL"
-              autocomplete="off"
-              th:checked="${styleNames != null and styleNames.contains('CASUAL')}"
-            />
-            <label class="btn btn-outline-primary" for="styleCasual"
-              >캐주얼</label
-            >
-
-            <input
-              type="radio"
-              class="btn-check"
-              name="styleNames"
-              id="styleStreet"
-              value="STREET"
-              autocomplete="off"
-              th:checked="${styleNames != null and styleNames.contains('STREET')}"
-            />
-            <label class="btn btn-outline-primary" for="styleStreet"
-              >스트리트</label
-            >
-
-            <input
-              type="radio"
-              class="btn-check"
-              name="styleNames"
-              id="styleFormal"
-              value="FORMAL"
-              autocomplete="off"
-              th:checked="${styleNames != null and styleNames.contains('FORMAL')}"
-            />
-            <label class="btn btn-outline-primary" for="styleFormal"
-              >포멀</label
-            >
-
-            <input
-              type="radio"
-              class="btn-check"
-              name="styleNames"
-              id="styleOutdoor"
-              value="OUTDOOR"
-              autocomplete="off"
-              th:checked="${styleNames != null and styleNames.contains('OUTDOOR')}"
-            />
-            <label class="btn btn-outline-primary" for="styleOutdoor"
-              >기타</label
-            >
+          <div class="btn-group btn-group-sm" role="group" aria-label="스타일 선택" style="margin-top: 8px">
+            <input type="radio" class="btn-check" name="styleNames" id="styleCasual" value="CASUAL" autocomplete="off" th:checked="${styleNames != null and styleNames.contains('CASUAL')}" />
+            <label class="btn btn-outline-primary" for="styleCasual">캐주얼</label>
+            <input type="radio" class="btn-check" name="styleNames" id="styleStreet" value="STREET" autocomplete="off" th:checked="${styleNames != null and styleNames.contains('STREET')}" />
+            <label class="btn btn-outline-primary" for="styleStreet">스트리트</label>
+            <input type="radio" class="btn-check" name="styleNames" id="styleFormal" value="FORMAL" autocomplete="off" th:checked="${styleNames != null and styleNames.contains('FORMAL')}" />
+            <label class="btn btn-outline-primary" for="styleFormal">포멀</label>
+            <input type="radio" class="btn-check" name="styleNames" id="styleOutdoor" value="OUTDOOR" autocomplete="off" th:checked="${styleNames != null and styleNames.contains('OUTDOOR')}" />
+            <label class="btn btn-outline-primary" for="styleOutdoor">기타</label>
           </div>
         </form>
-        <a
-          th:href="@{/community/create(board=${board})}"
-          class="btn btn-primary btn-sm ms-3 create-btn"
-          sec:authorize="isAuthenticated()"
-          >글쓰기</a
-        >
+        <a th:href="@{/community/create(board=${board})}" class="btn btn-primary btn-sm ms-3 create-btn" sec:authorize="isAuthenticated()">글쓰기</a>
       </div>
       <div th:fragment="postGrid(posts)">
         <!-- 게시글 카드 그리드 -->
@@ -162,56 +69,41 @@
             th:each="post : ${list}"
             th:href="@{/community/detail/{id}(id=${post.id})}"
             class="post-card text-decoration-none text-reset"
+            th:attr="data-id=${post.id}"
           >
             <!-- 시간/상대시간 및 온도 -->
-            <div
-              class="card-time d-flex justify-content-between align-items-center px-3 pt-2"
-            >
+            <div class="card-time d-flex justify-content-between align-items-center px-3 pt-2">
               <small class="text-muted" th:text="${post.displayDate}"></small>
               <div class="d-flex">
                 <span class="badge bg-sky me-1" th:text="${post.sky}"></span>
-                <span
-                  class="badge bg-day me-1"
-                  th:text="${post.maxTemp + '°'}"
-                ></span>
-                <span
-                  class="badge bg-night"
-                  th:text="${post.minTemp + '°'}"
-                ></span>
+                <span class="badge bg-day me-1" th:text="${post.maxTemp + '°'}"></span>
+                <span class="badge bg-night" th:text="${post.minTemp + '°'}"></span>
               </div>
             </div>
 
             <!-- 대표 이미지 -->
-            <img
-              th:if="${post.repImageUrl != null}"
-              th:src="@{'/uploads/' + ${post.repImageUrl}}"
-              alt="대표사진"
-              class="card-img-top"
-            />
+            <img th:if="${post.repImageUrl != null}" th:src="@{'/uploads/' + ${post.repImageUrl}}" alt="대표사진" class="card-img-top"/>
 
             <!-- 카드 본문 -->
             <div class="card-body">
               <h5 class="card-title" th:text="${post.title}">제목</h5>
-              <p class="card-subtitle" th:text="${post.author.nickname}">
-                작성자
-              </p>
+              <p class="card-subtitle" th:text="${post.author.nickname}">작성자</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="badge-list">
-                  <span th:if="${post.casual}" class="badge bg-secondary"
-                    >캐주얼</span
-                  >
-                  <span th:if="${post.street}" class="badge bg-secondary"
-                    >스트리트</span
-                  >
-                  <span th:if="${post.formal}" class="badge bg-secondary"
-                    >포멀</span
-                  >
-                  <span th:if="${post.outdoor}" class="badge bg-secondary"
-                    >아웃도어</span
-                  >
+                  <span th:if="${post.casual}" class="badge bg-secondary">캐주얼</span>
+                  <span th:if="${post.street}" class="badge bg-secondary">스트리트</span>
+                  <span th:if="${post.formal}" class="badge bg-secondary">포멀</span>
+                  <span th:if="${post.outdoor}" class="badge bg-secondary">기타</span>
                 </div>
-                <div class="text-end" style="min-width: 3rem">
-                  <span>♥ [[${post.recommendCount}]]</span>
+                <div class="text-end d-flex align-items-center gap-2" style="min-width: 3rem">
+                  <span style="font-size: 1.15em;">♥ [[${post.recommendCount}]]</span>
+                  <span class="d-flex align-items-center" style="font-size:1.1em;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" class="bi bi-eye me-1" viewBox="0 0 16 16">
+                      <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8z"/>
+                      <path d="M8 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
+                    </svg>
+                    [[${post.viewCount}]]
+                  </span>
                 </div>
               </div>
             </div>
@@ -223,48 +115,13 @@
       <nav class="mt-4">
         <ul class="pagination justify-content-center">
           <li class="page-item" th:if="${startPage > 1}">
-            <a
-              class="page-link"
-              th:href="@{/community/list(
-                            board=${board},
-                            page=${startPage-1},
-                            type=${type},
-                            keyword=${keyword},
-                            styleNames=${styleNames}
-                          )}"
-              >이전</a
-            >
+            <a class="page-link" th:href="@{/community/list(board=${board},page=${startPage-1},type=${type},keyword=${keyword},styleNames=${styleNames})}">이전</a>
           </li>
-          <li
-            class="page-item"
-            th:each="i : ${#numbers.sequence(startPage, endPage)}"
-            th:classappend="${i == currentPage} ? ' active'"
-          >
-            <a
-              class="page-link"
-              th:href="@{/community/list(
-                            board=${board},
-                            page=${i},
-                            type=${type},
-                            keyword=${keyword},
-                            styleNames=${styleNames}
-                          )}"
-              th:text="${i}"
-              >1</a
-            >
+          <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}" th:classappend="${i == currentPage} ? ' active'">
+            <a class="page-link" th:href="@{/community/list(board=${board},page=${i},type=${type},keyword=${keyword},styleNames=${styleNames})}" th:text="${i}">1</a>
           </li>
           <li class="page-item" th:if="${endPage < totalPages}">
-            <a
-              class="page-link"
-              th:href="@{/community/list(
-                            board=${board},
-                            page=${endPage+1},
-                            type=${type},
-                            keyword=${keyword},
-                            styleNames=${styleNames}
-                          )}"
-              >다음</a
-            >
+            <a class="page-link" th:href="@{/community/list(board=${board},page=${endPage+1},type=${type},keyword=${keyword},styleNames=${styleNames})}">다음</a>
           </li>
         </ul>
       </nav>
@@ -281,6 +138,16 @@
           });
           card.addEventListener("mouseleave", () => {
             card.style.transform = "scale(1)";
+          });
+          // 조회수 증가 & 이동 (기존 href 막고, fetch로 POST 후 이동)
+          card.addEventListener("click", (e) => {
+            e.preventDefault();
+            const postId = card.getAttribute("data-id");
+            const targetUrl = card.getAttribute("href");
+            fetch(`/api/community/view/${postId}`, { method: "POST" })
+              .finally(() => {
+                window.location.href = targetUrl;
+              });
           });
         });
       });
