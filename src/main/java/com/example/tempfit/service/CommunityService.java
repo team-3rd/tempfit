@@ -362,7 +362,9 @@ public class CommunityService {
                 .findByCommunity_IdOrderByIsRepDescIdAsc(entity.getId());
         String repUrl = (!imgs.isEmpty()) ? imgs.get(0).getFileName() : null;
 
-        CommunityDTO dto = CommunityDTO.builder()
+        CommunityTemp temp = entity.getCommunityTemp();
+
+        return CommunityDTO.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .author(entity.getAuthor())
@@ -376,10 +378,13 @@ public class CommunityService {
                 .street(entity.getCommunityStyle() != null && entity.getCommunityStyle().isStreet())
                 .formal(entity.getCommunityStyle() != null && entity.getCommunityStyle().isFormal())
                 .outdoor(entity.getCommunityStyle() != null && entity.getCommunityStyle().isOutdoor())
+                .minTemp(temp != null ? temp.getMinTemp() : 0)
+                .maxTemp(temp != null ? temp.getMaxTemp() : 0)
+                .avgTemp(temp != null ? temp.getAvgTemp() : 0)
+                .sky(temp != null ? temp.getSky() : "")
                 .createdDate(entity.getCreatedDate())
                 .upDateTime(entity.getUpDateTime())
                 .build();
-        return dto;
     }
 
     // Native Query 결과 배열 → DTO 변환
