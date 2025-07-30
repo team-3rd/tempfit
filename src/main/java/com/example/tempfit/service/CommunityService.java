@@ -38,8 +38,6 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,14 +64,18 @@ public class CommunityService {
 
     // 게시글 등록 + 이미지 저장
     public Long register(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
-            List<SelectedWeatherDTO> weatherData)
-            throws IOException {
+                        List<SelectedWeatherDTO> weatherData) throws IOException {
+        // board 값 누락 방지
+        if (dto.getBoard() == null) {
+            throw new IllegalArgumentException("게시글의 board 값이 누락되었습니다.");
+        }
+
         Community community = Community.builder()
                 .title(dto.getTitle())
                 .author(currentUser)
                 .content(dto.getContent())
                 .recommendCount(dto.getRecommendCount())
-                .board(dto.getBoard())
+                .board(dto.getBoard()) // 반드시 board 세팅
                 .build();
         communityRepository.save(community);
 
@@ -111,13 +113,13 @@ public class CommunityService {
         }
 
         for (int i = 0; i < skys.size(); i++) {
-            if (skys.get(i) == "맑음") {
+            if ("맑음".equals(skys.get(i))) {
                 dto.setSky("맑음");
-            } else if (skys.get(i) == "구름 많음") {
+            } else if ("구름 많음".equals(skys.get(i))) {
                 dto.setSky("구름 많음");
-            } else if (skys.get(i) == "흐림" && ptys.get(i) == "강수없음") {
+            } else if ("흐림".equals(skys.get(i)) && "강수없음".equals(ptys.get(i))) {
                 dto.setSky("흐림");
-            } else if (ptys.get(i) == "비") {
+            } else if ("비".equals(ptys.get(i))) {
                 dto.setSky("비");
             }
         }
@@ -207,9 +209,9 @@ public class CommunityService {
 
     // 스타일 필터+검색 페이징
     public Page<CommunityDTO> searchPageRaw(String type,
-            String keyword,
-            List<String> styleNames,
-            int page) {
+                                            String keyword,
+                                            List<String> styleNames,
+                                            int page) {
         Pageable pageable = PageRequest.of(page - 1, 10,
                 Sort.by(Sort.Direction.DESC, "createdDate"));
         return communityRepository.list(type, keyword, styleNames, null, pageable)
@@ -217,7 +219,7 @@ public class CommunityService {
     }
 
     public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
-            boolean removeRepImage, List<SelectedWeatherDTO> weatherData) throws IOException {
+                       boolean removeRepImage, List<SelectedWeatherDTO> weatherData) throws IOException {
         Community community = communityRepository.findById(dto.getId()).orElseThrow();
 
         community.setTitle(dto.getTitle());
@@ -288,13 +290,13 @@ public class CommunityService {
         }
 
         for (int i = 0; i < ptys.size(); i++) {
-            if (skys.get(i).equals("맑음")) {
+            if ("맑음".equals(skys.get(i))) {
                 dto.setSky("맑음");
-            } else if (skys.get(i).equals("구름 많음")) {
+            } else if ("구름 많음".equals(skys.get(i))) {
                 dto.setSky("구름 많음");
-            } else if (skys.get(i).equals("흐림") && ptys.get(i).equals("강수없음")) {
+            } else if ("흐림".equals(skys.get(i)) && "강수없음".equals(ptys.get(i))) {
                 dto.setSky("흐림");
-            } else if (ptys.get(i).equals("비")) {
+            } else if ("비".equals(ptys.get(i))) {
                 dto.setSky("비");
             }
         }
@@ -333,8 +335,8 @@ public class CommunityService {
 
     // 이미지 파일 저장
     private void saveCommunityImage(Community community,
-            MultipartFile file,
-            boolean isRep) throws IOException {
+                                    MultipartFile file,
+                                    boolean isRep) throws IOException {
         File uploadPathDir = new File(uploadDir);
         if (!uploadPathDir.exists())
             uploadPathDir.mkdirs();

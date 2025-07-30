@@ -4,7 +4,7 @@ import com.example.tempfit.dto.CommunityDTO;
 import com.example.tempfit.dto.CoordsDTO;
 import com.example.tempfit.dto.GridDTO;
 import com.example.tempfit.dto.SelectedWeatherDTO;
-import com.example.tempfit.entity.Board; // ← import 추가
+import com.example.tempfit.entity.Board;
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Sex;
 import com.example.tempfit.repository.MemberRepository;
@@ -41,23 +41,33 @@ public class CommunityController {
      */
     @GetMapping("/list")
     public String list(
-            @RequestParam(value = "board", defaultValue = "FREE") Board board, // ← 추가
+            @RequestParam(value = "board", defaultValue = "TEMP_FIT") Board board,
             @RequestParam(value = "page", defaultValue = "1") int page,
             Model model) {
         Page<CommunityDTO> pageData = communityService.getPageByBoard(board, page);
 
-        int currentPage = page;
+        int currentPage;
         int totalPages = pageData.getTotalPages();
         int pageBlock = 10;
-        int startPage = ((currentPage - 1) / pageBlock) * pageBlock + 1;
-        int endPage = Math.min(startPage + pageBlock - 1, totalPages);
+        int startPage;
+        int endPage;
+
+        if (totalPages == 0) {
+            currentPage = 0;
+            startPage = 0;
+            endPage = 0;
+        } else {
+            currentPage = page;
+            startPage = ((currentPage - 1) / pageBlock) * pageBlock + 1;
+            endPage = Math.min(startPage + pageBlock - 1, totalPages);
+        }
 
         model.addAttribute("list", pageData.getContent());
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
-        model.addAttribute("board", board); // 뷰에서 분기 렌더링에 사용
+        model.addAttribute("board", board);
 
         return "community/list";
     }
@@ -79,20 +89,30 @@ public class CommunityController {
         return "redirect:/community/detail/" + id;
     }
 
+    /**
+     * 글쓰기 폼 진입 (게시판값 받기, default: TEMP_FIT)
+     */
     @GetMapping("/create")
-    public String createForm(Model model) {
+    public String createForm(
+            @RequestParam(value = "board", defaultValue = "TEMP_FIT") Board board,
+            Model model) {
         model.addAttribute("communityDTO", new CommunityDTO());
+        model.addAttribute("board", board); // 반드시 전달
         return "community/create";
     }
 
     @PostMapping("/register")
     public String registerPost(
             @ModelAttribute("communityDTO") CommunityDTO dto,
+            @RequestParam("board") Board board, // 반드시 board 파라미터 받기
             @RequestParam(value = "styleNames", required = false) List<String> styleNames,
             @RequestParam("repImage") MultipartFile repImage,
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
             @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
+
+        dto.setBoard(board);
+
         if (sexSet != null) {
             dto.setSexSet(sexSet);
             dto.setMale(sexSet.contains(Sex.MALE));
@@ -122,6 +142,7 @@ public class CommunityController {
     public String editPost(@PathVariable Long id, Model model) {
         CommunityDTO dto = communityService.get(id);
         model.addAttribute("communityDTO", dto);
+        model.addAttribute("board", dto.getBoard()); // 수정폼에서도 board 전달
         return "community/edit";
     }
 
@@ -134,7 +155,13 @@ public class CommunityController {
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @RequestParam(value = "removeRepImage", defaultValue = "false") boolean removeRepImage,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
-            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
+            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet,
+            @RequestParam(value = "board", required = false) Board board // 수정 시에도 board 받기
+    ) throws IOException {
+        // board null 아니면 set (안주면 그대로)
+        if (board != null) {
+            dto.setBoard(board);
+        }
         if (sexSet != null) {
             dto.setSexSet(sexSet);
             dto.setMale(sexSet.contains(Sex.MALE));
