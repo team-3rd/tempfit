@@ -4,7 +4,6 @@ import com.example.tempfit.dto.CommunityDTO;
 import com.example.tempfit.dto.CoordsDTO;
 import com.example.tempfit.dto.GridDTO;
 import com.example.tempfit.dto.SelectedWeatherDTO;
-import com.example.tempfit.entity.Board;
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Sex;
 import com.example.tempfit.repository.MemberRepository;
@@ -38,10 +37,9 @@ public class CommunityController {
 
     @GetMapping("/list")
     public String list(
-            @RequestParam(value = "board", defaultValue = "TEMP_FIT") Board board,
             @RequestParam(value = "page", defaultValue = "1") int page,
             Model model) {
-        Page<CommunityDTO> pageData = communityService.getPageByBoard(board, page);
+        Page<CommunityDTO> pageData = communityService.getPage(page);
 
         int currentPage;
         int totalPages = pageData.getTotalPages();
@@ -64,14 +62,12 @@ public class CommunityController {
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
-        model.addAttribute("board", board);
 
         return "community/list";
     }
 
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable Long id, Model model) {
-        // 조회수 증가 X (AJAX로 대체)
         CommunityDTO postDto = communityService.get(id);
         model.addAttribute("post", postDto);
         model.addAttribute("comments", commentService.getComments(id));
@@ -88,25 +84,19 @@ public class CommunityController {
     }
 
     @GetMapping("/create")
-    public String createForm(
-            @RequestParam(value = "board", defaultValue = "TEMP_FIT") Board board,
-            Model model) {
+    public String createForm(Model model) {
         model.addAttribute("communityDTO", new CommunityDTO());
-        model.addAttribute("board", board); // 반드시 전달
         return "community/create";
     }
 
     @PostMapping("/register")
     public String registerPost(
             @ModelAttribute("communityDTO") CommunityDTO dto,
-            @RequestParam("board") Board board,
             @RequestParam(value = "styleNames", required = false) List<String> styleNames,
             @RequestParam("repImage") MultipartFile repImage,
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
             @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
-
-        dto.setBoard(board);
 
         if (sexSet != null) {
             dto.setSexSet(sexSet);
@@ -137,7 +127,6 @@ public class CommunityController {
     public String editPost(@PathVariable Long id, Model model) {
         CommunityDTO dto = communityService.get(id);
         model.addAttribute("communityDTO", dto);
-        model.addAttribute("board", dto.getBoard());
         return "community/edit";
     }
 
@@ -150,12 +139,8 @@ public class CommunityController {
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @RequestParam(value = "removeRepImage", defaultValue = "false") boolean removeRepImage,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
-            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet,
-            @RequestParam(value = "board", required = false) Board board
+            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet
     ) throws IOException {
-        if (board != null) {
-            dto.setBoard(board);
-        }
         if (sexSet != null) {
             dto.setSexSet(sexSet);
             dto.setMale(sexSet.contains(Sex.MALE));

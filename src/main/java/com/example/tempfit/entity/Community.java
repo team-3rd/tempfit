@@ -22,31 +22,20 @@ public class Community extends Base {
     @SequenceGenerator(name = "community_seq_gen", sequenceName = "COMMUNITY_SEQ", allocationSize = 1)
     private Long id;
 
-    /** 제목은 반드시 입력되도록 유지 */
     @Column(nullable = false)
     private String title;
 
-    /* author도 비워둘 수 있게 nullable=true (기본값) */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
     private Member author;
 
-    /** content 역시 nullable=true (기본값), CLOB 매핑 유지 */
     @Lob
     @Column(columnDefinition = "CLOB")
     private String content;
 
-    /**
-     * 게시판 구분 (TEMP_FIT, QUERY, FREE)
-     */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "board", nullable = false)
-    private Board board;
-
     @Column(nullable = false)
     private int recommendCount;
 
-    // ★ 조회수 필드 추가 (초기값 0)
     @Column(name = "view_count", nullable = false)
     private int viewCount = 0;
 

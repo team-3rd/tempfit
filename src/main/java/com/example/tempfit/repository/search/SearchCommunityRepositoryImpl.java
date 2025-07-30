@@ -64,7 +64,8 @@ public class SearchCommunityRepositoryImpl
                         temp.minTemp,
                         temp.maxTemp,
                         temp.avgTemp,
-                        temp.sky)
+                        temp.sky,
+                        community.viewCount) // 여기 viewCount 추가
                 .distinct();
 
         BooleanBuilder builder = new BooleanBuilder();
@@ -110,7 +111,7 @@ public class SearchCommunityRepositoryImpl
 
         query.where(builder);
 
-        // ✅ 정렬 처리: pageable 정렬 우선, 없으면 추천순
+        // 정렬 처리: pageable 정렬 우선, 없으면 추천순
         if (pageable.getSort().isSorted()) {
             for (Sort.Order o : pageable.getSort()) {
                 Order dir = o.isAscending() ? Order.ASC : Order.DESC;
@@ -143,7 +144,8 @@ public class SearchCommunityRepositoryImpl
                         t.get(temp.minTemp),
                         t.get(temp.maxTemp),
                         t.get(temp.avgTemp),
-                        t.get(temp.sky)
+                        t.get(temp.sky),
+                        t.get(community.viewCount) // 결과에도 추가
                 })
                 .collect(Collectors.toList());
 

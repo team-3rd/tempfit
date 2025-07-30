@@ -235,25 +235,6 @@
           <input type="hidden" name="lon" id="lon" />
         </div>
 
-        <!-- ★ 게시판 선택 드롭다운 (board 필수 전달) ★ -->
-        <div class="mb-3">
-          <label for="boardSelect" class="form-label">게시판 선택 <span class="text-danger">*</span></label>
-          <select
-            class="form-select"
-            id="boardSelect"
-            name="board"
-            required
-            th:value="${board}"
-          >
-            <option th:value="TEMP_FIT" th:selected="${board}=='TEMP_FIT'">TempFit 게시판</option>
-            <option th:value="QUERY" th:selected="${board}=='QUERY'">질의게시판</option>
-            <option th:value="FREE" th:selected="${board}=='FREE'">자유게시판</option>
-          </select>
-          <div class="invalid-feedback">
-            게시판을 선택해주세요.
-          </div>
-        </div>
-
         <a href="/community/list" class="btn btn-secondary ms-2">목록</a>
         <button type="submit" class="btn btn-primary" id="bsubmitBtn">
           등록

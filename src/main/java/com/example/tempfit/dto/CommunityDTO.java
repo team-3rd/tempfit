@@ -1,6 +1,5 @@
 package com.example.tempfit.dto;
 
-import com.example.tempfit.entity.Board;
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Sex;
 import lombok.AllArgsConstructor;
@@ -25,7 +24,6 @@ public class CommunityDTO {
     private String title;
 
     private Member author;
-    private Board board;
 
     private String content;
     private int recommendCount;
@@ -58,7 +56,7 @@ public class CommunityDTO {
     private LocalDateTime createdDate;
     private LocalDateTime upDateTime;
 
-    private int viewCount; // ★★★ 조회수 필드 추가!
+    private int viewCount; // ★★★ 조회수 필드
 
     /**
      * 상대 시간 표시:

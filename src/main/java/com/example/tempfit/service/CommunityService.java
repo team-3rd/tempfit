@@ -3,7 +3,6 @@ package com.example.tempfit.service;
 import com.example.tempfit.entity.TemperatureRange;
 import com.example.tempfit.dto.CommunityDTO;
 import com.example.tempfit.dto.SelectedWeatherDTO;
-import com.example.tempfit.entity.Board;
 import com.example.tempfit.entity.Community;
 import com.example.tempfit.entity.CommunityImage;
 import com.example.tempfit.entity.CommunitySex;
@@ -65,17 +64,11 @@ public class CommunityService {
     // 게시글 등록 + 이미지 저장
     public Long register(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
                         List<SelectedWeatherDTO> weatherData) throws IOException {
-        // board 값 누락 방지
-        if (dto.getBoard() == null) {
-            throw new IllegalArgumentException("게시글의 board 값이 누락되었습니다.");
-        }
-
         Community community = Community.builder()
                 .title(dto.getTitle())
                 .author(currentUser)
                 .content(dto.getContent())
                 .recommendCount(dto.getRecommendCount())
-                .board(dto.getBoard())
                 .build();
         communityRepository.save(community);
 
@@ -191,14 +184,6 @@ public class CommunityService {
                 .map(this::arrayToDTO);
     }
 
-    // 보드 타입별 페이징 조회
-    public Page<CommunityDTO> getPageByBoard(Board board, int page) {
-        Pageable pageable = PageRequest.of(page - 1, 10,
-                Sort.by(Sort.Direction.DESC, "createdDate"));
-        return communityRepository.findByBoard(board, pageable)
-                .map(this::entityToDTO);
-    }
-
     // 키워드 검색 페이징
     public Page<CommunityDTO> searchPage(String type, String keyword, int page) {
         Pageable pageable = PageRequest.of(page - 1, 10,
@@ -225,7 +210,6 @@ public class CommunityService {
         community.setTitle(dto.getTitle());
         community.setAuthor(currentUser);
         community.setContent(dto.getContent());
-        community.setBoard(dto.getBoard());
 
         long count = recommendRepository.countByCommunity(community);
         community.setRecommendCount((int) count);
@@ -368,7 +352,6 @@ public class CommunityService {
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .author(entity.getAuthor())
-                .board(entity.getBoard())
                 .content(entity.getContent())
                 .recommendCount(entity.getRecommendCount())
                 .repImageUrl(repUrl)
@@ -384,7 +367,7 @@ public class CommunityService {
                 .sky(temp != null ? temp.getSky() : "")
                 .createdDate(entity.getCreatedDate())
                 .upDateTime(entity.getUpDateTime())
-                .viewCount(entity.getViewCount()) // ★ 이 한줄만 추가하면 해결!
+                .viewCount(entity.getViewCount())
                 .build();
     }
 
@@ -405,6 +388,7 @@ public class CommunityService {
                 .maxTemp((int) arr[11])
                 .avgTemp((int) arr[12])
                 .sky((String) arr[13])
+                .viewCount((Integer) arr[14])
                 .build();
     }
 
