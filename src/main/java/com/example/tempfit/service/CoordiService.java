@@ -3,12 +3,11 @@ package com.example.tempfit.service;
 import com.example.tempfit.dto.CoordiDTO;
 import com.example.tempfit.entity.CommunityStyle;
 import com.example.tempfit.entity.Coordi;
-import com.example.tempfit.entity.Product;
-import com.example.tempfit.entity.Sex;
+import com.example.tempfit.entity.ProductsMale;
 import com.example.tempfit.entity.TemperatureRange;
 import com.example.tempfit.repository.CoordiRepository;
 import com.example.tempfit.repository.ProductRepository;
-
+import com.example.tempfit.service.ClothingGuideService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +22,11 @@ public class CoordiService {
 
     private final CoordiRepository coordiRepository;
     private final ProductRepository productRepository;
+    private final ClothingGuideService clothingGuideService;  // 새로 주입
 
-    // DB에 저장된 스타일별 Product 목록 조회
-    public List<Product> getProductsByGenderAndItemName(String gender, String itemName) {
-        Sex sex = "male".equalsIgnoreCase(gender) ? Sex.MALE : Sex.FEMALE;
-        return productRepository.findAllBySexAndItemName(sex, itemName);
+    // ===== [추가] 카테고리별 상품 리스트 조회 =====
+    public List<ProductsMale> getProductsByCategory(String categoryId) {
+        return productRepository.findAllByCategoryId(categoryId);
     }
 
     // 게시글 등록
@@ -46,41 +45,37 @@ public class CoordiService {
                 .formal(dto.isFormal())
                 .outdoor(dto.isOutdoor())
                 .build();
-
         coordi.setCommunityStyle(flags);
+
         coordiRepository.save(coordi);
         return coordi.getId();
     }
 
-    // 온도에 맞는 스타일별 추천 상위 5개
+    // 온도에 맞는 스타일별 추천 상위 3개
     public Map<String, List<CoordiDTO>> getRecommendationsByTemp(int temp) {
         TemperatureRange range = TemperatureRange.fromTemperature(temp);
         Map<String, List<CoordiDTO>> result = new LinkedHashMap<>();
 
         result.put("casual",
-                coordiRepository
-                        .findTop5ByCommunityStyleCasualTrueAndTemperatureRangeOrderByRecommendCountDesc(range)
-                        .stream()
-                        .map(this::toDTO)
-                        .collect(Collectors.toList()));
+            coordiRepository
+                .findTop3ByCommunityStyleCasualTrueAndTemperatureRangeOrderByRecommendCountDesc(range)
+                .stream().map(this::toDTO).collect(Collectors.toList())
+        );
         result.put("street",
-                coordiRepository
-                        .findTop5ByCommunityStyleStreetTrueAndTemperatureRangeOrderByRecommendCountDesc(range)
-                        .stream()
-                        .map(this::toDTO)
-                        .collect(Collectors.toList()));
+            coordiRepository
+                .findTop3ByCommunityStyleStreetTrueAndTemperatureRangeOrderByRecommendCountDesc(range)
+                .stream().map(this::toDTO).collect(Collectors.toList())
+        );
         result.put("formal",
-                coordiRepository
-                        .findTop5ByCommunityStyleFormalTrueAndTemperatureRangeOrderByRecommendCountDesc(range)
-                        .stream()
-                        .map(this::toDTO)
-                        .collect(Collectors.toList()));
+            coordiRepository
+                .findTop3ByCommunityStyleFormalTrueAndTemperatureRangeOrderByRecommendCountDesc(range)
+                .stream().map(this::toDTO).collect(Collectors.toList())
+        );
         result.put("outdoor",
-                coordiRepository
-                        .findTop5ByCommunityStyleOutdoorTrueAndTemperatureRangeOrderByRecommendCountDesc(range)
-                        .stream()
-                        .map(this::toDTO)
-                        .collect(Collectors.toList()));
+            coordiRepository
+                .findTop3ByCommunityStyleOutdoorTrueAndTemperatureRangeOrderByRecommendCountDesc(range)
+                .stream().map(this::toDTO).collect(Collectors.toList())
+        );
 
         return result;
     }
@@ -90,9 +85,47 @@ public class CoordiService {
         TemperatureRange range = TemperatureRange.fromTemperature(temp);
         return coordiRepository
                 .findByTemperatureRangeOrderByRecommendCountDesc(range)
-                .stream()
-                .map(this::toDTO)
+                .stream().map(this::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    // ===== 리팩토링된: 남/여 DB 랜덤 추천 메서드 =====
+    /**
+     * gender ("male" 또는 "female"), temp (실제 온도 값) 에 맞춰
+     * 각 category별 {name, imageUrl} 맵을 반환합니다.
+     */
+    public Map<String, Map<String, String>> getRandomClothingWithImage(String gender, int temp) {
+        boolean isMale = "male".equalsIgnoreCase(gender);
+
+        if (isMale) {
+            // 남성용: category → ClothMale
+            return clothingGuideService
+                .getRandomMaleClothingByTemperature(temp)
+                .entrySet().stream()
+                .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    e -> Map.of(
+                        "name", e.getValue().getClothName(),
+                        "imageUrl", e.getValue().getImageUrl()
+                    ),
+                    (a, b) -> a,
+                    LinkedHashMap::new
+                ));
+        } else {
+            // 여성용: category → ClothFemale
+            return clothingGuideService
+                .getRandomFemaleClothingByTemperature(temp)
+                .entrySet().stream()
+                .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    e -> Map.of(
+                        "name", e.getValue().getClothName(),
+                        "imageUrl", e.getValue().getImageUrl()
+                    ),
+                    (a, b) -> a,
+                    LinkedHashMap::new
+                ));
+        }
     }
 
     // Entity → DTO 변환

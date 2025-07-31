@@ -8,16 +8,16 @@ import java.util.List;
 
 public interface CoordiRepository extends JpaRepository<Coordi, Long> {
 
-    List<Coordi> findTop5ByCommunityStyleCasualTrueAndTemperatureRangeOrderByRecommendCountDesc(
+    List<Coordi> findTop3ByCommunityStyleCasualTrueAndTemperatureRangeOrderByRecommendCountDesc(
         TemperatureRange temperatureRange);
 
-    List<Coordi> findTop5ByCommunityStyleStreetTrueAndTemperatureRangeOrderByRecommendCountDesc(
+    List<Coordi> findTop3ByCommunityStyleStreetTrueAndTemperatureRangeOrderByRecommendCountDesc(
         TemperatureRange temperatureRange);
 
-    List<Coordi> findTop5ByCommunityStyleFormalTrueAndTemperatureRangeOrderByRecommendCountDesc(
+    List<Coordi> findTop3ByCommunityStyleFormalTrueAndTemperatureRangeOrderByRecommendCountDesc(
         TemperatureRange temperatureRange);
 
-    List<Coordi> findTop5ByCommunityStyleOutdoorTrueAndTemperatureRangeOrderByRecommendCountDesc(
+    List<Coordi> findTop3ByCommunityStyleOutdoorTrueAndTemperatureRangeOrderByRecommendCountDesc(
         TemperatureRange temperatureRange);
 
     List<Coordi> findByTemperatureRangeOrderByRecommendCountDesc(
