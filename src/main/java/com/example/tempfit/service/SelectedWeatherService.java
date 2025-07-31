@@ -82,7 +82,6 @@ public class SelectedWeatherService {
 
     public List<SelectedWeatherDTO> weatherDataParsing(String weatherData, String baseDate) {
         List<SelectedWeatherDTO> selectedweather = new ArrayList<>();
-        SelectedWeatherDTO selectedWeatherDTO = new SelectedWeatherDTO();
 
         try {
             // XML 형식의 데이터 파싱(parsing) - item 태그의 부분(날씨 데이터) 가져오기
@@ -156,6 +155,7 @@ public class SelectedWeatherService {
 
             // 예보 날짜 및 시간 파싱 , 기온 평균 구하고 DTO에 저장
             for (int i = 0; i < ptyList.size(); i++) {
+                SelectedWeatherDTO selectedWeatherDTO = new SelectedWeatherDTO();
                 LocalDate parseDate = LocalDate.parse(dateList.get(i), DateTimeFormatter.BASIC_ISO_DATE);
                 LocalTime parseTime = LocalTime.parse(timeList.get(i), DateTimeFormatter.ofPattern("HHmm"));
 

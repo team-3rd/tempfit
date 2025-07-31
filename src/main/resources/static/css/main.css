@@ -78,39 +78,33 @@
 .btn-next::after {
   content: "";
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 7px;
-  height: 11px;
+  width: 12px;
+  height: 12px;
+  left: 45%;
   margin: -5px 0 0 -2px;
   display: inline-block;
   overflow: hidden;
-  background: url(https://ssl.pstatic.net/sstatic/keypage/outside/scui/weather_new_new/img/sp_icon_v7.png)
+  background: url(https://img.icons8.com/ios-filled/12/forward--v1.png)
     no-repeat;
-  background-size: 100px 100px;
+  background-size: 12px 12px;
   vertical-align: top;
   color: transparent;
-  background-position: -33px -36px;
   z-index: 1;
 }
 .btn-prev::after {
   content: "";
   position: absolute;
-  top: 50%;
-  left: 45%;
-  width: 7px;
-  height: 11px;
+  width: 12px;
+  height: 12px;
+  left: 37%;
   margin: -5px 0 0 -2px;
   display: inline-block;
   overflow: hidden;
-  background: url(https://ssl.pstatic.net/sstatic/keypage/outside/scui/weather_new_new/img/sp_icon_v7.png)
-    no-repeat;
-  background-size: 100px 100px;
+  background: url(https://img.icons8.com/ios-filled/12/back.png) no-repeat;
+  background-size: 12px 12px;
   vertical-align: top;
   color: transparent;
-  background-position: -33px -36px;
   z-index: 1;
-  transform: scaleX(-1);
 }
 .inner {
   position: relative;
