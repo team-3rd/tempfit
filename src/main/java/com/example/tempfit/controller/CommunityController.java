@@ -93,8 +93,8 @@ public class CommunityController {
     public String registerPost(
             @ModelAttribute("communityDTO") CommunityDTO dto,
             @RequestParam(value = "styleNames", required = false) List<String> styleNames,
-            @RequestParam("repImage") MultipartFile repImage,
-            @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
+            @RequestParam("imageFiles") List<MultipartFile> imageFiles,
+            @RequestParam("repImageIndex") int repImageIndex,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
             @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
 
@@ -119,7 +119,7 @@ public class CommunityController {
         Member loginMember = memberRepository.findByEmailAndFromSocial(
                 authMemberDTO.getEmail(), authMemberDTO.isFromSocial());
 
-        Long newId = communityService.register(dto, loginMember, repImage, extraImages, weatherData);
+        Long newId = communityService.register(dto, loginMember, imageFiles, repImageIndex, weatherData);
         return "redirect:/community/detail/" + newId;
     }
 

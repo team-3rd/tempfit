@@ -69,67 +69,29 @@
           />
         </div>
 
-        <!-- 대표 사진 -->
-        <div class="mb-3">
-          <label for="repImage" class="form-label"
-            >대표 사진<span class="text-danger">*</span></label
-          >
-          <div
-            class="mb-2 d-flex align-items-center gap-2"
-            id="repImagePreviewContainer"
-            style="display: none"
-          >
-            <img
-              id="previewImage"
-              src=""
-              alt="미리보기"
-              style="max-width: 200px; display: none"
-            />
-            <button
-              type="button"
-              id="repImageXBtnPreview"
-              class="x-square-btn show"
-              tabindex="-1"
-            >
-              &times;
-            </button>
-          </div>
-          <div class="file-row d-flex align-items-center gap-2">
-            <input
-              class="form-control"
-              type="file"
-              id="repImage"
-              name="repImage"
-              accept="image/*"
-              required
-            />
-          </div>
-          <div class="invalid-feedback">대표 사진을 선택해주세요.</div>
-        </div>
+<!-- 이미지 업로드 -->
+<div class="mb-3">
+  <label for="imageFiles" class="form-label">
+    사진 업로드 <span class="text-danger">*</span> (대표 1장 선택)
+  </label>
+  <input
+    class="form-control"
+    type="file"
+    id="imageFiles"
+    name="imageFiles"
+    accept="image/*"
+    multiple
+    required
+  />
+  <div class="form-text">클릭해서 대표 이미지를 선택하세요 (1장)</div>
+  <div class="invalid-feedback">최소 1장 이상의 사진을 올려주세요.</div>
+</div>
 
-        <!-- 추가 사진 -->
-        <div class="mb-3">
-          <label for="extraImages" class="form-label">추가 사진</label>
-          <div class="file-row d-flex align-items-center gap-2">
-            <input
-              class="form-control"
-              type="file"
-              id="extraImages"
-              name="extraImages"
-              accept="image/*"
-              multiple
-            />
-            <button
-              type="button"
-              id="extraImagesXBtn"
-              class="x-square-btn btn btn-outline-danger"
-              tabindex="-1"
-            >
-              &times;
-            </button>
-          </div>
-          <div class="form-text">Ctrl 또는 Shift를 눌러 여러 장 선택 가능</div>
-        </div>
+<!-- 미리보기 + 대표 선택 표시 -->
+<div id="previewContainer" class="d-flex flex-wrap gap-3 mb-3"></div>
+
+<!-- 대표 이미지 index 서버 전달용 -->
+<input type="hidden" name="repImageIndex" id="repImageIndex" />
 
         <!-- 내용 -->
         <div class="mb-3">

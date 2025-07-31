@@ -1,72 +1,66 @@
-// 대표 사진 미리보기 + X 버튼 제어
-const repInput = document.getElementById("repImage");
-const repXBtn = document.getElementById("repImageXBtnPreview");
-const previewImage = document.getElementById("previewImage");
-const previewContainer = document.getElementById("repImagePreviewContainer");
+// ─── 대표 이미지 선택용 변수들 ───
+const imageInput = document.getElementById("imageFiles");
+const previewContainer = document.getElementById("previewContainer");
+const repImageIndexInput = document.getElementById("repImageIndex");
+let selectedFiles = [];
 
-repXBtn.classList.remove("show");
-previewContainer.style.display = "none";
-previewImage.style.display = "none";
+// ─── 대표 이미지 선택 미리보기 ───
+imageInput.addEventListener("change", function () {
+  selectedFiles = Array.from(this.files);
+  previewContainer.innerHTML = "";
+  repImageIndexInput.value = ""; // 대표 이미지 초기화
 
-repInput.addEventListener("change", function () {
-  const file = this.files[0];
-  if (file) {
+  selectedFiles.forEach((file, index) => {
     const reader = new FileReader();
     reader.onload = function (e) {
-      previewImage.src = e.target.result;
-      previewImage.style.display = "block";
-      previewContainer.style.display = "flex";
-      repXBtn.classList.add("show");
+      const wrapper = document.createElement("div");
+      wrapper.className = "position-relative";
+
+      const img = document.createElement("img");
+      img.src = e.target.result;
+      img.style.width = "200px";
+      img.style.height = "200px";
+      img.style.objectFit = "cover";
+      img.style.border = "3px solid transparent";
+      img.style.cursor = "pointer";
+
+      img.addEventListener("click", () => {
+        // 모든 이미지 테두리 제거
+        document
+          .querySelectorAll("#previewContainer img")
+          .forEach((el) => (el.style.border = "3px solid transparent"));
+
+        // 선택한 이미지만 강조
+        img.style.border = "3px solid #007bff";
+        repImageIndexInput.value = index;
+      });
+
+      wrapper.appendChild(img);
+      previewContainer.appendChild(wrapper);
     };
     reader.readAsDataURL(file);
-  } else {
-    previewImage.src = "";
-    previewImage.style.display = "none";
-    previewContainer.style.display = "none";
-    repXBtn.classList.remove("show");
-  }
+  });
 });
 
-repXBtn.onclick = function () {
-  repInput.value = "";
-  previewImage.src = "";
-  previewImage.style.display = "none";
-  previewContainer.style.display = "none";
-  repXBtn.classList.remove("show");
-};
-
-// 추가 사진 X 버튼 제어
-const extraInput = document.getElementById("extraImages");
-const extraXBtn = document.getElementById("extraImagesXBtn");
-extraXBtn.classList.remove("show");
-
-extraInput.addEventListener("change", function () {
-  extraXBtn.classList.toggle("show", this.files.length > 0);
-});
-extraXBtn.onclick = function () {
-  extraInput.value = "";
-  extraXBtn.classList.remove("show");
-};
-
-// 제목 글자수 표시
+// ─── 제목 글자수 표시 ───
 const titleInput = document.getElementById("title");
 const titleHelp = document.getElementById("titleHelp");
 titleInput.addEventListener("input", function () {
   titleHelp.textContent = this.value.length + " / 11";
 });
 
-// 스타일 체크박스 최대 2개 제한
-document.querySelectorAll(".style-check").forEach(function (chk) {
-  chk.addEventListener("change", function () {
+// ─── 스타일 체크박스 최대 2개 제한 ───
+document.querySelectorAll(".style-check").forEach((chk) => {
+  chk.addEventListener("change", () => {
     const checked = document.querySelectorAll(".style-check:checked");
-    if (checked.length > 2) this.checked = false;
+    if (checked.length > 2) chk.checked = false;
   });
 });
 
-// 성별 체크박스 (둘 다 선택 가능)
+// ─── 성별 체크박스 요소 ───
 const sexChecks = document.querySelectorAll("input[name='sexSet']");
 
-// 날짜 범위 설정
+// ─── 날짜 초기값 및 범위 설정 ───
 const date_now = new Date();
 function formatDate(date) {
   const year = date.getFullYear();
@@ -87,7 +81,7 @@ dateInput.value = todayStr;
 dateInput.min = minStr;
 dateInput.max = maxStr;
 
-// 좌표 설정
+// ─── 위치 정보 설정 ───
 window.addEventListener("DOMContentLoaded", () => {
   navigator.geolocation.getCurrentPosition((pos) => {
     document.getElementById("lat").value = pos.coords.latitude;
@@ -95,13 +89,13 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// 커스텀 유효성 검사 + 중복 클릭 방지
+// ─── 유효성 검사 및 중복 제출 방지 ───
 document
   .getElementById("communityForm")
   .addEventListener("submit", function (e) {
     let valid = true;
 
-    // 제목 필수
+    // 제목 검사
     if (!titleInput.value.trim()) {
       titleInput.classList.add("is-invalid");
       valid = false;
@@ -109,15 +103,21 @@ document
       titleInput.classList.remove("is-invalid");
     }
 
-    // 대표 사진 필수
-    if (!repInput.files || repInput.files.length === 0) {
-      repInput.classList.add("is-invalid");
+    // 이미지 업로드 검사
+    if (!imageInput.files || imageInput.files.length === 0) {
+      imageInput.classList.add("is-invalid");
       valid = false;
     } else {
-      repInput.classList.remove("is-invalid");
+      imageInput.classList.remove("is-invalid");
     }
 
-    // 스타일 필수 (1~2개)
+    // 대표 이미지 선택 여부 검사
+    if (!repImageIndexInput.value) {
+      alert("대표 이미지를 클릭해서 선택해주세요.");
+      valid = false;
+    }
+
+    // 스타일 검사
     const checkedStyles = Array.from(
       document.querySelectorAll(".style-check")
     ).filter((chk) => chk.checked);
@@ -129,7 +129,7 @@ document
       styleGroup.classList.remove("was-validated");
     }
 
-    // 성별 필수 (최소 1개)
+    // 성별 검사
     const checkedSexes = Array.from(sexChecks).filter((chk) => chk.checked);
     const sexGroup = document.getElementById("sexGroup");
     const sexFeedback = sexGroup.querySelector(".invalid-feedback");
