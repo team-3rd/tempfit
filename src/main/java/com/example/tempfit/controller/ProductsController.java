@@ -35,8 +35,8 @@ public class ProductsController {
             return "products/list-empty";
         }
 
-        // 페이징: 한 페이지당 6개
-        int pageSize = 6;
+        // 페이징: 한 페이지당 10개
+        int pageSize = 10;
         int total = result.getProducts().size();
         int totalPages = (total + pageSize - 1) / pageSize;
         int currentPage = Math.max(0, Math.min(page, totalPages - 1));
