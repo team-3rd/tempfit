@@ -54,8 +54,8 @@ window.addEventListener("DOMContentLoaded", async () => {
           if (tagElem) {
             tagElem.innerHTML =
               tempNum != null
-                ? `‘현재 온도 기준(<b>${tempNum}℃</b>)’`
-                : "‘현재 온도 기준(-℃)’";
+                ? `‘🌡현재 온도 기준(<b>${tempNum}℃</b>)’`
+                : "‘🌡현재 온도 기준(-℃)’";
           }
 
           // 날씨 로드 완료 이벤트 발생

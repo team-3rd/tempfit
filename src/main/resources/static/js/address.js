@@ -79,25 +79,8 @@ window.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
-// 도·시 리스트
-function doList() {
-  let result = "";
-
-  adList.forEach((ads) => {
-    result += `<li class="list-li-do">`;
-    result += `<a href="#" class="li-do-btn" onclick="showDo()">`;
-    result += `${ads}</a>`;
-    result += `</li>`;
-  });
-  result += `<a href="javascript:hideDoList()" class="list-close">`;
-  result += `<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 40 40">
-            <path d="M 7.71875 6.28125 L 6.28125 7.71875 L 23.5625 25 L 6.28125 42.28125 L 7.71875 43.71875 L 25 26.4375 L 42.28125 43.71875 L 43.71875 42.28125 L 26.4375 25 L 43.71875 7.71875 L 42.28125 6.28125 L 25 23.5625 Z"></path>
-            </svg>`;
-  result += `</a>`;
-
-  document.querySelector(".list-do").innerHTML = result;
-
-  // 도·시 리스트 토글
+// 도·시 리스트 토글
+function doListToggle() {
   document.querySelector(".layer-do").classList.toggle("hide");
   document.querySelector(".list-li-left").classList.toggle("unfold");
 
@@ -123,6 +106,64 @@ function doList() {
     icon.src = `https://img.icons8.com/ios-filled/10/sort-down.png`;
     icon.alt = `sort-down`;
     dosi.appendChild(icon);
+  }
+}
+
+// 시·군·구 리스트 토글
+function siListToggle() {
+  // 시·군·구 리스트 토글
+  document.querySelector(".layer-si").classList.toggle("hide");
+  document.querySelector(".list-li-center").classList.toggle("unfold");
+
+  // 리스트 탭 접힘 확인표시 변경
+  const sigungu = document.querySelector(".sigungu");
+  if (document.querySelector(".list-li-center").classList.length == 2) {
+    sigungu.removeChild(sigungu.querySelector(".img"));
+
+    const icon = document.createElement("img");
+    icon.classList.add("img");
+    icon.width = `10`;
+    icon.height = `10`;
+    icon.src = `https://img.icons8.com/ios-filled/10/sort-up.png`;
+    icon.alt = `sort-up`;
+    sigungu.appendChild(icon);
+  } else {
+    sigungu.removeChild(sigungu.querySelector(".img"));
+
+    const icon = document.createElement("img");
+    icon.classList.add("img");
+    icon.width = `10`;
+    icon.height = `10`;
+    icon.src = `https://img.icons8.com/ios-filled/10/sort-down.png`;
+    icon.alt = `sort-down`;
+    sigungu.appendChild(icon);
+  }
+}
+
+// 도·시 리스트
+function doList() {
+  let result = "";
+
+  adList.forEach((ads) => {
+    result += `<li class="list-li-do">`;
+    result += `<a href="#" class="li-do-btn" onclick="showDo()">`;
+    result += `${ads}</a>`;
+    result += `</li>`;
+  });
+  result += `<a href="javascript:hideDoList()" class="list-close">`;
+  result += `<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 40 40">
+            <path d="M 7.71875 6.28125 L 6.28125 7.71875 L 23.5625 25 L 6.28125 42.28125 L 7.71875 43.71875 L 25 26.4375 L 42.28125 43.71875 L 43.71875 42.28125 L 26.4375 25 L 43.71875 7.71875 L 42.28125 6.28125 L 25 23.5625 Z"></path>
+            </svg>`;
+  result += `</a>`;
+
+  document.querySelector(".list-do").innerHTML = result;
+
+  // 도·시 리스트 토글
+  doListToggle();
+
+  // 시·군·구 리스트 열려있으면 닫기
+  if (document.querySelector(".layer-si").classList.length == 1) {
+    hideSiList();
   }
 }
 
@@ -237,31 +278,11 @@ function siList() {
   document.querySelector(".list-si").innerHTML = result;
 
   // 시·군·구 리스트 토글
-  document.querySelector(".layer-si").classList.toggle("hide");
-  document.querySelector(".list-li-center").classList.toggle("unfold");
+  siListToggle();
 
-  // 리스트 탭 접힘 확인표시 변경
-  const sigungu = document.querySelector(".sigungu");
-  if (document.querySelector(".list-li-center").classList.length == 2) {
-    sigungu.removeChild(sigungu.querySelector(".img"));
-
-    const icon = document.createElement("img");
-    icon.classList.add("img");
-    icon.width = `10`;
-    icon.height = `10`;
-    icon.src = `https://img.icons8.com/ios-filled/10/sort-up.png`;
-    icon.alt = `sort-up`;
-    sigungu.appendChild(icon);
-  } else {
-    sigungu.removeChild(sigungu.querySelector(".img"));
-
-    const icon = document.createElement("img");
-    icon.classList.add("img");
-    icon.width = `10`;
-    icon.height = `10`;
-    icon.src = `https://img.icons8.com/ios-filled/10/sort-down.png`;
-    icon.alt = `sort-down`;
-    sigungu.appendChild(icon);
+  // 도·시 리스트 닫기
+  if (document.querySelector(".layer-do").classList.length == 1) {
+    hideDoList();
   }
 }
 
@@ -330,5 +351,15 @@ async function weatherLoad() {
     .then((res) => res.json())
     .then((weatherData) => {
       wd.weatherLoads(weatherData);
+      const weather = weatherData[0];
+
+      const tempNum = weather.tmp != null ? parseInt(weather.tmp, 10) : null;
+      const tagElem = document.getElementById("current-temp-tag");
+      if (tagElem) {
+        tagElem.innerHTML =
+          tempNum != null
+            ? `‘🌡현재 온도 기준(<b>${tempNum}℃</b>)’`
+            : "‘🌡현재 온도 기준(-℃)’";
+      }
     });
 }
