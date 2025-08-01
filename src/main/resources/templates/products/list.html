@@ -13,8 +13,77 @@
       href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/variable/pretendardvariable.css"
       rel="stylesheet"
     />
+    <style>
+      .product-card {
+        position: relative;
+        border: none;
+        border-radius: 0;
+        overflow: hidden;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        transition: transform .15s ease-in-out;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+      }
+      .product-card:hover {
+        transform: translateY(-2px);
+      }
+      .product-img-wrapper {
+        position: relative;
+        width: 100%;
+        padding-top: 100%; /* 1:1 비율 */
+        overflow: hidden;
+        background: #f9f9f9;
+      }
+      .product-img-wrapper img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .brand-name {
+        font-weight: 700;
+        color: #000;
+        margin-bottom: 4px;
+        font-size: 1rem;
+        line-height: 1.1;
+      }
+      .product-name {
+        font-weight: 500;
+        color: #000;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+        line-height: 1.2;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        word-break: break-word;
+      }
+      .pagination-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 1rem;
+      }
+      .no-products {
+        text-align: center;
+        padding: 60px 0;
+        color: #666;
+      }
+      .card-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 12px;
+      }
+    </style>
   </head>
-  <body>
+  <body class="d-flex flex-column min-vh-100">
     <th:block th:replace="fragments/navbar :: navbar"></th:block>
     <th:block th:replace="fragments/toggle :: toggle"></th:block>
 
@@ -28,48 +97,62 @@
         />
         <h2 class="mb-0" th:text="|${genderLabel} ${itemName}|">상품 보기</h2>
       </div>
-      <div class="text-center mt-2">
+      <div class="text-center mt-2 mb-4">
         <a href="/" class="btn btn-outline-secondary">뒤로 가기</a>
       </div>
-    </div>
 
-    <!-- 카드 전체 그리드 컨테이너 -->
-    <div class="container py-5">
-      <div class="row row-cols-5 g-5">
-        <div class="col text-decoration-none text-reset" th:each="product : ${products}">
-          <a th:href="${product.linkUrl}" target="_blank" class="text-decoration-none text-reset">
-            <div class="card border shadow-sm" style="border-radius: 0">
-              <img
-                th:src="${product.imageUrl}"
-                th:alt="${product.productName}"
-                class="card-img-top"
-                style="height: 200px; object-fit: contain; border-radius: 0"
-              />
-              <div class="card-body p-2">
-                <p class="mb-1 fw-bold" style="font-size: 16px" th:text="${product.brandName}">브랜드명</p>
-                <p
-                  class="mb-0 card-text"
-                  style="
-                    font-size: 14px;
-                    color: #000;
-                    overflow: hidden;
-                    display: -webkit-box;
-                    -webkit-line-clamp: 2;
-                    -webkit-box-orient: vertical;
-                    min-height: 3em;
-                  "
-                  th:text="${product.productName}"
-                >
-                  상품명
-                </p>
-              </div>
+      <!-- 상품 카드 그리드 -->
+      <div class="row gy-4">
+        <div class="col-12" th:if="${#lists.isEmpty(products)}">
+          <div class="no-products">등록된 상품이 없습니다.</div>
+        </div>
+
+        <div class="col-md-4" th:each="p : ${products}">
+          <a th:href="${p.linkUrl}" target="_blank" class="card product-card mb-3">
+            <div class="product-img-wrapper">
+              <img th:src="${p.imageUrl}" alt="이미지" />
+            </div>
+            <div class="card-body">
+              <div class="brand-name" th:text="${p.brandName}">브랜드</div>
+              <div class="product-name" th:text="${p.productName}">상품명</div>
+              <!-- 버튼 없애고 카드 전체가 링크라 별도 UI 생략 -->
             </div>
           </a>
         </div>
+      </div>
 
-        <div class="col-12 text-center text-muted" th:if="${#lists.isEmpty(products)}">
-          <p>등록된 상품이 없습니다.</p>
-        </div>
+      <!-- 페이징 -->
+      <div class="pagination-wrapper">
+        <nav th:if="${totalPages != null && totalPages > 0}">
+          <ul class="pagination">
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+              <a class="page-link"
+                 th:href="@{|/products/${gender}?item=${itemName}&page=0|}"
+                 aria-label="첫 페이지">«</a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+              <a class="page-link"
+                 th:href="@{|/products/${gender}?item=${itemName}&page=${currentPage - 1}|}"
+                 aria-label="이전">‹</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${i} == ${currentPage} ? 'active'">
+              <a class="page-link"
+                 th:href="@{|/products/${gender}?item=${itemName}&page=${i}|}"
+                 th:text="${i + 1}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+              <a class="page-link"
+                 th:href="@{|/products/${gender}?item=${itemName}&page=${currentPage + 1}|}"
+                 aria-label="다음">›</a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+              <a class="page-link"
+                 th:href="@{|/products/${gender}?item=${itemName}&page=${totalPages - 1}|}"
+                 aria-label="마지막 페이지">»</a>
+            </li>
+          </ul>
+        </nav>
       </div>
     </div>
 

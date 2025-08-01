@@ -1,5 +1,3 @@
-// main.js
-
 // ─── 전역 저장 변수 ───
 let lastTempNum = null;
 let guideData = null;
@@ -146,18 +144,30 @@ function renderByGender(gender) {
 // ─── 슬롯 카드 헬퍼 ───
 function renderSlot(part, item, container) {
   if (!item.name) return;
-  const safe = item.name.replace(/\s+/g,'-').replace(/\//g,'+');
-  const slug = encodeURIComponent(safe);
-  const prefix = currentGender + '_';
+  const encodedItemName = encodeURIComponent(item.name); // 공백 포함 그대로 query param으로
   const labelMap = {outer:"아우터",top:"상의",bottom:"하의",shoes:"신발"};
   container.innerHTML += `
-    <a href="/products/${prefix}${slug}" style="display:inline-block;width:150px;text-align:center;color:inherit;margin:0 6px;">
-      <div style="width:150px;height:150px;border:1px solid #ddd;border-radius:10px;background:#fafafa;display:flex;justify-content:center;align-items:center;margin-bottom:6px;overflow:hidden;">
-        <img src="${item.imageUrl}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover;"/>
+    <div style="display:inline-block;width:150px;text-align:center;color:inherit;margin:0 6px;">
+      <div style="
+           width:150px;
+           height:150px;
+           border-radius:10px;
+           border:1px solid #ddd;
+           background:#fafafa;
+           display:flex;
+           align-items:center;
+           justify-content:center;
+           overflow:hidden;
+           margin-bottom:6px;
+         ">
+        <a href="/products/${currentGender}?item=${encodedItemName}" style="display:block;width:100%;height:100%;text-decoration:none;color:inherit;">
+          <img src="${item.imageUrl}" alt="${item.name}"
+               style="width:100%;height:100%;object-fit:cover;"/>
+        </a>
       </div>
-      <b style="display:block;margin-bottom:2px;">${labelMap[part]}</b>
-      <span style="font-size:14px;line-height:1.2;">${item.name}</span>
-    </a>`;
+      <b style="display:block;margin-bottom:2px;text-decoration:none;">${labelMap[part]}</b>
+      <span style="font-size:14px;line-height:1.2;display:block;text-decoration:none;">${item.name}</span>
+    </div>`;
 }
 
 // ─── 빈 슬롯 헬퍼 ───
