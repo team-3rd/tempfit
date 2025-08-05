@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Sex;
 
 import lombok.Getter;
@@ -44,7 +45,7 @@ public class AuthMemberDTO extends User implements OAuth2User {
         this.attr = attr;
     }
 
-    public String getEmail() {
+    public String getEmail() { 
         return email;
     }
 

@@ -289,6 +289,15 @@ public class CommunityService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
+    public List<CommunityDTO> getPostsByMember(Member member) {
+        List<Community> posts = communityRepository.findByAuthor(member);
+        return posts.stream()
+            .map(this::entityToDTO)
+            .collect(Collectors.toList());
+    }
+
+    // 추천/취소
     @Transactional
     public void recommendPost(Long communityId, Member member) {
         Community community = communityRepository.findById(communityId)

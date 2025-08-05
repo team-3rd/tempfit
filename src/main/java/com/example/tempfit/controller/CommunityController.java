@@ -76,12 +76,16 @@ public class CommunityController {
 
     @PostMapping("/detail/{id}/comments")
     public String addComment(
-            @PathVariable Long id,
-            @RequestParam(required = false) Member author,
-            @RequestParam String content) {
-        commentService.addComment(id, author, content);
-        return "redirect:/community/detail/" + id;
-    }
+        @PathVariable Long id,
+        @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
+        @RequestParam String content) {
+
+    Member member = memberRepository.findByEmailAndFromSocial(
+        authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
+
+    commentService.addComment(id, member, content);
+    return "redirect:/community/detail/" + id;
+}
 
     @GetMapping("/create")
     public String createForm(Model model) {

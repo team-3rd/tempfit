@@ -24,7 +24,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http, RememberMeServices rememberMeServices) throws Exception
     {
         http.authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/css/**", "/js/**", "/image/**").permitAll()
+            .requestMatchers("/css/**", "/js/**", "/image/**", "/ws/**").permitAll()
             .anyRequest().permitAll())
             .formLogin(login -> login.loginPage("/member/login")
             .successHandler(successHandler())
@@ -35,7 +35,7 @@ public class SecurityConfig {
             .logoutSuccessUrl("/"))
             .csrf(csrf -> csrf.disable());
         http.rememberMe(remember -> remember.rememberMeServices(rememberMeServices));
-
+        
         return http.build();
     }
 
@@ -57,5 +57,4 @@ public class SecurityConfig {
         rememberMeServices.setTokenValiditySeconds(60*60*24*7);
         return rememberMeServices;
     }
-
 }

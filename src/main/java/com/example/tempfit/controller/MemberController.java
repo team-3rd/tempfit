@@ -1,7 +1,10 @@
 package com.example.tempfit.controller;
 
+import java.util.List;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,8 +12,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.example.tempfit.dto.CommunityDTO;
 import com.example.tempfit.dto.MemberDTO;
 import com.example.tempfit.entity.Member;
+import com.example.tempfit.repository.MemberRepository;
+import com.example.tempfit.security.AuthMemberDTO;
+import com.example.tempfit.service.CommunityService;
 import com.example.tempfit.service.MemberService;
 
 import jakarta.validation.Valid;
@@ -23,7 +30,9 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class MemberController {
 
+    private final MemberRepository memberRepository;
     private final MemberService memberService;
+    private final CommunityService communityService;
 
     //@PreAuthorize("permitAll()")
     @GetMapping("/login")
@@ -72,4 +81,14 @@ public class MemberController {
         }
         return "redirect:/member/mypage";
     }
+
+    @GetMapping("/mypage/posts")
+    public String myPosts(@AuthenticationPrincipal AuthMemberDTO authMemberDTO, Model model) {
+    Member member = memberRepository.findByEmailAndFromSocial(
+            authMemberDTO.getEmail(), authMemberDTO.isFromSocial());
+
+    List<CommunityDTO> posts = communityService.getPostsByMember(member);
+    model.addAttribute("myPosts", posts);
+    return "member/myposts";
+}
 }

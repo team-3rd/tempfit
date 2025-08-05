@@ -128,11 +128,6 @@
           method="post"
           class="mt-3 mb-4"
         >
-          <input
-            type="hidden"
-            name="authorName"
-            th:value="${#authentication.name}"
-          />
           <div class="mb-2">
             <textarea
               name="content"
@@ -162,8 +157,8 @@
         <div th:each="c : ${comments}" class="mb-3">
           <small
             class="text-muted"
-            th:text="${c.authorName != null && c.authorName.trim().length()>0
-                         ? c.authorName : '익명'}"
+            th:text="${c.author != null && c.author.nickname.trim().length()>0
+                         ? c.author.nickname : '익명'}"
             >익명</small
           >
           &nbsp;
