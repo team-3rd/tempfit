@@ -1,0 +1,10 @@
+<div th:fragment="chatSidebar">
+  <aside class="chat-sidebar">
+    <h5>대화 목록</h5>
+    <ul class="chat-list">
+      <li th:each="partner : ${Partner}">
+        <a th:href="@{/messages/{email}(email=${partner.email})}" th:text="${partner.nickname}">상대 이름</a>
+      </li>
+    </ul>
+  </aside>
+</div>

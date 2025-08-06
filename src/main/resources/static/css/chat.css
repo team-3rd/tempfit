@@ -77,6 +77,12 @@ body {
 }
 
 .chat-input textarea {
-  flex-grow: 1;
+  flex-grow: 2;
   resize: none;
+}
+
+.chat-input button {
+  white-space: nowrap;
+  align-self: flex-end;
+  height: auto;
 }
