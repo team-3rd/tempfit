@@ -1,5 +1,6 @@
 package com.example.tempfit.repository;
 
+import com.example.tempfit.dto.ChatUserDTO;
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Message;
 
@@ -16,8 +17,17 @@ public interface MessageRepository extends JpaRepository<Message, Long>  {
        "(m.sender.email = :user2 AND m.receiver.email = :user1) " +
        "ORDER BY m.sentAt ASC")
     List<Message> findConversationBetween(@Param("user1") String user1, @Param("user2") String user2);
-
-    List<Message> findBySenderAndReceiverOrReceiverAndSenderOrderBySentAt(
-        Member sender1, Member receiver1, Member sender2, Member receiver2
-    );
+    
+    @Query("""
+    SELECT new com.example.tempfit.dto.ChatUserDTO(
+        CASE WHEN m.sender.email = :userEmail THEN m.receiver.email ELSE m.sender.email END,
+        CASE WHEN m.sender.email = :userEmail THEN m.receiver.name ELSE m.sender.name END
+    )
+    FROM Message m
+    WHERE m.sender.email = :userEmail OR m.receiver.email = :userEmail
+    GROUP BY 
+        CASE WHEN m.sender.email = :userEmail THEN m.receiver.email ELSE m.sender.email END,
+        CASE WHEN m.sender.email = :userEmail THEN m.receiver.name ELSE m.sender.name END
+""")
+    List<ChatUserDTO> findChatUsers(@Param("userEmail") String userEmail);
 }

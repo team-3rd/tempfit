@@ -21,10 +21,11 @@
   <th:block th:replace="fragments/toggle :: toggle"></th:block>
 
   <div class="container chat-container flex-grow-1">
+    <div class="sidebar" th:replace="fragments/chat-sidebar :: chatSidebar"></div>
     <input type="hidden" id="senderEmail" th:value="${sender.email}" />
     <input type="hidden" id="receiverEmail" th:value="${receiver.email}" />
 
-    <h4 class="mb-4 text-center" th:text="${receiver.nickname} + ' 님의 채팅'">대화상대</h4>
+    <h4 class="mb-4 text-center" th:text="${receiver.nickname} + ' 님과의 채팅'">대화상대</h4>
 
     <div class="chat-box shadow-sm mb-3" id="chatBox">
       <div th:each="msg : ${messages}" th:class="|message-row ${msg.sender.email == sender.email ? 'message-right' : 'message-left'}|">
@@ -34,7 +35,7 @@
     </div>
 
     <div class="chat-input">
-      <textarea id="msgInput" class="form-control" rows="2" placeholder="메시지를 입력하세요"></textarea>
+      <textarea id="msgInput" class="form-control" rows="1" placeholder="메시지를 입력하세요"></textarea>
       <button id="sendBtn" class="btn btn-primary">발송</button>
     </div>
   </div>

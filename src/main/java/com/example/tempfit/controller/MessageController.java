@@ -49,7 +49,10 @@ public class MessageController {
 
         List<Message> messages = messageService.getConversation(senderId, receiverId);
 
+        //List<Member> partner = messageService.getPartner(senderId);
+
         model.addAttribute("messages", messages);
+        //model.addAttribute("partner", partner);
        
 
         return "chat";
@@ -80,5 +83,11 @@ public class MessageController {
             return "redirect:/";
         }
     }
-    
+    @GetMapping("/chat")
+    public String openChatPage(@AuthenticationPrincipal Member user, Model model) {
+    List<ChatUserDTO> chatUsers = messageService.getChatPartners(user.getEmail());
+    model.addAttribute("chatUsers", chatUsers);
+    model.addAttribute("currentUser", user);
+    return "chat/chatPage";
+}
 }

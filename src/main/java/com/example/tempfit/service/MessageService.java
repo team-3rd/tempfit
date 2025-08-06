@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.tempfit.dto.ChatUserDTO;
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Message;
 import com.example.tempfit.repository.MemberRepository;
@@ -37,4 +38,8 @@ public class MessageService {
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
         return messageRepository.findConversationBetween(user1, user2);
     }
+
+    public List<ChatUserDTO> getChatPartners(String userEmail) {
+    return messageRepository.findChatUsers(userEmail);
+}
 }
