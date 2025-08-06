@@ -29,7 +29,37 @@
 	<properties>
 		<java.version>17</java.version>
 	</properties>
+	<dependencyManagement>
+		  <dependencies>
+    		<dependency>
+      			<groupId>org.springframework.ai</groupId>
+      			<artifactId>spring-ai-bom</artifactId>
+      			<version>1.0.0-M7</version>
+      			<type>pom</type>
+      			<scope>import</scope>
+    		</dependency>
+  		</dependencies>
+	</dependencyManagement>
 	<dependencies>
+<!-- 1) ChatClient 코어 API -->
+  <dependency>
+    <groupId>org.springframework.ai</groupId>
+    <artifactId>spring-ai-client-chat</artifactId>
+  </dependency>
+  <!-- :contentReference[oaicite:0]{index=0} -->
+
+  <!-- 2) ChatClient 자동설정 (모델별 바인딩) -->
+  <dependency>
+    <groupId>org.springframework.ai</groupId>
+    <artifactId>spring-ai-autoconfigure-model-chat-client</artifactId>
+  </dependency>
+  <!-- :contentReference[oaicite:1]{index=1} -->
+
+  <!-- 3) OpenAI 모델을 위한 스타터 -->
+  <dependency>
+    <groupId>org.springframework.ai</groupId>
+    <artifactId>spring-ai-starter-model-openai</artifactId>
+  </dependency>
 		<dependency>
     		<groupId>com.fasterxml.jackson.core</groupId>
     		<artifactId>jackson-databind</artifactId>
