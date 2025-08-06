@@ -36,20 +36,23 @@ public class MessageController {
         String senderId = authMemberDTO.getEmail();
 
         try {
-            Member sender = memberRepository.findByEmailAndFromSocial(senderId, authMemberDTO.isFromSocial());
+            Member sender = memberRepository.findByEmail(senderId)
+                .orElseThrow(() -> new IllegalArgumentException("발신자를 찾을 수 없습니다."));
             Member receiver = memberRepository.findByEmail(receiverId)
-                    .orElseThrow(() -> new IllegalArgumentException("수신자를 찾을 수 없습니다."));
-
-            List<Message> messages = messageService.getConversation(senderId, receiverId);
-
-            model.addAttribute("messages", messages);
+                .orElseThrow(() -> new IllegalArgumentException("수신자를 찾을 수 없습니다."));
             model.addAttribute("receiver", receiver);
             model.addAttribute("sender", sender);
 
-            return "chat";
         } catch (IllegalArgumentException e) {
             return "redirect:/";
         }
+
+        List<Message> messages = messageService.getConversation(senderId, receiverId);
+
+        model.addAttribute("messages", messages);
+       
+
+        return "chat";
     }
 
     /**

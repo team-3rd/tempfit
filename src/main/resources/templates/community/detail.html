@@ -36,7 +36,10 @@
 
       <!-- 작성자, 날짜, 추천 수, 조회수 -->
       <div class="detail-meta">
-        작성자: <span th:text="${post.author.nickname}">관리자</span>
+        작성자: 
+        <a th:href="@{/messages/{email}(email=${post.author.email})}" target="_blank">
+          <span th:text="${post.author.nickname}"></span>
+        </a>
         &nbsp;|&nbsp; 등록일:
         <span th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}">
           2025-06-15 12:00
@@ -106,13 +109,13 @@
         <a
           th:href="@{/community/edit/{id}(id=${post.id})}"
           class="btn btn-primary"
-          th:if="${#authentication.name} == ${post.author.email}"
+          th:if="${#authentication.name} == ${post.author.email} or ${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
           >수정</a
         >
         <form
           th:action="@{/community/delete/{id}(id=${post.id})}"
           method="post"
-          th:if="${#authentication.name} == ${post.author.email}"
+          th:if="${#authentication.name} == ${post.author.email} or ${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
           onsubmit="return confirm('정말 삭제하시겠습니까?');"
           class="d-inline"
         >

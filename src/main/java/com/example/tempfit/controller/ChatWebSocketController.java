@@ -35,14 +35,14 @@ public class ChatWebSocketController {
         chatMessage.setSentAt(savedMessage.getSentAt());
         messagingTemplate.convertAndSendToUser(
                 chatMessage.getReceiver(),
-                "/topic/messages",
+                "/queue/messages",
                 chatMessage
         );
 
         // 송신자에게도 전송 (자기 화면에서도 바로 반영되도록)
         messagingTemplate.convertAndSendToUser(
                 chatMessage.getSender(),
-                "/topic/messages",
+                "/queue/messages",
                 chatMessage
         );
     }

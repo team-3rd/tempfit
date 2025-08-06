@@ -35,7 +35,6 @@ public class MessageService {
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
         Member member2 = memberRepository.findByEmail(user2)
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
-
-        return messageRepository.findBySenderAndReceiverOrReceiverAndSenderOrderBySentAt(member1, member2, member2, member1);
+        return messageRepository.findConversationBetween(user1, user2);
     }
 }

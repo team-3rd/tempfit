@@ -3,6 +3,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const targetUser = document.getElementById("receiverEmail").value;
   let stompClient = null;
 
+  const chatBox = document.getElementById("chatBox");
+
+  // ✅ 스크롤을 가장 아래로 이동
+  if (chatBox) {
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
   function connectWebSocket() {
     const socket = new SockJS("/ws");
     stompClient = Stomp.over(socket);
@@ -10,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     stompClient.connect({}, function (frame) {
       console.log("Connected: " + frame);
 
-      stompClient.subscribe(`/user/${currentUser}/topic/messages`, function (msg) {
+      stompClient.subscribe("/user/queue/messages", function (msg) {
         const message = JSON.parse(msg.body);
         showMessage(message);
       });
@@ -46,7 +53,6 @@ document.addEventListener("DOMContentLoaded", function () {
     stompClient.send("/app/chat.send", {}, JSON.stringify(message));
 
     contentInput.value = '';
-    showMessage(message);
   }
 
   const sendBtn = document.getElementById("sendBtn");

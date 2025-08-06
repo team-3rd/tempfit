@@ -1,39 +1,79 @@
-.chat-box {
-  height: 70vh;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  padding: 15px;
-  background-color: #f9f9f9;
+html,
+body {
+  font-family: 'Pretendard Variable', sans-serif;
+  height: 100%;
+  box-sizing: border-box;
 }
 
+.chat-container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding-top: 2rem;
+}
+
+/* 채팅창 */
+.chat-box {
+  height: 500px;
+  overflow-y: auto;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 메시지 줄 */
+.message-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+/* 좌우 정렬 */
 .message-left {
+  align-items: flex-start;
   text-align: left;
 }
 
 .message-right {
+  align-items: flex-end;
   text-align: right;
 }
 
-.message {
-  margin: 5px 0;
+/* 말풍선 */
+.bubble {
+  max-width: 75%;
   padding: 10px 15px;
-  border-radius: 15px;
+  border-radius: 1rem;
   display: inline-block;
-  max-width: 70%;
+  word-wrap: break-word;
 }
 
-.message-left .message {
+.bubble-left {
   background-color: #e9ecef;
+  color: #000;
+  border-top-left-radius: 0;
 }
 
-.message-right .message {
+.bubble-right {
   background-color: #0d6efd;
-  color: white;
+  color: #fff;
+  border-top-right-radius: 0;
 }
 
+/* 시간 표시 */
+.timestamp {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 4px;
+}
+
+/* 입력창 영역 */
 .chat-input {
   display: flex;
   gap: 10px;
+  margin-top: 1rem;
 }
 
 .chat-input textarea {
