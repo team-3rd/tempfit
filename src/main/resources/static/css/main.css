@@ -483,3 +483,38 @@ h1 {
   line-height: 22px;
   bottom: 20px;
 }
+/* 로딩 오버레이 */
+.loading-wrap {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(255,255,255,0.8);
+  z-index: 10;
+}
+/* 로딩 스피너 */
+.loading-spinner {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 3rem; height: 3rem;
+  margin: -1.5rem 0 0 -1.5rem; /* 스피너 절반 크기만큼 오프셋 */
+  border: 5px solid #3498db;
+  border-top: 5px solid transparent;
+  border-radius: 50%;
+  z-index: 11;
+  animation: rotate 1s linear infinite;
+}
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+/* 로딩 텍스트 */
+.loading-text {
+  position: absolute;
+  /* spinner 높이(3rem) + margin 절반(1.5rem) + 텍스트 위아래 여유(0.5rem) = 5rem 아래에 배치 */
+  top: calc(50% + 2.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1rem;
+  color: #555;
+  z-index: 11;
+}
