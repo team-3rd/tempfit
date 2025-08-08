@@ -24,11 +24,11 @@ imageInput.addEventListener("change", function () {
       img.style.border = "3px solid transparent";
       img.style.cursor = "pointer";
 
+      const images = document.querySelectorAll("#previewContainer img");
+
       img.addEventListener("click", () => {
         // 모든 이미지 테두리 제거
-        document
-          .querySelectorAll("#previewContainer img")
-          .forEach((el) => (el.style.border = "3px solid transparent"));
+        images.forEach((el) => (el.style.border = "3px solid transparent"));
 
         // 선택한 이미지만 강조
         img.style.border = "3px solid #007bff";

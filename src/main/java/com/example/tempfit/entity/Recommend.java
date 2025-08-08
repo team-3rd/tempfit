@@ -25,8 +25,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Recommend {
-    
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

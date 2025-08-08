@@ -36,25 +36,79 @@
 
       <!-- 작성자, 날짜, 추천 수, 조회수 -->
       <div class="detail-meta">
-        작성자: 
-        <a th:href="@{/messages/{email}(email=${post.author.email})}" target="_blank">
+        작성자:
+        <a
+          th:href="@{/messages/{email}(email=${post.author.email})}"
+          target="_blank"
+        >
           <span th:text="${post.author.nickname}"></span>
         </a>
         &nbsp;|&nbsp; 등록일:
-        <span th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}">
+        <span
+          th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"
+        >
           2025-06-15 12:00
         </span>
         &nbsp;|&nbsp;
+        <span
+          class="badge bg-day day"
+          th:text="${'최고  ' + post.maxTemp + '℃'}"
+        ></span>
+        &nbsp;|&nbsp;
+        <span
+          class="badge bg-night night"
+          th:text="${'최저  ' + post.minTemp + '℃'}"
+        ></span>
+        &nbsp;|&nbsp;
         <span>
-          <span class="recommend-icon">♥</span>
+          <span class="recommend-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="#ff0000"
+              class="bi bi-heart-fill"
+              viewBox="0 0 16 16"
+              th:if="${post.recommendCount > 0}"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
+              />
+            </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="#ff0000"
+              class="bi bi-heart"
+              viewBox="0 0 16 16"
+              th:if="${post.recommendCount == 0}"
+            >
+              <path
+                d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"
+              />
+            </svg>
+          </span>
           <span th:text="${post.recommendCount}">0</span>
         </span>
         &nbsp;|&nbsp;
         <span>
           <!-- 눈 SVG 아이콘 -->
-          <svg class="view-icon" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288C13.881 11.332 12.12 12.5 10 12.5c-2.12 0-3.88-1.168-5.168-2.457A13.133 13.133 0 0 1 1.172 8z"/>
-            <path d="M8 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0 1a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            fill="currentColor"
+            class="bi bi-eye"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"
+            />
+            <path
+              d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"
+            />
           </svg>
           <span th:text="${post.viewCount}">0</span>
         </span>
@@ -62,34 +116,168 @@
 
       <!-- 스타일 배지 -->
       <div class="badge-list mb-3">
-        <span th:if="${post.male&&!post.female}" class="badge bg-primary">남성</span>
-        <span th:if="${post.female&&!post.male}" class="badge bg-danger">여성</span>
-        <span th:if="${post.male&&post.female}" class="badge bg-success">공용</span>
+        <span th:if="${post.male&&!post.female}" class="badge bg-primary"
+          >남성</span
+        >
+        <span th:if="${post.female&&!post.male}" class="badge bg-danger"
+          >여성</span
+        >
+        <span th:if="${post.male&&post.female}" class="badge bg-success"
+          >공용</span
+        >
         <span th:if="${post.casual}" class="badge bg-secondary">캐주얼</span>
         <span th:if="${post.street}" class="badge bg-secondary">스트리트</span>
         <span th:if="${post.formal}" class="badge bg-secondary">포멀</span>
         <span th:if="${post.outdoor}" class="badge bg-secondary">아웃도어</span>
-        <span class="badge bg-day day" th:text="${'최고  ' + post.maxTemp + '℃'}"></span>
-        <span class="badge bg-night night" th:text="${'최저  ' + post.minTemp + '℃'}"></span>
       </div>
 
-      <!-- 대표 이미지 -->
-      <div th:if="${post.repImageUrl != null}" class="mb-3">
-        <img
-          th:src="@{'/uploads/' + ${post.repImageUrl}}"
-          alt="대표사진"
-          class="detail-image"
-        />
+      <!-- 이미지 슬라이드 -->
+      <div
+        id="carouselIndicators"
+        class="carousel carousel-dark slide"
+        data-bs-ride="carousel"
+        data-bs-touch="true"
+      >
+        <div class="carousel-indicators">
+          <button
+            type="button"
+            data-bs-target="#carouselIndicators"
+            data-bs-slide-to="0"
+            class="active"
+            aria-current="true"
+            aria-label="Slide 1"
+          ></button>
+        </div>
+
+        <div class="carousel-inner">
+          <!-- 대표 이미지 -->
+          <div
+            th:if="${post.repImageUrl != null}"
+            class="mb-3 carousel-item active repImg"
+          >
+            <img
+              th:src="@{'/uploads/' + ${post.repImageUrl}}"
+              alt="대표사진"
+              class="detail-image d-block w-100"
+            />
+          </div>
+
+          <!-- 추가 이미지들 -->
+          <div th:if="${post.extraImageUrls != null}" class="mb-3 extraImgs">
+            <div
+              th:each="url : ${post.extraImageUrls}"
+              class="mb-3 carousel-item extraImg"
+            >
+              <img
+                th:src="@{'/uploads/' + ${url}}"
+                alt="추가사진"
+                class="detail-image d-block w-100"
+              />
+            </div>
+          </div>
+        </div>
+
+        <button
+          class="carousel-control-prev"
+          data-bs-target="#carouselIndicators"
+          type="button"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only"></span>
+        </button>
+        <button
+          class="carousel-control-next"
+          data-bs-target="#carouselIndicators"
+          type="button"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only"></span>
+        </button>
       </div>
 
-      <!-- 추가 이미지들 -->
-      <div th:if="${post.extraImageUrls != null}" class="mb-3">
-        <div th:each="url : ${post.extraImageUrls}" class="mb-3">
-          <img
-            th:src="@{'/uploads/' + ${url}}"
-            alt="추가사진"
-            class="detail-image"
-          />
+      <!-- 이미지 모달 창 -->
+      <div
+        id="modal"
+        class="modal fade"
+        role="dialog"
+        aria-hidden="true"
+        tabindex="-1"
+      >
+        <div
+          class="modal-dialog modal-fullscreen"
+          role="document"
+          id="modal-main"
+        >
+          <div class="modal-content" id="content">
+            <div class="modal-body">
+              <button
+                type="button"
+                class="btn-close btn-close-white xBtn"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+              <div class="prevSec">
+                <button class="prevImg" onclick="showPrevImg()"></button>
+              </div>
+              <div class="modal-img">
+                <img src="" id="selectedImg" />
+              </div>
+              <div class="nextSec">
+                <button class="nextImg" onclick="showNextImg()"></button>
+              </div>
+            </div>
+            <div class="modal-bottom">
+              <div class="toolbox">
+                <ul class="tools">
+                  <li class="tool rotate">
+                    <button
+                      type="button"
+                      class="tool-btn btn-rotate"
+                      onclick="rotate()"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="회전"
+                    ></button>
+                  </li>
+                  <li class="tool zoomout">
+                    <button
+                      type="button"
+                      class="tool-btn btn-zoomout"
+                      onclick="zoomout()"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="축소"
+                    ></button>
+                  </li>
+                  <li class="tool zoomin">
+                    <button
+                      type="button"
+                      class="tool-btn btn-zoomin"
+                      onclick="zoomin()"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="확대"
+                    ></button>
+                  </li>
+                  <li class="tool original">
+                    <button
+                      type="button"
+                      class="tool-btn btn-reset"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="원래대로"
+                    ></button>
+                  </li>
+                </ul>
+              </div>
+              <div class="noSec">
+                <span class="imgNo"></span>
+              </div>
+              <ul class="imgList"></ul>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -98,7 +286,9 @@
 
       <!-- 액션 버튼 -->
       <div class="detail-actions">
-        <a th:href="@{/community/list}" class="btn btn-outline-secondary">목록</a>
+        <a th:href="@{/community/list}" class="btn btn-outline-secondary"
+          >목록</a
+        >
         <form
           th:action="@{/community/recommend/{id}(id=${post.id})}"
           method="post"
@@ -175,5 +365,7 @@
       </div>
     </div>
     <div th:replace="fragments/footer :: footer"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/detail.js"></script>
   </body>
 </html>

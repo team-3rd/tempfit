@@ -27,6 +27,7 @@
   object-fit: contain;
   border-radius: 8px;
   margin-bottom: 16px;
+  cursor: pointer;
 }
 .detail-content {
   font-size: 1rem;
@@ -43,8 +44,190 @@
   width: 100px;
 }
 .bg-day {
-  background-color: rgb(253, 152, 67);
+  color: rgb(253, 152, 67);
+  font-size: 0.9rem;
+  padding: 0;
 }
 .bg-night {
-  background-color: rgb(163, 112, 247);
+  color: rgb(163, 112, 247);
+  font-size: 0.9rem;
+  padding: 0;
+}
+.modal-header {
+  position: relative;
+}
+.imgNo {
+  color: #111;
+  font-size: 24px;
+  left: 48%;
+  text-align: center;
+}
+#title {
+  justify-content: center;
+  text-align: center;
+  font-weight: bold;
+  font-size: 2rem;
+}
+.edit:hover {
+  background-image: url(https://img.icons8.com/?size=32&id=RgcsUF7ERmty&format=png&color=999999);
+}
+.modal-body {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  padding: 0;
+}
+#modal-main {
+  margin-top: 0;
+}
+#content {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.prevSec {
+  display: inline-block;
+  position: absolute;
+  left: 1.5%;
+  top: 50%;
+  width: 48px;
+  height: 48px;
+}
+.prevImg {
+  display: inline-block;
+  background-image: url(https://img.icons8.com/?size=48&id=40217&format=png&color=ffffff);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 100%;
+  border: none;
+  width: 48px;
+  height: 48px;
+  z-index: 120;
+}
+.modal-img {
+  position: absolute;
+  display: inline-block;
+  background-color: rgba(0, 0, 0, 0);
+  margin: 0 auto;
+  border-radius: 5%;
+  width: 750px;
+  height: 750px;
+  justify-content: center;
+  top: 7px;
+  left: 30%;
+  overflow: hidden;
+}
+#selectedImg {
+  max-width: 750px;
+  object-fit: cover;
+  justify-content: center;
+}
+.nextSec {
+  position: absolute;
+  display: inline-block;
+  right: 1%;
+  top: 50%;
+  width: 48px;
+  height: 48px;
+}
+.nextImg {
+  display: inline-block;
+  background-image: url(https://img.icons8.com/?size=48&id=7849&format=png&color=ffffff);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 100%;
+  border: none;
+  width: 48px;
+  height: 48px;
+  z-index: 120s;
+}
+.modal-bottom {
+  position: relative;
+  height: 150px;
+}
+.imgList {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 0;
+  opacity: 0;
+}
+.noSec {
+  display: flex;
+  height: 36px;
+  margin: 0 auto;
+  justify-content: center;
+  opacity: 0;
+}
+.toolbox {
+  display: block;
+  position: absolute;
+  bottom: 50%;
+  left: 43%;
+  margin: 0 auto;
+  width: 225px;
+  height: fit-content;
+  z-index: 200;
+}
+.tools {
+  display: flex;
+  list-style: none;
+  border-radius: 24px;
+  background-color: rgba(0, 0, 0, 0.5);
+  margin: 0 auto;
+  justify-content: center;
+  padding: 0;
+  height: 48px;
+}
+.tool {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.tool-btn {
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 100%;
+  border: none;
+  height: 48px;
+  width: 48px;
+}
+.tool-btn:hover {
+  background-color: rgba(213, 213, 213, 0.3);
+}
+.btn-rotate {
+  background-image: url(https://img.icons8.com/?size=42&id=12494&format=png&color=ffffff);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.btn-zoomout {
+  background-image: url(https://img.icons8.com/?size=42&id=78399&format=png&color=ffffff);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.btn-zoomin {
+  background-image: url(https://img.icons8.com/?size=42&id=60720&format=png&color=ffffff);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.btn-reset {
+  background-image: url(https://img.icons8.com/?size=42&id=38034&format=png&color=ffffff);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.xBtn {
+  position: absolute;
+  width: 2em;
+  height: 2em;
+  background-size: 1.5em;
+  right: 10px;
+  top: 10px;
+}
+.bi-heart {
+  margin-bottom: 3px;
+}
+.bi-heart-fill {
+  margin-bottom: 3px;
+}
+.carousel-indicators button {
+  cursor: pointer;
 }

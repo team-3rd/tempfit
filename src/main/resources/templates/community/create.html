@@ -69,29 +69,29 @@
           />
         </div>
 
-<!-- 이미지 업로드 -->
-<div class="mb-3">
-  <label for="imageFiles" class="form-label">
-    사진 업로드 <span class="text-danger">*</span> (대표 1장 선택)
-  </label>
-  <input
-    class="form-control"
-    type="file"
-    id="imageFiles"
-    name="imageFiles"
-    accept="image/*"
-    multiple
-    required
-  />
-  <div class="form-text">클릭해서 대표 이미지를 선택하세요 (1장)</div>
-  <div class="invalid-feedback">최소 1장 이상의 사진을 올려주세요.</div>
-</div>
+        <!-- 이미지 업로드 -->
+        <div class="mb-3">
+          <label for="imageFiles" class="form-label">
+            사진 업로드 <span class="text-danger">*</span> (대표 1장 선택)
+          </label>
+          <input
+            class="form-control"
+            type="file"
+            id="imageFiles"
+            name="imageFiles"
+            accept="image/*"
+            multiple
+            required
+          />
+          <div class="form-text">클릭해서 대표 이미지를 선택하세요 (1장)</div>
+          <div class="invalid-feedback">최소 1장 이상의 사진을 올려주세요.</div>
+        </div>
 
-<!-- 미리보기 + 대표 선택 표시 -->
-<div id="previewContainer" class="d-flex flex-wrap gap-3 mb-3"></div>
+        <!-- 미리보기 + 대표 선택 표시 -->
+        <div id="previewContainer" class="d-flex flex-wrap gap-3 mb-3"></div>
 
-<!-- 대표 이미지 index 서버 전달용 -->
-<input type="hidden" name="repImageIndex" id="repImageIndex" />
+        <!-- 대표 이미지 index 서버 전달용 -->
+        <input type="hidden" name="repImageIndex" id="repImageIndex" />
 
         <!-- 내용 -->
         <div class="mb-3">

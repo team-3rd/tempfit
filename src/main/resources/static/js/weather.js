@@ -1,3 +1,15 @@
+// ─── 날씨 로딩 스피너 제어 ───
+function showWeatherLoading() {
+  document.getElementById("weather-loading-overlay").style.display = "block";
+  document.getElementById("weather-loading-spinner").style.display = "block";
+  document.getElementById("weather-loading-text").style.display = "block";
+}
+function hideWeatherLoading() {
+  document.getElementById("weather-loading-overlay").style.display = "none";
+  document.getElementById("weather-loading-spinner").style.display = "none";
+  document.getElementById("weather-loading-text").style.display = "none";
+}
+
 // 페이지 리로드 함수
 function refresh() {
   location.reload();
@@ -40,6 +52,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
 
+      showWeatherLoading();
       fetch(`/api/weather/current?lat=${lat}&lon=${lon}`)
         .then((res) => res.json())
         .then((weatherData) => {
@@ -59,13 +72,15 @@ window.addEventListener("DOMContentLoaded", async () => {
           }
 
           // 날씨 로드 완료 이벤트 발생
+          hideWeatherLoading();
           window.dispatchEvent(
             new CustomEvent("weatherLoaded", { detail: { tempNum } })
           );
         })
         .catch(() => {
           document.getElementById("weather-temp").textContent =
-            "날씨 정보를 가져오지 못했습니다";
+            "날씨 정보를 불러오지 못했습니다";
+          hideWeatherLoading();
         });
     },
     () => {

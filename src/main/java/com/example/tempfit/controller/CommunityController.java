@@ -143,8 +143,7 @@ public class CommunityController {
             @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
             @RequestParam(value = "removeRepImage", defaultValue = "false") boolean removeRepImage,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
-            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet
-    ) throws IOException {
+            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
         if (sexSet != null) {
             dto.setSexSet(sexSet);
             dto.setMale(sexSet.contains(Sex.MALE));

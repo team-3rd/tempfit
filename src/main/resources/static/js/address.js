@@ -331,6 +331,17 @@ function showSi() {
     });
   });
 }
+// ─── 날씨 로딩 스피너 제어 ───
+function showWeatherLoading() {
+  document.getElementById("weather-loading-overlay").style.display = "block";
+  document.getElementById("weather-loading-spinner").style.display = "block";
+  document.getElementById("weather-loading-text").style.display = "block";
+}
+function hideWeatherLoading() {
+  document.getElementById("weather-loading-overlay").style.display = "none";
+  document.getElementById("weather-loading-spinner").style.display = "none";
+  document.getElementById("weather-loading-text").style.display = "none";
+}
 
 // 선택한 주소의 날씨 로드
 async function weatherLoad() {
@@ -338,6 +349,7 @@ async function weatherLoad() {
   let lat = null;
   let lon = null;
 
+  showWeatherLoading();
   await fetch(
     `https://maps.googleapis.com/maps/api/geocode/json?address=대한민국+${clickedText}+${clickedSiText}&key=AIzaSyAH3J5S71gGtsQUQ-ABAoLmHQZ2kaEA88g`
   )
@@ -361,5 +373,10 @@ async function weatherLoad() {
             ? `‘🌡현재 온도 기준(<b>${tempNum}℃</b>)’`
             : "‘🌡현재 온도 기준(-℃)’";
       }
+      hideWeatherLoading();
+    })
+    .catch(() => {
+      document.getElementById("weather-temp").textContent =
+        "날씨 정보를 불러오지 못했습니다.";
     });
 }
