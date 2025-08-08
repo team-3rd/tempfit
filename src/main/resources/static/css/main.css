@@ -84,8 +84,7 @@
   margin: -5px 0 0 -2px;
   display: inline-block;
   overflow: hidden;
-  background: url(https://img.icons8.com/ios-filled/12/forward--v1.png)
-    no-repeat;
+  background: url(https://img.icons8.com/ios-filled/12/forward--v1.png) no-repeat;
   background-size: 12px 12px;
   vertical-align: top;
   color: transparent;
@@ -204,12 +203,13 @@ footer.py-5.bg-dark {
 }
 .best-looks-title-box {
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   background: #fff;
   border: 1.5px solid rgb(210, 210, 210);
-  border-radius: 8px;
+  border-radius: 0;
   box-shadow: 0 3px 16px 0 rgba(60, 70, 86, 0.07);
   padding: 16px 32px;
   margin: 0 auto 34px;
@@ -222,6 +222,7 @@ footer.py-5.bg-dark {
   font-weight: 500;
   font-size: 1.05em;
   white-space: nowrap;
+  /* color: #2076ff; ← 여기 추가 */
 }
 .style-best {
   font-size: 1.1em;
@@ -251,11 +252,9 @@ footer.py-5.bg-dark {
   border-top-left-radius: 0.25rem;
   border-top-right-radius: 0.25rem;
 }
-.current-temp-tag {
-  font-weight: 500;
-  font-size: 1.05em;
-  white-space: nowrap;
-  color: #2076ff; /* ← 여기 추가 */
+#color-btn {
+  border: 1px solid rgb(210, 210, 210);
+  color: #6c757d;
 }
 #ai-btn {
   border: 1px solid rgb(210, 210, 210);
@@ -526,4 +525,21 @@ h1 {
   font-size: 1rem;
   color: #555;
   z-index: 11;
+}
+.product-name {
+  display: block; /* 블록으로 만들어야 width가 먹습니다 */
+  width: 150px; /* 슬롯 너비와 동일하게 설정 */
+  white-space: nowrap; /* 한 줄만 */
+  overflow: hidden; /* 넘치는 내용 숨김 */
+  text-overflow: ellipsis; /* … 처리 */
+}
+.control-btn {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  padding: 0 !important;
+  /* border-radius: 0 !important; */
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem !important;
 }

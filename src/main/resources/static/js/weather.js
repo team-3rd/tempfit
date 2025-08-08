@@ -41,8 +41,7 @@ function prevBtn() {
 // 날씨 불러오기
 window.addEventListener("DOMContentLoaded", async () => {
   if (!navigator.geolocation) {
-    document.getElementById("weather-temp").textContent =
-      "브라우저가 위치정보를 지원하지 않습니다.";
+    document.getElementById("weather-temp").textContent = "브라우저가 위치정보를 지원하지 않습니다.";
     return;
   }
 
@@ -63,29 +62,22 @@ window.addEventListener("DOMContentLoaded", async () => {
           // 온도 정수로 변환
           const tempNum =
             weather.tmp != null ? parseInt(weather.tmp, 10) : null;
-          const tagElem = document.getElementById("current-temp-tag");
-          if (tagElem) {
-            tagElem.innerHTML =
-              tempNum != null
-                ? `‘🌡현재 온도 기준(<b>${tempNum}℃</b>)’`
-                : "‘🌡현재 온도 기준(-℃)’";
+          if (tempNum != null) {
+            lastTempNum = tempNum;
+            updateCurrentTempTag(tempNum);
           }
 
           // 날씨 로드 완료 이벤트 발생
           hideWeatherLoading();
-          window.dispatchEvent(
-            new CustomEvent("weatherLoaded", { detail: { tempNum } })
-          );
+          window.dispatchEvent(new CustomEvent("weatherLoaded", { detail: { tempNum } }));
         })
         .catch(() => {
-          document.getElementById("weather-temp").textContent =
-            "날씨 정보를 불러오지 못했습니다";
+          document.getElementById("weather-temp").textContent = "날씨 정보를 불러오지 못했습니다";
           hideWeatherLoading();
         });
     },
     () => {
-      document.getElementById("weather-temp").textContent =
-        "위치 권한을 허용해 주세요!";
+      document.getElementById("weather-temp").textContent = "위치 권한을 허용해 주세요!";
     }
   );
 });

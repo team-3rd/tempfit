@@ -11,7 +11,13 @@
       href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/variable/pretendardvariable.css"
       rel="stylesheet"
     />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+      crossorigin="anonymous"
+    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet" />
     <link href="/css/darkmode.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
     <link href="css/main.css" rel="stylesheet" />
@@ -34,31 +40,40 @@
         <div class="col-12 col-lg-6 d-flex flex-column h-100">
           <div class="card shadow-sm mb-4 flex-grow-1 w-100 position-relative">
             <div class="card-body d-flex flex-column align-items-center justify-content-start h-100 position-relative">
-              <!-- 토글 버튼 -->
+              <!-- 성별 버튼 -->
               <button
                 id="toggle-gender-btn"
-                class="btn btn-outline-secondary btn-sm position-absolute"
-                style="top: 0.5rem; left: 0.5rem; font-size: 1.5rem; padding: 0.25rem 0.35rem"
+                class="btn btn-outline-secondary btn-sm position-absolute control-btn"
+                style="top: 0.5rem; left: 0.5rem"
               >
-                🧑🏻
+                <i class="bi bi-gender-male"></i>
               </button>
+
+              <!-- 컬러 추천 버튼 -->
+              <!-- <button
+                id="color-btn"
+                class="btn btn-outline-secondary btn-sm position-absolute control-btn"
+                style="top: 0.5rem; left: 3.5rem"
+              >
+                <i class="bi bi-palette"></i>
+              </button> -->
 
               <!-- AI 버튼 -->
               <button
                 id="ai-btn"
-                class="btn btn-outline-secondary btn-sm position-absolute"
-                style="top: 0.5rem; right: 4rem; font-size: 1.5rem; padding: 0.25rem 0.35rem"
+                class="btn btn-outline-secondary btn-sm position-absolute control-btn"
+                style="top: 0.5rem; right: 3.5rem"
               >
-                AI
+                <i class="bi bi-openai"></i>
               </button>
 
               <!-- 리프레시 버튼 -->
               <button
                 id="refresh-images-btn"
-                class="btn btn-outline-secondary btn-sm position-absolute"
-                style="top: 0.5rem; right: 0.5rem; font-size: 1.5rem; padding: 0.25rem 0.35rem"
+                class="btn btn-outline-secondary btn-sm position-absolute control-btn"
+                style="top: 0.5rem; right: 0.5rem"
               >
-                🔄
+                <i class="bi bi-arrow-clockwise"></i>
               </button>
 
               <!-- 로딩 오버레이 -->
@@ -97,8 +112,11 @@
             <div class="card-body p-4">
               <div class="text-center mb-4">
                 <div class="best-looks-title-box" title="일주일마다 초기화 됩니다.">
-                  <span id="current-temp-tag" class="current-temp-tag">‘🌡현재 온도 기준(℃)’</span>
-                  <span class="style-best">스타일별 <span class="best-looks">🏆명예의 전당🥇🥈🥉</span></span>
+                  <div class="current-temp-text1">
+                    현재 온도 기준( <span id="current-temp-tag" class="current-temp-tag">-℃</span>
+                    <span class="current-temp-text2">)</span>
+                  </div>
+                  <div class="style-best">스타일별 <span class="best-looks"><i class="bi bi-award"></i>🏆명예의 전당🥇🥈🥉</span></div>
                 </div>
               </div>
               <div id="best-looks-area" class="row g-4 gx-lg-5 mt-4 ms-3">

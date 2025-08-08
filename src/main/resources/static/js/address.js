@@ -7,9 +7,7 @@ let dosis = "";
 
 // 주소 데이터 로드
 window.addEventListener("DOMContentLoaded", async () => {
-  await fetch(
-    `https://raw.githubusercontent.com/Dogyeong-Kim/adData/refs/heads/main/ad_data.json`
-  )
+  await fetch(`https://raw.githubusercontent.com/Dogyeong-Kim/adData/refs/heads/main/ad_data.json`)
     .then((res) => res.json())
     .then((data) => {
       data.forEach((ads) => {
@@ -19,10 +17,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         }
 
         // 전체 주소 리스트
-        if (
-          ads.ad_name != ads.lowest_ad_name ||
-          ads.lowest_ad_name == "세종특별자치시"
-        ) {
+        if (ads.ad_name != ads.lowest_ad_name || ads.lowest_ad_name == "세종특별자치시") {
           allAdList.push(ads.ad_name);
         }
       });
@@ -42,9 +37,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
         document.querySelector(".dosi").textContent = "";
 
-        document
-          .querySelector(".dosi")
-          .appendChild(document.createTextNode(addressArray[1] + " "));
+        document.querySelector(".dosi").appendChild(document.createTextNode(addressArray[1] + " "));
 
         const icon = document.createElement("img");
         icon.classList.add("img");
@@ -58,9 +51,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
         document.querySelector(".sigungu").textContent = "";
 
-        document
-          .querySelector(".sigungu")
-          .appendChild(document.createTextNode(addressArray[2] + " "));
+        document.querySelector(".sigungu").appendChild(document.createTextNode(addressArray[2] + " "));
 
         const icons = document.createElement("img");
         icons.classList.add("img");
@@ -177,9 +168,7 @@ function showDo() {
         clickedText = event.target.textContent;
         document.querySelector(".dosi").textContent = "";
 
-        document
-          .querySelector(".dosi")
-          .appendChild(document.createTextNode(clickedText + " "));
+        document.querySelector(".dosi").appendChild(document.createTextNode(clickedText + " "));
 
         const icon = document.createElement("img");
         icon.classList.add("img");
@@ -194,9 +183,7 @@ function showDo() {
         if (document.querySelector(".sigungu").textContent != "시·군·구") {
           document.querySelector(".sigungu").textContent = "";
 
-          document
-            .querySelector(".sigungu")
-            .appendChild(document.createTextNode("시·군·구 "));
+          document.querySelector(".sigungu").appendChild(document.createTextNode("시·군·구 "));
 
           const icon = document.createElement("img");
           icon.classList.add("img");
@@ -208,18 +195,13 @@ function showDo() {
 
           if (document.querySelector(".layer-si").classList.length == 1) {
             document.querySelector(".layer-si").classList.add("hide");
-            document
-              .querySelector(".list-li-center")
-              .classList.remove("unfold");
+            document.querySelector(".list-li-center").classList.remove("unfold");
           }
         }
 
         dosis = clickedText;
 
-        if (
-          adList.indexOf(clickedText) != -1 &&
-          clickedText != "세종특별자치시"
-        ) {
+        if (adList.indexOf(clickedText) != -1 && clickedText != "세종특별자치시") {
           if (document.querySelector(".si-btn").classList.length == 2) {
             document.querySelector(".si-btn").classList.remove("disabled");
           }
@@ -313,9 +295,7 @@ function showSi() {
         clickedSiText = event.target.textContent;
         document.querySelector(".sigungu").textContent = "";
 
-        document
-          .querySelector(".sigungu")
-          .appendChild(document.createTextNode(clickedSiText + " "));
+        document.querySelector(".sigungu").appendChild(document.createTextNode(clickedSiText + " "));
 
         const icon = document.createElement("img");
         icon.classList.add("img");
@@ -366,17 +346,13 @@ async function weatherLoad() {
       const weather = weatherData[0];
 
       const tempNum = weather.tmp != null ? parseInt(weather.tmp, 10) : null;
-      const tagElem = document.getElementById("current-temp-tag");
-      if (tagElem) {
-        tagElem.innerHTML =
-          tempNum != null
-            ? `‘🌡현재 온도 기준(<b>${tempNum}℃</b>)’`
-            : "‘🌡현재 온도 기준(-℃)’";
+      if (tempNum != null) {
+        lastTempNum = tempNum;
+        updateCurrentTempTag(tempNum);
       }
       hideWeatherLoading();
     })
     .catch(() => {
-      document.getElementById("weather-temp").textContent =
-        "날씨 정보를 불러오지 못했습니다.";
+      document.getElementById("weather-temp").textContent = "날씨 정보를 불러오지 못했습니다.";
     });
 }
