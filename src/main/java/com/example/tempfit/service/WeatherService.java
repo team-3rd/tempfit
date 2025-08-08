@@ -202,6 +202,8 @@ public class WeatherService {
                     case "3":
                         weatherDTO.setPty("눈");
                         break;
+                    case "4":
+                        weatherDTO.setPty("소나기");
                 }
 
                 switch (skyList.get(i)) {
