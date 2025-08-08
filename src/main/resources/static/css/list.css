@@ -126,16 +126,17 @@ body {
 
 /* ── 낮/밤 배지 ── */
 .bg-day {
-  background-color: rgb(253, 152, 67);
-  color: #fff;
+  color: gray;
+  font-size: 0.75em;
+  padding-left: 3px;
+  padding-right: 2px;
+  margin: 0;
 }
 .bg-night {
-  background-color: rgb(163, 112, 247);
-  color: #fff;
-}
-.bg-sky {
-  background-color: #0dcaf0;
-  color: #fff;
+  color: gray;
+  font-size: 0.75em;
+  padding-left: 2px;
+  padding-right: 1px;
 }
 
 /* ── (이전 .card-footer 자리였던) ── */
@@ -147,4 +148,13 @@ body {
 .card-footer small {
   font-size: 0.75rem;
   color: #666;
+}
+.bi-eye {
+  margin-top: 3px;
+}
+.bi-heart {
+  margin-bottom: 2px;
+}
+.bi-heart-fill {
+  margin-bottom: 2px;
 }

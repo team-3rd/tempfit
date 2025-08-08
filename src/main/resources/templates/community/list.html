@@ -6,12 +6,18 @@
 >
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <title>TempFit 커뮤니티</title>
-    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="/css/darkmode.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="/css/list.css"/>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="/css/darkmode.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/list.css" />
   </head>
   <body class="d-flex flex-column min-vh-100">
     <!-- 네비바 -->
@@ -24,29 +30,96 @@
 
       <!-- 검색 & 스타일 필터 + 글쓰기 버튼 -->
       <div class="d-flex justify-content-between align-items-start mb-3 w-100">
-        <form class="search-form d-flex flex-column" th:action="@{/community/list}" method="get" style="gap: 8px; max-width: 600px; width: 100%">
+        <form
+          class="search-form d-flex flex-column"
+          th:action="@{/community/list}"
+          method="get"
+          style="gap: 8px; max-width: 600px; width: 100%"
+        >
           <div class="d-flex" style="gap: 8px">
             <select name="type" class="form-select form-select-sm">
               <option value="">전체</option>
               <option value="t" th:selected="${type=='t'}">제목</option>
               <option value="a" th:selected="${type=='a'}">작성자</option>
             </select>
-            <input type="text" name="keyword" th:value="${keyword}" class="form-control form-control-sm" placeholder="검색어"/>
-            <button type="submit" class="btn btn-outline-secondary btn-sm">검색</button>
-            <a th:href="@{/community/list}" class="btn btn-outline-secondary btn-sm reset-btn">초기화</a>
+            <input
+              type="text"
+              name="keyword"
+              th:value="${keyword}"
+              class="form-control form-control-sm"
+              placeholder="검색어"
+            />
+            <button type="submit" class="btn btn-outline-secondary btn-sm">
+              검색
+            </button>
+            <a
+              th:href="@{/community/list}"
+              class="btn btn-outline-secondary btn-sm reset-btn"
+              >초기화</a
+            >
           </div>
-          <div class="btn-group btn-group-sm" role="group" aria-label="스타일 선택" style="margin-top: 8px">
-            <input type="radio" class="btn-check" name="styleNames" id="styleCasual" value="CASUAL" autocomplete="off" th:checked="${styleNames != null and styleNames.contains('CASUAL')}" />
-            <label class="btn btn-outline-primary" for="styleCasual">캐주얼</label>
-            <input type="radio" class="btn-check" name="styleNames" id="styleStreet" value="STREET" autocomplete="off" th:checked="${styleNames != null and styleNames.contains('STREET')}" />
-            <label class="btn btn-outline-primary" for="styleStreet">스트리트</label>
-            <input type="radio" class="btn-check" name="styleNames" id="styleFormal" value="FORMAL" autocomplete="off" th:checked="${styleNames != null and styleNames.contains('FORMAL')}" />
-            <label class="btn btn-outline-primary" for="styleFormal">포멀</label>
-            <input type="radio" class="btn-check" name="styleNames" id="styleOutdoor" value="OUTDOOR" autocomplete="off" th:checked="${styleNames != null and styleNames.contains('OUTDOOR')}" />
-            <label class="btn btn-outline-primary" for="styleOutdoor">기타</label>
+          <div
+            class="btn-group btn-group-sm"
+            role="group"
+            aria-label="스타일 선택"
+            style="margin-top: 8px"
+          >
+            <input
+              type="radio"
+              class="btn-check"
+              name="styleNames"
+              id="styleCasual"
+              value="CASUAL"
+              autocomplete="off"
+              th:checked="${styleNames != null and styleNames.contains('CASUAL')}"
+            />
+            <label class="btn btn-outline-primary" for="styleCasual"
+              >캐주얼</label
+            >
+            <input
+              type="radio"
+              class="btn-check"
+              name="styleNames"
+              id="styleStreet"
+              value="STREET"
+              autocomplete="off"
+              th:checked="${styleNames != null and styleNames.contains('STREET')}"
+            />
+            <label class="btn btn-outline-primary" for="styleStreet"
+              >스트리트</label
+            >
+            <input
+              type="radio"
+              class="btn-check"
+              name="styleNames"
+              id="styleFormal"
+              value="FORMAL"
+              autocomplete="off"
+              th:checked="${styleNames != null and styleNames.contains('FORMAL')}"
+            />
+            <label class="btn btn-outline-primary" for="styleFormal"
+              >포멀</label
+            >
+            <input
+              type="radio"
+              class="btn-check"
+              name="styleNames"
+              id="styleOutdoor"
+              value="OUTDOOR"
+              autocomplete="off"
+              th:checked="${styleNames != null and styleNames.contains('OUTDOOR')}"
+            />
+            <label class="btn btn-outline-primary" for="styleOutdoor"
+              >기타</label
+            >
           </div>
         </form>
-        <a th:href="@{/community/create}" class="btn btn-primary btn-sm ms-3 create-btn" sec:authorize="isAuthenticated()">글쓰기</a>
+        <a
+          th:href="@{/community/create}"
+          class="btn btn-primary btn-sm ms-3 create-btn"
+          sec:authorize="isAuthenticated()"
+          >글쓰기</a
+        >
       </div>
       <div th:fragment="postGrid(posts)">
         <!-- 게시글 카드 그리드 -->
@@ -58,35 +131,218 @@
             th:attr="data-id=${post.id}"
           >
             <!-- 시간/상대시간 및 온도 -->
-            <div class="card-time d-flex justify-content-between align-items-center px-3 pt-2">
-              <small class="text-muted" th:text="${post.displayDate}"></small>
+            <div
+              class="card-time d-flex justify-content-between align-items-center px-3 pt-2"
+            >
+              <span class="fw-semibold" th:text="${post.displayDate}"></span>
               <div class="d-flex">
-                <span class="badge bg-sky me-1" th:text="${post.sky}"></span>
-                <span class="badge bg-day me-1" th:text="${post.maxTemp + '°'}"></span>
-                <span class="badge bg-night" th:text="${post.minTemp + '°'}"></span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  x="0px"
+                  y="0px"
+                  width="20"
+                  height="20"
+                  viewBox="0,0,200,200"
+                  th:if="${post.sky == '맑음'}"
+                  style="top: 50%; margin-top: 5px"
+                >
+                  <defs>
+                    <radialGradient
+                      cx="24"
+                      cy="24"
+                      r="22"
+                      gradientUnits="userSpaceOnUse"
+                      id="color-1_8EUmYhfLPTCF_gr1"
+                    >
+                      <stop offset="0.724" stop-color="#ffed54"></stop>
+                      <stop
+                        offset="0.779"
+                        stop-color="#ffe649"
+                        stop-opacity="0.76863"
+                      ></stop>
+                      <stop
+                        offset="0.877"
+                        stop-color="#ffd22d"
+                        stop-opacity="0"
+                      ></stop>
+                      <stop
+                        offset="1"
+                        stop-color="#ffb300"
+                        stop-opacity="0"
+                      ></stop>
+                    </radialGradient>
+                    <linearGradient
+                      x1="8.092"
+                      y1="8.092"
+                      x2="35.996"
+                      y2="35.996"
+                      gradientUnits="userSpaceOnUse"
+                      id="color-2_8EUmYhfLPTCF_gr2"
+                    >
+                      <stop
+                        offset="0"
+                        stop-color="#fed100"
+                        stop-opacity="0.65882"
+                      ></stop>
+                      <stop
+                        offset="1"
+                        stop-color="#e36001"
+                        stop-opacity="0.63137"
+                      ></stop>
+                    </linearGradient>
+                  </defs>
+                  <g
+                    fill="none"
+                    fill-rule="nonzero"
+                    stroke="none"
+                    stroke-width="1"
+                    stroke-linecap="butt"
+                    stroke-linejoin="miter"
+                    stroke-miterlimit="10"
+                    stroke-dasharray=""
+                    stroke-dashoffset="0"
+                    font-family="none"
+                    font-weight="none"
+                    font-size="none"
+                    text-anchor="none"
+                    style="mix-blend-mode: normal"
+                  >
+                    <g transform="scale(5.33333,5.33333)">
+                      <path
+                        d="M24,2l1.421,1.474c0.93,0.965 2.388,1.196 3.571,0.566l1.807,-0.963l0.896,1.841c0.586,1.205 1.902,1.876 3.222,1.641l2.016,-0.357l0.283,2.028c0.185,1.328 1.229,2.371 2.557,2.557l2.028,0.283l-0.357,2.016c-0.234,1.32 0.436,2.635 1.641,3.222l1.841,0.896l-0.963,1.807c-0.631,1.183 -0.4,2.641 0.566,3.571l1.471,1.418l-1.474,1.421c-0.965,0.93 -1.196,2.388 -0.566,3.571l0.963,1.807l-1.841,0.896c-1.205,0.586 -1.876,1.902 -1.641,3.222l0.357,2.016l-2.028,0.283c-1.328,0.185 -2.371,1.229 -2.557,2.557l-0.283,2.028l-2.016,-0.357c-1.32,-0.234 -2.635,0.436 -3.222,1.641l-0.896,1.841l-1.807,-0.963c-1.183,-0.631 -2.641,-0.4 -3.571,0.566l-1.418,1.471l-1.421,-1.474c-0.93,-0.965 -2.388,-1.196 -3.571,-0.566l-1.807,0.963l-0.896,-1.841c-0.586,-1.205 -1.902,-1.876 -3.222,-1.641l-2.016,0.357l-0.283,-2.028c-0.185,-1.328 -1.229,-2.371 -2.557,-2.557l-2.028,-0.283l0.357,-2.016c0.234,-1.32 -0.436,-2.635 -1.641,-3.222l-1.841,-0.896l0.963,-1.807c0.631,-1.183 0.4,-2.641 -0.566,-3.571l-1.471,-1.418l1.474,-1.421c0.965,-0.93 1.196,-2.388 0.566,-3.571l-0.963,-1.807l1.841,-0.896c1.205,-0.586 1.876,-1.902 1.641,-3.222l-0.357,-2.016l2.028,-0.283c1.328,-0.185 2.371,-1.229 2.557,-2.557l0.283,-2.028l2.016,0.357c1.32,0.234 2.635,-0.436 3.222,-1.641l0.896,-1.841l1.807,0.963c1.183,0.631 2.641,0.4 3.571,-0.566z"
+                        fill="url(#color-1_8EUmYhfLPTCF_gr1)"
+                      ></path>
+                      <path
+                        d="M24,7c-9.389,0 -17,7.611 -17,17c0,9.389 7.611,17 17,17c9.389,0 17,-7.611 17,-17c0,-9.389 -7.611,-17 -17,-17z"
+                        fill="url(#color-2_8EUmYhfLPTCF_gr2)"
+                      ></path>
+                    </g>
+                  </g>
+                </svg>
+                <img
+                  width="20"
+                  height="20"
+                  src="https://img.icons8.com/fluency/20/partly-cloudy-day.png"
+                  alt="partly-cloudy-day"
+                  th:if="${post.sky == '구름 많음'}"
+                  style="top: 50%; margin-top: 5px"
+                />
+                <img
+                  width="20"
+                  height="20"
+                  src="https://img.icons8.com/fluency/20/clouds--v3.png"
+                  alt="clouds--v3"
+                  th:if="${post.sky == '흐림'}"
+                  style="top: 50%; margin-top: 5px"
+                />
+                <img
+                  width="20"
+                  height="20"
+                  src="https://img.icons8.com/fluency/20/heavy-rain.png"
+                  alt="heavy-rain"
+                  th:if="${post.sky == '비'}"
+                  style="top: 50%; margin-top: 5px"
+                />
+                &nbsp;
+                <span
+                  class="badge bg-day"
+                  th:text="${post.maxTemp + '°'}"
+                ></span>
+                <span
+                  class="badge bg-night"
+                  th:text="${post.minTemp + '°'}"
+                ></span>
               </div>
             </div>
             <!-- 대표 이미지 -->
-            <img th:if="${post.repImageUrl != null}" th:src="@{'/uploads/' + ${post.repImageUrl}}" alt="대표사진" class="card-img-top"/>
+            <img
+              th:if="${post.repImageUrl != null}"
+              th:src="@{'/uploads/' + ${post.repImageUrl}}"
+              alt="대표사진"
+              class="card-img-top"
+            />
             <!-- 카드 본문 -->
             <div class="card-body">
               <h5 class="card-title" th:text="${post.title}">제목</h5>
-              <p class="card-subtitle" th:text="${post.author.nickname}">작성자</p>
+              <p class="card-subtitle" th:text="${post.author.nickname}">
+                작성자
+              </p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="badge-list">
-                  <span th:if="${post.casual}" class="badge bg-secondary">캐주얼</span>
-                  <span th:if="${post.street}" class="badge bg-secondary">스트리트</span>
-                  <span th:if="${post.formal}" class="badge bg-secondary">포멀</span>
-                  <span th:if="${post.outdoor}" class="badge bg-secondary">기타</span>
+                  <span th:if="${post.casual}" class="badge bg-secondary"
+                    >캐주얼</span
+                  >
+                  <span th:if="${post.street}" class="badge bg-secondary"
+                    >스트리트</span
+                  >
+                  <span th:if="${post.formal}" class="badge bg-secondary"
+                    >포멀</span
+                  >
+                  <span th:if="${post.outdoor}" class="badge bg-secondary"
+                    >기타</span
+                  >
                 </div>
-                <div class="text-end d-flex align-items-center gap-2" style="min-width: 3rem">
-                  <span style="font-size: 1.15em;">♥ [[${post.recommendCount}]]</span>
-                  <span class="d-flex align-items-center" style="font-size:1.1em;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" class="bi bi-eye me-1" viewBox="0 0 16 16">
-                      <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8z"/>
-                      <path d="M8 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
+                <div
+                  class="text-end d-flex align-items-center"
+                  style="min-width: 3rem"
+                >
+                  <span style="font-size: 0.9em">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="#ff0000"
+                      class="bi bi-heart"
+                      viewBox="0 0 16 16"
+                      th:if="${post.recommendCount == 0}"
+                    >
+                      <path
+                        d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"
+                      />
                     </svg>
-                    [[${post.viewCount}]]
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="#ff0000"
+                      class="bi bi-heart-fill"
+                      viewBox="0 0 16 16"
+                      th:if="${post.recommendCount > 0}"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
+                      />
+                    </svg>
+                    [[${post.recommendCount}]]</span
+                  >
+                  &nbsp;
+                  <span
+                    class="d-flex align-items-center gap-1"
+                    style="font-size: 0.9em"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      fill="currentColor"
+                      class="bi bi-eye"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"
+                      />
+                      <path
+                        d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"
+                      />
+                    </svg>
+                    <!-- <img
+                      width="16"
+                      height="16"
+                      src="https://img.icons8.com/external-gradak-royyan-wijaya/24/1A1A1A/external-eye-gradak-interface-gradak-royyan-wijaya-2.png"
+                      alt="external-eye-gradak-interface-gradak-royyan-wijaya-2"
+                    /> -->
+                    <span>[[${post.viewCount}]]</span>
                   </span>
                 </div>
               </div>
@@ -99,13 +355,30 @@
       <nav class="mt-4">
         <ul class="pagination justify-content-center">
           <li class="page-item" th:if="${startPage > 1}">
-            <a class="page-link" th:href="@{/community/list(page=${startPage-1},type=${type},keyword=${keyword},styleNames=${styleNames})}">이전</a>
+            <a
+              class="page-link"
+              th:href="@{/community/list(page=${startPage-1},type=${type},keyword=${keyword},styleNames=${styleNames})}"
+              >이전</a
+            >
           </li>
-          <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}" th:classappend="${i == currentPage} ? ' active'">
-            <a class="page-link" th:href="@{/community/list(page=${i},type=${type},keyword=${keyword},styleNames=${styleNames})}" th:text="${i}">1</a>
+          <li
+            class="page-item"
+            th:each="i : ${#numbers.sequence(startPage, endPage)}"
+            th:classappend="${i == currentPage} ? ' active'"
+          >
+            <a
+              class="page-link"
+              th:href="@{/community/list(page=${i},type=${type},keyword=${keyword},styleNames=${styleNames})}"
+              th:text="${i}"
+              >1</a
+            >
           </li>
           <li class="page-item" th:if="${endPage < totalPages}">
-            <a class="page-link" th:href="@{/community/list(page=${endPage+1},type=${type},keyword=${keyword},styleNames=${styleNames})}">다음</a>
+            <a
+              class="page-link"
+              th:href="@{/community/list(page=${endPage+1},type=${type},keyword=${keyword},styleNames=${styleNames})}"
+              >다음</a
+            >
           </li>
         </ul>
       </nav>
@@ -128,10 +401,11 @@
             e.preventDefault();
             const postId = card.getAttribute("data-id");
             const targetUrl = card.getAttribute("href");
-            fetch(`/api/community/view/${postId}`, { method: "POST" })
-              .finally(() => {
+            fetch(`/api/community/view/${postId}`, { method: "POST" }).finally(
+              () => {
                 window.location.href = targetUrl;
-              });
+              }
+            );
           });
         });
       });
