@@ -1,20 +1,27 @@
 package com.example.tempfit.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.Authentication;
 
 import com.example.tempfit.entity.Comment;
 import com.example.tempfit.entity.Community;
+import com.example.tempfit.entity.CommunityImage;
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Role;
 import com.example.tempfit.repository.MemberRepository;
@@ -34,10 +41,17 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${upload.path} + '/profile'")
+    private String uploadDir;
+
+    @Value("${default.profile-image-url}")
+    private String defaultProfileImageUrl;
+
     public String register(MemberDTO dto)
     {
         Member member = dtoToEntity(dto);
         member.setPassword(passwordEncoder.encode(dto.getPassword()));
+        member.setProfileImageUrl(defaultProfileImageUrl);
         Member newMember = memberRepository.save(member);
         return newMember.getEmail();
     }
@@ -82,6 +96,10 @@ public class MemberService {
         member.setRoleSet(originalRoles);
         memberRepository.save(member);
 
+        if (member.getProfileImageUrl() == null) {
+            member.setProfileImageUrl(defaultProfileImageUrl);
+        }
+
         LoginMemberDetails updatedUserDetails = new LoginMemberDetails(member);
         AuthMemberDTO authMemberDTO = new AuthMemberDTO(email, updatedUserDetails.getName(), updatedUserDetails.getNickname(), updatedUserDetails.getPassword(), updatedUserDetails.isFromSocial(), updatedUserDetails.getSex(), updatedUserDetails.getAuthorities());
 
@@ -98,6 +116,20 @@ public class MemberService {
         return true;
     }
 
+    private void saveProfileImage(Member member, MultipartFile file) throws IOException {
+        File uploadPathDir = new File(uploadDir);
+        if (!uploadPathDir.exists())
+            uploadPathDir.mkdirs();
+
+        String uuid = UUID.randomUUID().toString();
+        String ext = StringUtils.getFilenameExtension(file.getOriginalFilename());
+        String storedName = uuid + (ext != null ? "." + ext : "");
+        File dest = new File(uploadPathDir, storedName);
+        file.transferTo(dest);
+
+        
+    }
+
     private Member dtoToEntity(MemberDTO dto){
         Member member = Member.builder()
                         .email(dto.getEmail())
@@ -106,6 +138,7 @@ public class MemberService {
                         .password(dto.getPassword())
                         .sex(dto.getSex())
                         .fromSocial(false)
+                        .profileImageUrl(defaultProfileImageUrl)
                         .build();
         member.addMemberRole(Role.USER);
         return member;
@@ -119,6 +152,9 @@ public class MemberService {
                 .sex(member.getSex())
                 .myPosts(posts)
                 .myComments(comments)
+                .profileImageUrl((member.getProfileImageUrl() != null && !member.getProfileImageUrl().isEmpty())
+                                ? member.getProfileImageUrl()
+                                : defaultProfileImageUrl)
                 .build();
     }
 }

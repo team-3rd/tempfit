@@ -1,6 +1,9 @@
 package com.example.tempfit.dto;
 
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
+
 import com.example.tempfit.entity.Sex;
 
 import jakarta.validation.constraints.NotBlank;
@@ -27,6 +30,10 @@ public class MemberDTO {
     private Sex sex;
     private List<CommunityDTO> myPosts;
     private List<CommentDTO> myComments;
+    private String profileImageUrl;
+
+    @Value("${default.profile-image-url}")
+    private String defaultProfileImageUrl;
 
     public int getPostCount() {
         return myPosts != null ? myPosts.size() : 0;
@@ -34,5 +41,9 @@ public class MemberDTO {
 
     public int getCommentCount() {
         return myComments != null ? myComments.size() : 0;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl != null ? profileImageUrl : defaultProfileImageUrl;
     }
 }

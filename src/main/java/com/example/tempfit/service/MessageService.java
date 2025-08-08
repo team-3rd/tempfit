@@ -32,14 +32,10 @@ public class MessageService {
 
     @Transactional(readOnly = true)
     public List<Message> getConversation(String user1, String user2) {
-        Member member1 = memberRepository.findByEmail(user1)
-                .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
-        Member member2 = memberRepository.findByEmail(user2)
-                .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
         return messageRepository.findConversationBetween(user1, user2);
     }
 
     public List<ChatUserDTO> getChatPartners(String userEmail) {
-    return messageRepository.findChatUsers(userEmail);
-}
+        return messageRepository.findChatUsers(userEmail);
+        }
 }

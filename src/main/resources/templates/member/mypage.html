@@ -40,7 +40,11 @@
     <main class="container flex-grow-1">
       <div class="profile-card">
         <h2 class="mb-4 text-center">마이페이지</h2>
+        <div class="profile-item">
+          <img th:src="@{'/uploads/profile/' + ${dto.profileImageUrl}}" />
+          <img th:src="@{http://localhost:8080/uploads/profile/default.png}" />
 
+        </div>
         <div class="profile-item">
           <span class="profile-label">이메일 (ID):</span> <span th:text="${dto.email}">user@example.com</span>
         </div>

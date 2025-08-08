@@ -50,11 +50,11 @@ public class MessageController {
 
         List<Message> messages = messageService.getConversation(senderId, receiverId);
 
-        // List<Member> partner = messageService.getPartner(senderId);
-
+        List<ChatUserDTO> chatUsers = messageService.getChatPartners(senderId);
+        
         model.addAttribute("messages", messages);
-        // model.addAttribute("partner", partner);
-
+        model.addAttribute("chatUsers", chatUsers);
+       
         return "chat";
     }
 

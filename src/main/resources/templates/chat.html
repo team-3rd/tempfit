@@ -20,8 +20,11 @@
   <th:block th:replace="fragments/navbar :: navbar"></th:block>
   <th:block th:replace="fragments/toggle :: toggle"></th:block>
 
-  <div class="container chat-container flex-grow-1">
-    <div class="sidebar" th:replace="fragments/chat-sidebar :: chatSidebar"></div>
+  <div class="container chat-container flex-grow-1 row">
+    <div class="col-md-3">
+      <div th:replace="~{fragments/chatUserList :: chatUserList(${chatUsers})}"></div>
+    </div>
+  <div class="col-md-9">
     <input type="hidden" id="senderEmail" th:value="${sender.email}" />
     <input type="hidden" id="receiverEmail" th:value="${receiver.email}" />
 
@@ -39,7 +42,7 @@
       <button id="sendBtn" class="btn btn-primary">발송</button>
     </div>
   </div>
-
+  </div>
   <th:block th:replace="fragments/footer :: footer"></th:block>
 </body>
 </html>

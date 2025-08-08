@@ -207,14 +207,18 @@ public class CommunityService {
     }
 
     public void remove(Long id) {
-        commentRepository.deleteAll(
-                commentRepository.findByPostIdOrderByCreatedDateAsc(id));
+        Community post = communityRepository.findById(id).get();
+        commentRepository.deleteAll(commentRepository.findByPostIdOrderByCreatedDateAsc(id));
+        recommendRepository.deleteAll(recommendRepository.findByCommunity(post));
         communityTempRepository.deleteById(id);
         communityStyleRepository.deleteById(id);
         communitySexRepository.deleteById(id);
-        communityImageRepository.deleteAll(
-                communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(id));
-        communityRepository.deleteById(id);
+        communityImageRepository.deleteAll(communityImageRepository.findByCommunity_IdOrderByIsRepDescIdAsc(id));
+        post.setCommunityTemp(null);
+        post.setCommunityStyle(null);
+        post.setCommunitySex(null);
+        communityRepository.save(post);
+        communityRepository.delete(post);
     }
 
     private void saveCommunityImage(Community community,

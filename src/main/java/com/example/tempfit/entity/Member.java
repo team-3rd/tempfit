@@ -64,7 +64,11 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Recommend> RecommendSet = new HashSet<>();
 
+    @Column(length = 1000)
+    private String profileImageUrl;
+
     public void addMemberRole(Role role){
         roleSet.add(role);
     }
+    
 }

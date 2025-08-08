@@ -1,0 +1,9 @@
+<div th:fragment="chatUserList(chatUsers)">
+  <ul class="list-group">
+    <li th:each="user : ${chatUsers}" class="list-group-item">
+      <a th:href="@{/messages/{email}(email=${user.email})}">
+        <span th:text="${user.name}">사용자 이름</span>
+      </a>
+    </li>
+  </ul>
+</div>

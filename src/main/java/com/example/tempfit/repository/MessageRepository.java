@@ -19,15 +19,12 @@ public interface MessageRepository extends JpaRepository<Message, Long>  {
     List<Message> findConversationBetween(@Param("user1") String user1, @Param("user2") String user2);
     
     @Query("""
-    SELECT new com.example.tempfit.dto.ChatUserDTO(
+    SELECT DISTINCT new com.example.tempfit.dto.ChatUserDTO(
         CASE WHEN m.sender.email = :userEmail THEN m.receiver.email ELSE m.sender.email END,
-        CASE WHEN m.sender.email = :userEmail THEN m.receiver.name ELSE m.sender.name END
+        CASE WHEN m.sender.email = :userEmail THEN m.receiver.nickname ELSE m.sender.nickname END
     )
     FROM Message m
     WHERE m.sender.email = :userEmail OR m.receiver.email = :userEmail
-    GROUP BY 
-        CASE WHEN m.sender.email = :userEmail THEN m.receiver.email ELSE m.sender.email END,
-        CASE WHEN m.sender.email = :userEmail THEN m.receiver.name ELSE m.sender.name END
-""")
+    """)
     List<ChatUserDTO> findChatUsers(@Param("userEmail") String userEmail);
 }
