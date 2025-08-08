@@ -24,6 +24,11 @@
     <!-- Pretendard Variable 웹폰트 (jsDelivr) -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <script th:if="${initialGender != null}" th:inline="javascript">
+      /*<![CDATA[*/
+      window.initialGender = /*[[${initialGender}]]*/ "male";
+      /*]]>*/
+    </script>
   </head>
   <body>
     <!-- Navbar -->
@@ -46,7 +51,7 @@
                 class="btn btn-outline-secondary btn-sm position-absolute control-btn"
                 style="top: 0.5rem; left: 0.5rem"
               >
-                <i class="bi bi-gender-male"></i>
+                <i class="bi bi-gender-male text-primary"></i>
               </button>
 
               <!-- 컬러 추천 버튼 -->
@@ -64,7 +69,7 @@
                 class="btn btn-outline-secondary btn-sm position-absolute control-btn"
                 style="top: 0.5rem; right: 3.5rem"
               >
-                <i class="bi bi-openai"></i>
+                <i class="bi bi-openai text-dark"></i>
               </button>
 
               <!-- 리프레시 버튼 -->
@@ -73,17 +78,17 @@
                 class="btn btn-outline-secondary btn-sm position-absolute control-btn"
                 style="top: 0.5rem; right: 0.5rem"
               >
-                <i class="bi bi-arrow-clockwise"></i>
+                <i class="bi bi-shuffle"></i>
               </button>
 
               <!-- 로딩 오버레이 -->
-              <div id="loading-overlay" class="loading-wrap" style="display: none"></div>
+              <div id="guide-loading-overlay" class="loading-wrap" style="display: none"></div>
 
               <!-- 로딩 스피너 -->
-              <div id="loading-spinner" class="loading-spinner" style="display: none"></div>
+              <div id="guide-loading-spinner" class="loading-spinner" style="display: none"></div>
 
               <!-- 로딩 텍스트 -->
-              <div id="loading-text" class="loading-text" style="display: none">추천 코디 불러오는 중...</div>
+              <div id="guide-loading-text" class="loading-text" style="display: none">추천 코디 불러오는 중...</div>
 
               <h2 class="mb-3 text-center" style="font-size: 1.6rem; font-weight: 500; letter-spacing: -1px">
                 【 오늘의 추천 코디 】
@@ -109,14 +114,25 @@
       <div class="row mb-4">
         <div class="col-12">
           <div class="card shadow-sm">
-            <div class="card-body p-4">
+
               <div class="text-center mb-4">
+                            <div class="card-body p-4">
+              <!-- 로딩 오버레이 -->
+              <div id="best-loading-overlay" class="loading-wrap" style="display: none"></div>
+
+              <!-- 로딩 스피너 -->
+              <div id="best-loading-spinner" class="loading-spinner" style="display: none"></div>
+
+              <!-- 로딩 텍스트 -->
+              <div id="best-loading-text" class="loading-text" style="display: none">베스트룩 불러오는 중...</div>
                 <div class="best-looks-title-box" title="일주일마다 초기화 됩니다.">
                   <div class="current-temp-text1">
                     현재 온도 기준( <span id="current-temp-tag" class="current-temp-tag">-℃</span>
                     <span class="current-temp-text2">)</span>
                   </div>
-                  <div class="style-best">스타일별 <span class="best-looks"><i class="bi bi-award"></i>🏆명예의 전당🥇🥈🥉</span></div>
+                  <div class="style-best">
+                   <span class="best-looks"><i class="bi bi-trophy-fill text-warning"></i>명예의 전당<i class="bi bi-trophy-fill text-warning"></i></span>
+                  </div>
                 </div>
               </div>
               <div id="best-looks-area" class="row g-4 gx-lg-5 mt-4 ms-3">

@@ -234,12 +234,12 @@ footer.py-5.bg-dark {
   gap: 5px;
 }
 .best-looks {
-  color: RGB(255, 215, 0);
+  /* color: RGB(255, 215, 0); */
   font-weight: 700;
   letter-spacing: 1px;
   margin-left: 3px;
   /* text-shadow: 1px 1px 2px RGB(166,124,0); */
-  text-shadow: 1px 1px 2px RGB(0, 0, 0);
+  /* text-shadow: 1px 1px 2px RGB(0, 0, 0); */
 }
 /* 카드 상단 스타일명 헤더 (optional 추가) */
 .card-style-header {
@@ -252,6 +252,14 @@ footer.py-5.bg-dark {
   border-top-left-radius: 0.25rem;
   border-top-right-radius: 0.25rem;
 }
+#toggle-gender-btn {
+  border: 1px solid rgb(210, 210, 210);
+  color: #6c757d;
+  background-color: transparent !important;
+}
+/* #toggle-gender-btn i {
+  color: blue;
+} */
 #color-btn {
   border: 1px solid rgb(210, 210, 210);
   color: #6c757d;
@@ -259,14 +267,12 @@ footer.py-5.bg-dark {
 #ai-btn {
   border: 1px solid rgb(210, 210, 210);
   color: #6c757d;
+  background-color: transparent !important;
 }
 #refresh-images-btn {
   border: 1px solid rgb(210, 210, 210);
   color: #6c757d;
-}
-#toggle-gender-btn {
-  border: 1px solid rgb(210, 210, 210);
-  color: #6c757d;
+  background-color: transparent !important;
 }
 /* 전역 기본 폰트로 Pretendard Variable 사용 */
 body {

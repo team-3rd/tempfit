@@ -23,10 +23,10 @@ public class CoordiController {
     private final ClothingGuideService clothingGuideService;
 
     // 게시글 등록
-    @PostMapping
-    public Long register(@RequestBody CoordiDTO dto) {
-        return coordiService.register(dto);
-    }
+//     @PostMapping
+//     public Long register(@RequestBody CoordiDTO dto) {
+//         return coordiService.register(dto);
+//     }
 
     // 온도별 스타일별 TOP3 추천 게시글
     @GetMapping("/recommend")
