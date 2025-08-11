@@ -18,6 +18,7 @@ public class OpenAIChatbotMessageRequest {
     private Double lon; // 경도, null 허용
 
     private Integer sexCode; // DB 성별코드
-
     private String gender; // 챗봇 문자열 성별
+
+    private Integer personalColorCode;  // 퍼스널컬러 코드(0~4)
 }
