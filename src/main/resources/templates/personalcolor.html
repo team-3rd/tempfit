@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>퍼스널 컬러 게임</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- CSRF (Spring Security 사용 시) : _csrf가 null일 수 있으므로 조건부 렌더링 -->
+  <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}" />
+  <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}" />
+
+  <!-- 정적 CSS -->
+  <link rel="stylesheet" th:href="@{/css/personalcolor.css}" />
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1 class="title">퍼스널 컬러 선택</h1>
+      <p class="desc">사진을 보고 본인에 가장 어울리는 톤을 선택하세요. (언제든 다시 고를 수 있어요)</p>
+
+      <div class="img-box">
+        <img th:src="${imageUrl}" alt="personal color sample" />
+      </div>
+
+      <div class="choices" id="choices">
+        <!-- 저장되는 값: 1~4 / 0은 미선택(기본값) -->
+        <button class="btn" data-code="1" th:classappend="${currentCode} == 1 ? ' active' : ''">1. 봄 웜톤</button>
+        <button class="btn" data-code="2" th:classappend="${currentCode} == 2 ? ' active' : ''">2. 여름 쿨톤</button>
+        <button class="btn" data-code="3" th:classappend="${currentCode} == 3 ? ' active' : ''">3. 가을 웜톤</button>
+        <button class="btn" data-code="4" th:classappend="${currentCode} == 4 ? ' active' : ''">4. 겨울 웜톤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 리다이렉트 플래시 토스트 (있을 때만 표시) -->
+  <div id="toast" class="toast" th:if="${toast != null}" th:text="${toast}"></div>
+    <div id="toast" class="toast" style="display:none;">저장되었습니다</div>
+
+  <!-- 정적 JS -->
+  <script th:src="@{/js/personalcolor.js}"></script>
+</body>
+</html>
