@@ -1,3 +1,4 @@
+// src/main/resources/static/js/chatbot.js
 (function () {
   'use strict';
 
@@ -6,11 +7,12 @@
   const sendBtn  = document.getElementById('sendBtn');
 
   // 컨텍스트(hidden)
-  const ctxTempEl = document.getElementById('ctxTemp');
-  const ctxLocEl  = document.getElementById('ctxLoc');
-  const ctxDateEl = document.getElementById('ctxDate');
-  const ctxLatEl  = document.getElementById('ctxLat');
-  const ctxLonEl  = document.getElementById('ctxLon');
+  const ctxTempEl    = document.getElementById('ctxTemp');
+  const ctxLocEl     = document.getElementById('ctxLoc');
+  const ctxDateEl    = document.getElementById('ctxDate');
+  const ctxLatEl     = document.getElementById('ctxLat');
+  const ctxLonEl     = document.getElementById('ctxLon');
+  const ctxLoggedEl  = document.getElementById('ctxLoggedIn');
 
   document.addEventListener('DOMContentLoaded', () => {
     // lat/lon 미지정이면 브라우저 Geolocation으로 채우기
@@ -24,7 +26,25 @@
       );
     }
 
-    appendBotWelcome();
+    const isLoggedIn = (String(ctxLoggedEl?.value) === 'true');
+
+    // ★ 로그인 상태에 따라 첫 메시지 분기
+    if (isLoggedIn) {
+      appendBotWelcome();
+    } else {
+      appendMessage({
+        isMine: false,
+        content: '로그인 후 이용할 수 있어요.',
+        sentAt: new Date()
+      });
+      // UX: 입력 비활성화(선택)
+      if (msgInput) {
+        msgInput.disabled = true;
+        msgInput.placeholder = '로그인 후 이용할 수 있어요.';
+      }
+      if (sendBtn) sendBtn.disabled = true;
+    }
+
     setupHandlers();
     autoResize(msgInput);
     msgInput?.focus();
@@ -69,10 +89,16 @@
         body: JSON.stringify(payload)
       });
 
-      const data = await res.json();
-      replaceBubbleText(placeholder, (data && data.answer) ? String(data.answer) : '(빈 응답)');
+      // 로그인 미상태 등으로 401/403/500이어도 본문 메시지를 시도
+      let textBody = '';
+      try { textBody = await res.text(); } catch {}
+      let data;
+      try { data = JSON.parse(textBody); } catch {}
+
+      const answer = data?.answer || textBody || '(빈 응답)';
+      replaceBubbleText(placeholder, String(answer));
     } catch (e) {
-      replaceBubbleText(placeholder, '오류: ' + (e && e.message ? e.message : '요청 실패'));
+      replaceBubbleText(placeholder, '오류: ' + (e?.message || '요청 실패'));
     }
   }
 
@@ -81,7 +107,6 @@
     const n = Number(v);
     return Number.isFinite(n) ? n : null;
   }
-
   function parseNum(v) {
     if (!v) return null;
     const n = Number(v);

@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
-  <title>퍼스널 컬러 게임</title>
+  <title>TempFit 퍼스널 컬러 선택</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- CSRF (Spring Security 사용 시) : _csrf가 null일 수 있으므로 조건부 렌더링 -->
@@ -16,25 +16,64 @@
   <div class="wrap">
     <div class="card">
       <h1 class="title">퍼스널 컬러 선택</h1>
-      <p class="desc">사진을 보고 본인에 가장 어울리는 톤을 선택하세요. (언제든 다시 고를 수 있어요)</p>
+      <p class="desc">아래 4개 이미지 중, 본인과 가장 어울린다고 생각되는 톤을 선택하세요.</p>
 
-      <div class="img-box">
-        <img th:src="${imageUrl}" alt="personal color sample" />
+      <!-- 이미지 버튼 2x2 -->
+      <div class="choices-grid" id="choices">
+        <button class="imgbtn"
+                type="button"
+                data-code="1"
+                th:classappend="${currentCode} == 1 ? ' active' : ''"
+                aria-label="봄 웜톤">
+          <img th:src="@{/images/personalcolor/봄웜톤.png}" alt="봄 웜톤" loading="lazy" />
+          <span class="label">봄 웜톤</span>
+        </button>
+
+        <button class="imgbtn"
+                type="button"
+                data-code="2"
+                th:classappend="${currentCode} == 2 ? ' active' : ''"
+                aria-label="여름 쿨톤">
+          <img th:src="@{/images/personalcolor/여름쿨톤.png}" alt="여름 쿨톤" loading="lazy" />
+          <span class="label">여름 쿨톤</span>
+        </button>
+
+        <button class="imgbtn"
+                type="button"
+                data-code="3"
+                th:classappend="${currentCode} == 3 ? ' active' : ''"
+                aria-label="가을 웜톤">
+          <img th:src="@{/images/personalcolor/가을웜톤.png}" alt="가을 웜톤" loading="lazy" />
+          <span class="label">가을 웜톤</span>
+        </button>
+
+        <button class="imgbtn"
+                type="button"
+                data-code="4"
+                th:classappend="${currentCode} == 4 ? ' active' : ''"
+                aria-label="겨울 쿨톤">
+          <img th:src="@{/images/personalcolor/겨울쿨톤.png}" alt="겨울 쿨톤" loading="lazy" />
+          <span class="label">겨울 쿨톤</span>
+        </button>
       </div>
 
-      <div class="choices" id="choices">
-        <!-- 저장되는 값: 1~4 / 0은 미선택(기본값) -->
-        <button class="btn" data-code="1" th:classappend="${currentCode} == 1 ? ' active' : ''">1. 봄 웜톤</button>
-        <button class="btn" data-code="2" th:classappend="${currentCode} == 2 ? ' active' : ''">2. 여름 쿨톤</button>
-        <button class="btn" data-code="3" th:classappend="${currentCode} == 3 ? ' active' : ''">3. 가을 웜톤</button>
-        <button class="btn" data-code="4" th:classappend="${currentCode} == 4 ? ' active' : ''">4. 겨울 웜톤</button>
+      <!-- 현재 선택 요약 (가운데, 예쁜 배지 + 따옴표) -->
+      <div class="summary">
+        <span class="summary-text">당신은</span>
+        <strong id="toneLabel" class="tone" th:switch="${currentCode}">
+          <span th:case="0">미선택</span>
+          <span th:case="1">봄 웜톤</span>
+          <span th:case="2">여름 쿨톤</span>
+          <span th:case="3">가을 웜톤</span>
+          <span th:case="4">겨울 쿨톤</span>
+        </strong>
+        <span class="summary-text">입니다.</span>
       </div>
     </div>
   </div>
 
-  <!-- 리다이렉트 플래시 토스트 (있을 때만 표시) -->
-  <div id="toast" class="toast" th:if="${toast != null}" th:text="${toast}"></div>
-    <div id="toast" class="toast" style="display:none;">저장되었습니다</div>
+  <!-- 토스트 -->
+  <div id="toast" class="toast" style="display:none;">저장되었습니다</div>
 
   <!-- 정적 JS -->
   <script th:src="@{/js/personalcolor.js}"></script>

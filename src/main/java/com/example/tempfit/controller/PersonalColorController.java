@@ -25,8 +25,7 @@ public class PersonalColorController {
     /** 퍼스널컬러 선택 페이지 */
     @GetMapping("/personalcolor")
     public String page(Model model, Principal principal) {
-        model.addAttribute("imageUrl", "/images/personalcolor/퍼스널컬러진단테스트.jpg");
-
+        // model.addAttribute("imageUrl", "/images/personalcolor/퍼스널컬러진단테스트.jpg");
         String email = currentUserEmail(principal);
         int current = (email == null) ? 0 : personalColorService.getChoice(email);
         model.addAttribute("currentCode", current);

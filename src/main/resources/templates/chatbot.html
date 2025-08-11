@@ -1,3 +1,4 @@
+<!-- src/main/resources/templates/chatbot.html -->
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -6,7 +7,6 @@
   <title>TempFit 챗봇</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <!-- 기존 채팅 UI 스타일 재사용 -->
   <link rel="stylesheet" th:href="@{/css/chat.css}" />
   <link href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/variable/pretendardvariable.css" rel="stylesheet"/>
 
@@ -16,12 +16,14 @@
   <th:block th:replace="fragments/navbar :: navbar"></th:block>
   <th:block th:replace="fragments/toggle :: toggle"></th:block>
 
-  <!-- 서버/페이지 컨텍스트를 숨은 필드로 내려 JS가 함께 전송 -->
+  <!-- 서버/페이지 컨텍스트 -->
   <input type="hidden" id="ctxTemp" th:value="${ctxTemp}" />
   <input type="hidden" id="ctxLoc"  th:value="${ctxLoc}" />
   <input type="hidden" id="ctxDate" th:value="${ctxDate}" />
   <input type="hidden" id="ctxLat"  th:value="${ctxLat}" />
   <input type="hidden" id="ctxLon"  th:value="${ctxLon}" />
+  <!-- ★ 로그인 여부 -->
+  <input type="hidden" id="ctxLoggedIn" th:value="${isLoggedIn}" />
 
   <div class="container chat-container flex-grow-1 row">
     <div class="col-md-12">
