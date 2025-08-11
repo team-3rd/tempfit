@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -98,20 +99,22 @@ public class MemberController {
     model.addAttribute("myPosts", posts);
     return "member/myposts";
 }
-@PostMapping("/members/{email}/upload-profile")
-public ResponseEntity<String> uploadProfileImage(
-        @PathVariable String email,
-        @RequestParam("file") MultipartFile file) {
+    @PostMapping("/{email}/profile-image")
+    public ResponseEntity<String> updateProfileImage(
+            @PathVariable String email,
+            @RequestParam("file") MultipartFile file) {
 
-    // 1. 파일 저장 (예: 로컬 or S3)
-    String imageUrl = fileStorageService.save(file, "profile");
-    // 2. 멤버 조회 및 URL 저장
-    Member member = memberRepository.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("회원 없음"));
-
-    member.setProfileImageUrl(imageUrl);
-    memberRepository.save(member);
-
-    return ResponseEntity.ok(imageUrl);
-}
+        try {
+            memberService.updateProfileImage(email, file);
+            return ResponseEntity.ok("프로필 이미지가 변경되었습니다.");
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("이미지 업로드 실패");
+        }
+    }
+    
+    @DeleteMapping("/{email}/profile-image")
+    public ResponseEntity<String> deleteProfileImage(@PathVariable String email) throws IOException {
+        memberService.resetToDefaultProfileImage(email);
+        return ResponseEntity.ok("프로필 이미지가 기본 이미지로 변경되었습니다.");
+    }
 }

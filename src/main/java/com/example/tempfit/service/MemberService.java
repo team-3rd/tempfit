@@ -41,7 +41,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${upload.path} + '/profile'")
+    @Value("${upload.path}" + "/profile/")
     private String uploadDir;
 
     @Value("${default.profile-image-url}")
@@ -116,7 +116,61 @@ public class MemberService {
         return true;
     }
 
-    private void saveProfileImage(Member member, MultipartFile file) throws IOException {
+    public void updateProfileImage(String email, MultipartFile file) throws IOException {
+        Member member = memberRepository.findById(email)
+                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
+
+        // 기존 이미지 삭제 (기본 이미지 제외)
+        if (member.getProfileImageUrl() != null &&
+            !member.getProfileImageUrl().equals(defaultProfileImageUrl)) {
+
+            String oldFileName = member.getProfileImageUrl()
+                    .replace("http://localhost:8080/uploads/profile/", "");
+            File oldFile = new File(uploadDir, oldFileName);
+            if (oldFile.exists()) {
+                oldFile.delete();
+            }
+        }
+
+        // 새 이미지 저장
+        String storedName = saveProfileImage(file);
+
+        // 새 URL 설정
+        String imageUrl = "http://localhost:8080/uploads/profile/" + storedName;
+        member.setProfileImageUrl(imageUrl);
+
+        memberRepository.save(member);
+    }
+
+    public void resetToDefaultProfileImage(String email) {
+        Member member = memberRepository.findById(email)
+                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
+
+        String currentImageUrl = member.getProfileImageUrl();
+
+        if (currentImageUrl != null && !currentImageUrl.equals(defaultProfileImageUrl)) {
+            try {
+                // URL → 파일 경로 변환
+                String fileName = currentImageUrl.replace("/uploads/profile/", "");
+                File fileToDelete = new File(uploadDir, fileName);
+
+                if (fileToDelete.exists()) {
+                    boolean deleted = fileToDelete.delete();
+                    if (!deleted) {
+                        System.err.println("⚠ 파일 삭제 실패: " + fileToDelete.getAbsolutePath());
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        // DB 기본 이미지로 변경
+        member.setProfileImageUrl(defaultProfileImageUrl);
+        memberRepository.save(member);
+    }
+
+    private String saveProfileImage(MultipartFile file) throws IOException {
         File uploadPathDir = new File(uploadDir);
         if (!uploadPathDir.exists())
             uploadPathDir.mkdirs();
@@ -127,7 +181,7 @@ public class MemberService {
         File dest = new File(uploadPathDir, storedName);
         file.transferTo(dest);
 
-        
+        return storedName;
     }
 
     private Member dtoToEntity(MemberDTO dto){

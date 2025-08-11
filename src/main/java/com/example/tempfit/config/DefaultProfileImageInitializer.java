@@ -31,7 +31,7 @@ public class DefaultProfileImageInitializer {
                 }
 
                 // 기본 이미지 리소스를 classpath에서 읽어옴
-                ClassPathResource resource = new ClassPathResource("default.png");
+                ClassPathResource resource = new ClassPathResource("/static/images/default.png");
 
                 try (InputStream is = resource.getInputStream();
                      FileOutputStream fos = new FileOutputStream(defaultImageFile)) {

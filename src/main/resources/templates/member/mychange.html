@@ -1,105 +1,199 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-  <head>
+<head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>템핏 TempFit - 개인정보 수정</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
-      integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous" />
-      <link href="/css/darkmode.css" rel="stylesheet" />
-      <link href="/css/login.css" rel="stylesheet" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/variable/pretendardvariable.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/darkmode.css" rel="stylesheet" />
+    <link href="/css/login.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/variable/pretendardvariable.css" rel="stylesheet" />
     <style>
-      .edit-profile-container {
-        max-width: 600px;
-        width: 100%; 
-        margin: 3rem auto;
-        padding: 2.5rem;
-        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
-        border-radius: 0.6rem;
-        background-color: #fff;
-      }
-      [data-bs-theme="dark"] .edit-profile-container {
-        max-width: 600px;
-        width: 100%; 
-        margin: 3rem auto;
-        padding: 2.5rem;
-        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
-        border-radius: 0.6rem;
-        background-color: #1e1e1e;
-      }
-      h3 {
-        font-weight: 600;
-        margin-bottom: 1rem;
-      }
-      .form-label {
-        font-weight: 500;
-      }
-      .btn-submit {
-        width: 100%;
-        padding: 0.75rem;
-        font-size: 1.1rem;
-      }
+        .edit-profile-container {
+            max-width: 600px;
+            width: 100%; 
+            margin: 3rem auto;
+            padding: 2.5rem;
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+            border-radius: 0.6rem;
+            background-color: #fff;
+        }
+        [data-bs-theme="dark"] .edit-profile-container {
+            background-color: #1e1e1e;
+        }
+        h3 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1.1rem;
+        }
+        /* 프로필 이미지 스타일 */
+        .profile-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            cursor: pointer;
+            margin: 0 auto 1.5rem;
+        }
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0);
+            transition: background 0.3s ease;
+        }
+        .profile-container:hover .overlay {
+            background: rgba(0, 0, 0, 0.4);
+        }
+        .delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    font-size: 16px;
+    line-height: 25px;
+    text-align: center;
+    cursor: pointer;
+    z-index: 2;
+    padding: 0;
+    transition: background 0.2s ease;
+}
+.delete-btn:hover {
+    background: rgba(255,0,0,0.8);
+}
     </style>
-  </head>
-  <body class="d-flex flex-column min-vh-100">
+</head>
+<body class="d-flex flex-column min-vh-100">
     <!-- Navbar -->
     <th:block th:replace="fragments/navbar :: navbar"></th:block>
-    
     <th:block th:replace="fragments/toggle :: toggle"></th:block>
+
     <main class="edit-profile-container flex-grow-1">
       <h2 class="text-center mb-4">개인정보 수정</h2>
-      <form th:action="@{/member/mychange}" th:object="${dto}" method="post" novalidate>
-        
-        <div class="mb-3">
-          <label for="id" class="form-label">이메일 (ID)</label>
-          <input type="text" class="form-control" id="id" name="email" placeholder="이메일 (ID)" th:field="*{email}" readonly required />
-        </div>
 
-        <div class="mb-3">
-          <label for="name" class="form-label">이름</label>
-          <input type="text" class="form-control" id="name" name="name" placeholder="이름" th:field="*{name}" th:attr="readonly=${#authentication.principal.fromSocial}" required />
-        </div>
-
-        <div class="mb-3">
-          <label for="nickname" class="form-label">별명</label>
-          <input type="text" class="form-control" id="nickname" name="nickname" placeholder="별명" th:field="*{nickname}" required />
-        </div>
-
-        <fieldset class="mb-4">
-          <legend class="form-label">성별</legend>
-
-          <div th:if="${#authentication.principal.fromSocial}">
-            <div class="form-check">
-              <input type="radio" class="form-check-input" name="sex" id="male" value="MALE" th:checked="${dto.sex.name() == 'MALE'}" disabled />
-              <label class="form-check-label" for="male">남성</label>
+        <!-- 프로필 이미지 변경 영역 -->
+      <div class="profile-container" onclick="document.getElementById('fileInput').click()">
+      <img th:src="@{${dto.profileImageUrl}}" alt="프로필" class="profile-image" id="profileImg">
+      <div class="overlay"></div>
+        <button type="button" class="delete-btn" onclick="event.stopPropagation(); deleteProfileImage()">×</button>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" style="display:none">
+        <!-- 개인정보 수정 폼 -->
+        <form th:action="@{/member/mychange}" th:object="${dto}" method="post" novalidate>
+            <div class="mb-3">
+                <label for="id" class="form-label">이메일 (ID)</label>
+                <input type="text" class="form-control" id="id" th:field="*{email}" readonly required />
             </div>
-            <div class="form-check">
-              <input type="radio" class="form-check-input" name="sex" id="female" value="FEMALE" th:checked="${dto.sex.name() == 'FEMALE'}" disabled />
-              <label class="form-check-label" for="female">여성</label>
-            </div>
-            <input type="hidden" th:field="*{sex}" />
-          </div>
 
-          <div th:unless="${#authentication.principal.fromSocial}">
-            <div class="form-check">
-              <input type="radio" class="form-check-input" th:field="*{sex}" id="male" value="MALE" />
-              <label class="form-check-label" for="male">남성</label>
+            <div class="mb-3">
+                <label for="name" class="form-label">이름</label>
+                <input type="text" class="form-control" id="name" th:field="*{name}" th:attr="readonly=${#authentication.principal.fromSocial}" required />
             </div>
-            <div class="form-check">
-              <input type="radio" class="form-check-input" th:field="*{sex}" id="female" value="FEMALE" />
-              <label class="form-check-label" for="female">여성</label>
-            </div>
-          </div>
-        </fieldset>
 
-        <button type="submit" class="btn btn-primary btn-submit">개인정보 변경</button>
-      </form>
+            <div class="mb-3">
+                <label for="nickname" class="form-label">별명</label>
+                <input type="text" class="form-control" id="nickname" th:field="*{nickname}" required />
+            </div>
+
+            <fieldset class="mb-4">
+                <legend class="form-label">성별</legend>
+                <div th:if="${#authentication.principal.fromSocial}">
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="male" value="MALE" th:checked="${dto.sex.name() == 'MALE'}" disabled />
+                        <label class="form-check-label" for="male">남성</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="female" value="FEMALE" th:checked="${dto.sex.name() == 'FEMALE'}" disabled />
+                        <label class="form-check-label" for="female">여성</label>
+                    </div>
+                    <input type="hidden" th:field="*{sex}" />
+                </div>
+                <div th:unless="${#authentication.principal.fromSocial}">
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" th:field="*{sex}" id="male" value="MALE" />
+                        <label class="form-check-label" for="male">남성</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" th:field="*{sex}" id="female" value="FEMALE" />
+                        <label class="form-check-label" for="female">여성</label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <button type="submit" class="btn btn-primary btn-submit">개인정보 변경</button>
+        </form>
     </main>
+
     <th:block th:replace="fragments/footer :: footer"></th:block>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+    <script>
+        document.getElementById("fileInput").addEventListener("change", async function() {
+            if (!this.files.length) return;
+
+            const email = "[[${dto.email}]]";
+            const apiUrl = `/member/${email}/profile-image`;
+            const formData = new FormData();
+            formData.append("file", this.files[0]);
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const imageUrl = URL.createObjectURL(this.files[0]);
+                    document.getElementById("profileImg").src = imageUrl;
+                } else {
+                    alert("업로드 실패");
+                }
+            } catch (error) {
+                console.error("업로드 중 오류:", error);
+            }
+        });
+        async function deleteProfileImage() {
+    if (!confirm("프로필 이미지를 삭제하시겠습니까?")) return;
+
+    const email = "[[${dto.email}]]";
+            const apiUrl = `/member/${email}/profile-image`;
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: "DELETE"
+        });
+
+        if (response.ok) {
+            document.getElementById("profileImg").src = "/images/default.png"; // 기본 이미지 경로
+            alert("프로필 이미지가 삭제되었습니다.");
+        } else {
+            alert("삭제 실패");
+        }
+    } catch (error) {
+        console.error("삭제 중 오류:", error);
+    }
+}
+    </script>
+</body>
 </html>

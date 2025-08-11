@@ -25,6 +25,21 @@
         font-size: 1.1rem;
         margin-bottom: 1rem;
       }
+      .profile-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            cursor: pointer;
+            margin: 0 auto 1.5rem;
+        }
+      .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
       .profile-label {
         font-weight: 600;
         color: #555;
@@ -40,10 +55,8 @@
     <main class="container flex-grow-1">
       <div class="profile-card">
         <h2 class="mb-4 text-center">마이페이지</h2>
-        <div class="profile-item">
-          <img th:src="@{'/uploads/profile/' + ${dto.profileImageUrl}}" />
-          <img th:src="@{http://localhost:8080/uploads/profile/default.png}" />
-
+        <div class="profile-container">
+          <img th:src="@{${dto.profileImageUrl}}" class="profile-image" />
         </div>
         <div class="profile-item">
           <span class="profile-label">이메일 (ID):</span> <span th:text="${dto.email}">user@example.com</span>
