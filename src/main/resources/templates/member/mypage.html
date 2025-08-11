@@ -58,6 +58,24 @@
         <div class="profile-container">
           <img th:src="@{${dto.profileImageUrl}}" class="profile-image" />
         </div>
+        <div class="follow-container text-center my-3">
+    <!-- 현재 사용자가 보고 있는 프로필 주인과 같지 않을 때만 버튼 표시 -->
+    <div th:if="${#authentication.name != dto.email}">
+        <!-- 팔로우 상태에 따라 다른 버튼 표시 -->
+        <button id="followBtn" 
+                class="btn btn-primary"
+                th:data-email="${dto.email}"
+                th:if="${!isFollowing}">
+            팔로우
+        </button>
+        <button id="unfollowBtn" 
+                class="btn btn-secondary"
+                th:data-email="${dto.email}"
+                th:if="${isFollowing}">
+            언팔로우
+        </button>
+    </div>
+</div>
         <div class="profile-item">
           <span class="profile-label">이메일 (ID):</span> <span th:text="${dto.email}">user@example.com</span>
         </div>
@@ -91,6 +109,38 @@
       </div>
     </main>
     <th:block th:replace="fragments/footer :: footer"></th:block>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+    const followBtn = document.getElementById("followBtn");
+    const unfollowBtn = document.getElementById("unfollowBtn");
+
+    if (followBtn) {
+        followBtn.addEventListener("click", function() {
+            const email = this.dataset.email;
+            fetch(`/follow/${email}`, {
+                method: "POST"
+            }).then(res => {
+                if (res.ok) {
+                    location.reload();
+                }
+            });
+        });
+    }
+
+    if (unfollowBtn) {
+        unfollowBtn.addEventListener("click", function() {
+            const email = this.dataset.email;
+            fetch(`/follow/${email}`, {
+                method: "DELETE"
+            }).then(res => {
+                if (res.ok) {
+                    location.reload();
+                }
+            });
+        });
+    }
+});
+</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

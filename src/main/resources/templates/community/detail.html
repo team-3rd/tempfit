@@ -296,6 +296,13 @@
         >
           <button type="submit" class="btn btn-outline-primary">추천</button>
         </form>
+        <form
+          th:action="@{/community/bookmark/{id}(id=${post.id})}"
+          method="post"
+          class="d-inline"
+        >
+          <button type="submit" class="btn btn-outline-primary">북마크</button>
+        </form>
         <a
           th:href="@{/community/edit/{id}(id=${post.id})}"
           class="btn btn-primary"

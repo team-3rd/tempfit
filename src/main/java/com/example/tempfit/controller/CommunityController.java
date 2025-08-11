@@ -178,9 +178,19 @@ public class CommunityController {
     public String recommendPost(
             @PathVariable Long id,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO) {
-        Member member = memberRepository.findByEmailAndFromSocial(
-                authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
+        Member member = memberRepository.findByEmail(
+                authMemberDTO.getEmail()).get();
         communityService.recommendPost(id, member);
+        return "redirect:/community/detail/" + id;
+    }
+
+    @PostMapping("/bookmark/{id}")
+    public String bookmarkPost(
+            @PathVariable Long id,
+            @AuthenticationPrincipal AuthMemberDTO authMemberDTO) {
+        Member member = memberRepository.findByEmail(
+                authMemberDTO.getEmail()).get();
+        communityService.bookmarkPost(id, member);
         return "redirect:/community/detail/" + id;
     }
 }

@@ -3,6 +3,7 @@ package com.example.tempfit.service;
 import com.example.tempfit.entity.TemperatureRange;
 import com.example.tempfit.dto.CommunityDTO;
 import com.example.tempfit.dto.SelectedWeatherDTO;
+import com.example.tempfit.entity.Bookmark;
 import com.example.tempfit.entity.Community;
 import com.example.tempfit.entity.CommunityImage;
 import com.example.tempfit.entity.CommunitySex;
@@ -11,6 +12,7 @@ import com.example.tempfit.entity.CommunityTemp;
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Recommend;
 import com.example.tempfit.entity.Sex;
+import com.example.tempfit.repository.BookmarkRepository;
 import com.example.tempfit.repository.CommentRepository;
 import com.example.tempfit.repository.CommunityImageRepository;
 import com.example.tempfit.repository.CommunityRepository;
@@ -55,6 +57,7 @@ public class CommunityService {
     private final CommunitySexRepository communitySexRepository;
     private final CommunityImageRepository communityImageRepository;
     private final RecommendRepository recommendRepository;
+    private final BookmarkRepository bookmarkRepository;
     private final CommentRepository commentRepository;
     private final CommunityTempRepository communityTempRepository;
 
@@ -318,6 +321,26 @@ public class CommunityService {
                     .build();
             recommendRepository.save(rec);
             community.setRecommendCount(community.getRecommendCount() + 1);
+        }
+        communityRepository.save(community);
+    }
+
+    @Transactional
+    public void bookmarkPost(Long communityId, Member member) {
+        Community community = communityRepository.findById(communityId)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+
+        Optional<Bookmark> existBook = bookmarkRepository.findByMemberAndCommunity(member, community);
+        if (existBook.isPresent()) {
+            bookmarkRepository.delete(existBook.get());
+            //community.setRecommendCount(community.getRecommendCount() - 1);
+        } else {
+            Bookmark rec = Bookmark.builder()
+                    .community(community)
+                    .member(member)
+                    .build();
+            bookmarkRepository.save(rec);
+            //community.setRecommendCount(community.getRecommendCount() + 1);
         }
         communityRepository.save(community);
     }

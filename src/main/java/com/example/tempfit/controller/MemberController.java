@@ -25,6 +25,7 @@ import com.example.tempfit.repository.MemberRepository;
 import com.example.tempfit.security.AuthMemberDTO;
 import com.example.tempfit.service.CommunityService;
 import com.example.tempfit.service.FileStorageService;
+import com.example.tempfit.service.FollowService;
 import com.example.tempfit.service.MemberService;
 
 import jakarta.validation.Valid;
@@ -40,7 +41,7 @@ public class MemberController {
     private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final CommunityService communityService;
-    private final FileStorageService fileStorageService;
+    private final FollowService followService;
 
     //@PreAuthorize("permitAll()")
     @GetMapping("/login")
@@ -69,6 +70,21 @@ public class MemberController {
         MemberDTO memberDTO = memberService.getMember(email);
         model.addAttribute("dto", memberDTO);
     }
+
+    @GetMapping("/{email}")
+    public String viewProfile(@PathVariable String email,
+                           @AuthenticationPrincipal AuthMemberDTO authMember,
+                           Model model) {
+
+    Member profileMember = memberRepository.findByEmail(email).get();
+
+    boolean isFollowing = followService.isFollowing(authMember.getEmail(), email);
+
+    model.addAttribute("profile", profileMember);
+    model.addAttribute("isFollowing", isFollowing);
+
+    return "member/profile";
+}
 
     @GetMapping("/mychange")
     public void getMychange(Authentication authentication, Model model){
