@@ -4,20 +4,24 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "products_male")
+@Table(name = "products")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductsMale {
-    // 외부 Musinsa 상품 고유 아이디를 PK로 사용
+public class Products {
     @Id
     @Column(name = "product_id")
     private Long productId;
 
-    @Column(name = "category_id")
+    // 예: 상의 / 아우터 / 하의 / 신발
+    @Column(name = "category_id", nullable = false)
     private String categoryId;
+
+    // 남성 0, 여성 1
+    @Column(name = "gender", nullable = false)
+    private Integer gender;
 
     @Column(name = "brand_name", nullable = false)
     private String brandName;
