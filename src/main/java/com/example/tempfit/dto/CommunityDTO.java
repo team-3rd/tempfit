@@ -24,6 +24,7 @@ public class CommunityDTO {
     private String title;
 
     private Member author;
+    private String profileImageUrl;
 
     private String content;
     private int recommendCount;

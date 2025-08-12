@@ -71,21 +71,21 @@ public class CommunityController {
         CommunityDTO postDto = communityService.get(id);
         model.addAttribute("post", postDto);
         model.addAttribute("comments", commentService.getComments(id));
-        return "community/detail";
+        return "community/detail :: detailCard";
     }
 
     @PostMapping("/detail/{id}/comments")
     public String addComment(
-        @PathVariable Long id,
-        @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
-        @RequestParam String content) {
+            @PathVariable Long id,
+            @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
+            @RequestParam String content) {
 
-    Member member = memberRepository.findByEmailAndFromSocial(
-        authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
+        Member member = memberRepository.findByEmailAndFromSocial(
+                authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
 
-    commentService.addComment(id, member, content);
-    return "redirect:/community/detail/" + id;
-}
+        commentService.addComment(id, member, content);
+        return "redirect:/community/detail/" + id;
+    }
 
     @GetMapping("/create")
     public String createForm(Model model) {
@@ -123,8 +123,8 @@ public class CommunityController {
         Member loginMember = memberRepository.findByEmailAndFromSocial(
                 authMemberDTO.getEmail(), authMemberDTO.isFromSocial());
 
-        Long newId = communityService.register(dto, loginMember, imageFiles, repImageIndex, weatherData);
-        return "redirect:/community/detail/" + newId;
+        communityService.register(dto, loginMember, imageFiles, repImageIndex, weatherData);
+        return "redirect:/community/list";
     }
 
     @GetMapping("/edit/{id}")

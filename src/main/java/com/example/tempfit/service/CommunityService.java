@@ -12,14 +12,7 @@ import com.example.tempfit.entity.CommunityTemp;
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Recommend;
 import com.example.tempfit.entity.Sex;
-import com.example.tempfit.repository.BookmarkRepository;
-import com.example.tempfit.repository.CommentRepository;
-import com.example.tempfit.repository.CommunityImageRepository;
-import com.example.tempfit.repository.CommunityRepository;
-import com.example.tempfit.repository.CommunitySexRepository;
-import com.example.tempfit.repository.CommunityStyleRepository;
-import com.example.tempfit.repository.CommunityTempRepository;
-import com.example.tempfit.repository.RecommendRepository;
+import com.example.tempfit.repository.*;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +45,8 @@ import java.util.stream.Collectors;
 @Transactional
 public class CommunityService {
 
+    private final MemberRepository memberRepository;
+
     private final CommunityRepository communityRepository;
     private final CommunityStyleRepository communityStyleRepository;
     private final CommunitySexRepository communitySexRepository;
@@ -66,10 +61,10 @@ public class CommunityService {
 
     // 게시글 등록 + 이미지 저장 (대표 인덱스로 구분)
     public Long register(CommunityDTO dto,
-                         Member currentUser,
-                         List<MultipartFile> imageFiles,
-                         int repImageIndex,
-                         List<SelectedWeatherDTO> weatherData) throws IOException {
+            Member currentUser,
+            List<MultipartFile> imageFiles,
+            int repImageIndex,
+            List<SelectedWeatherDTO> weatherData) throws IOException {
 
         Community community = Community.builder()
                 .title(dto.getTitle())
@@ -177,6 +172,10 @@ public class CommunityService {
             dto.setAvgTemp(temp.getAvgTemp());
             dto.setSky(temp.getSky());
         });
+
+        memberRepository.findByEmail(entity.getAuthor().getEmail()).ifPresent(member -> {
+            dto.setProfileImageUrl(member.getProfileImageUrl());
+        });
         return dto;
     }
 
@@ -195,9 +194,9 @@ public class CommunityService {
     }
 
     public Page<CommunityDTO> searchPageRaw(String type,
-                                            String keyword,
-                                            List<String> styleNames,
-                                            int page) {
+            String keyword,
+            List<String> styleNames,
+            int page) {
         Pageable pageable = PageRequest.of(page - 1, 10,
                 Sort.by(Sort.Direction.DESC, "createdDate"));
         return communityRepository.list(type, keyword, styleNames, null, pageable)
@@ -205,7 +204,7 @@ public class CommunityService {
     }
 
     public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
-                       boolean removeRepImage, List<SelectedWeatherDTO> weatherData) throws IOException {
+            boolean removeRepImage, List<SelectedWeatherDTO> weatherData) throws IOException {
         // 생략: 필요 시 기존 방식 유지
     }
 
@@ -225,8 +224,8 @@ public class CommunityService {
     }
 
     private void saveCommunityImage(Community community,
-                                    MultipartFile file,
-                                    boolean isRep) throws IOException {
+            MultipartFile file,
+            boolean isRep) throws IOException {
         File uploadPathDir = new File(uploadDir);
         if (!uploadPathDir.exists())
             uploadPathDir.mkdirs();
@@ -252,6 +251,7 @@ public class CommunityService {
         String repUrl = (!imgs.isEmpty()) ? imgs.get(0).getFileName() : null;
 
         CommunityTemp temp = entity.getCommunityTemp();
+        Member member = entity.getAuthor();
 
         return CommunityDTO.builder()
                 .id(entity.getId())
@@ -259,6 +259,7 @@ public class CommunityService {
                 .author(entity.getAuthor())
                 .content(entity.getContent())
                 .recommendCount(entity.getRecommendCount())
+                .profileImageUrl(member.getProfileImageUrl())
                 .repImageUrl(repUrl)
                 .male(entity.getCommunitySex() != null && entity.getCommunitySex().isMale())
                 .female(entity.getCommunitySex() != null && entity.getCommunitySex().isFemale())
@@ -281,18 +282,20 @@ public class CommunityService {
                 .id((Long) arr[0])
                 .title((String) arr[1])
                 .author((Member) arr[2])
-                .recommendCount((Integer) arr[3])
-                .repImageUrl((String) arr[4])
-                .createdDate((LocalDateTime) arr[5])
-                .casual((Boolean) arr[6])
-                .street((Boolean) arr[7])
-                .formal((Boolean) arr[8])
-                .outdoor((Boolean) arr[9])
-                .minTemp((int) arr[10])
-                .maxTemp((int) arr[11])
-                .avgTemp((int) arr[12])
-                .sky((String) arr[13])
-                .viewCount((Integer) arr[14])
+                .content((String) arr[3])
+                .recommendCount((Integer) arr[4])
+                .repImageUrl((String) arr[5])
+                .createdDate((LocalDateTime) arr[6])
+                .profileImageUrl((String) arr[7])
+                .casual((Boolean) arr[8])
+                .street((Boolean) arr[9])
+                .formal((Boolean) arr[10])
+                .outdoor((Boolean) arr[11])
+                .minTemp((int) arr[12])
+                .maxTemp((int) arr[13])
+                .avgTemp((int) arr[14])
+                .sky((String) arr[15])
+                .viewCount((Integer) arr[16])
                 .build();
     }
 
@@ -300,8 +303,8 @@ public class CommunityService {
     public List<CommunityDTO> getPostsByMember(Member member) {
         List<Community> posts = communityRepository.findByAuthor(member);
         return posts.stream()
-            .map(this::entityToDTO)
-            .collect(Collectors.toList());
+                .map(this::entityToDTO)
+                .collect(Collectors.toList());
     }
 
     // 추천/취소
@@ -333,14 +336,14 @@ public class CommunityService {
         Optional<Bookmark> existBook = bookmarkRepository.findByMemberAndCommunity(member, community);
         if (existBook.isPresent()) {
             bookmarkRepository.delete(existBook.get());
-            //community.setRecommendCount(community.getRecommendCount() - 1);
+            // community.setRecommendCount(community.getRecommendCount() - 1);
         } else {
             Bookmark rec = Bookmark.builder()
                     .community(community)
                     .member(member)
                     .build();
             bookmarkRepository.save(rec);
-            //community.setRecommendCount(community.getRecommendCount() + 1);
+            // community.setRecommendCount(community.getRecommendCount() + 1);
         }
         communityRepository.save(community);
     }

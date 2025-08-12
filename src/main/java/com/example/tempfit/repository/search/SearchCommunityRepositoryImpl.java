@@ -4,6 +4,7 @@ import com.example.tempfit.entity.Community;
 import com.example.tempfit.entity.QCommunity;
 import com.example.tempfit.entity.QCommunityStyle;
 import com.example.tempfit.entity.QCommunityTemp;
+import com.example.tempfit.entity.QMember;
 import com.example.tempfit.entity.QCommunityImage;
 import com.example.tempfit.entity.TemperatureRange;
 import com.querydsl.core.BooleanBuilder;
@@ -44,19 +45,23 @@ public class SearchCommunityRepositoryImpl
         QCommunityStyle style = QCommunityStyle.communityStyle;
         QCommunityImage image = QCommunityImage.communityImage;
         QCommunityTemp temp = QCommunityTemp.communityTemp;
+        QMember member = QMember.member;
 
         JPQLQuery<Tuple> query = from(community)
                 .leftJoin(style).on(community.id.eq(style.id))
                 .leftJoin(temp).on(community.id.eq(temp.id))
                 .leftJoin(image).on(image.community.id.eq(community.id)
                         .and(image.isRep.isTrue()))
+                .leftJoin(member).on(member.eq(community.author))
                 .select(
                         community.id,
                         community.title,
                         community.author,
+                        community.content,
                         community.recommendCount,
                         image.fileName,
                         community.createdDate,
+                        member.profileImageUrl,
                         style.casual,
                         style.street,
                         style.formal,
@@ -65,8 +70,7 @@ public class SearchCommunityRepositoryImpl
                         temp.maxTemp,
                         temp.avgTemp,
                         temp.sky,
-                        community.viewCount) // 여기 viewCount 추가
-                .distinct();
+                        community.viewCount); // 여기 viewCount 추가
 
         BooleanBuilder builder = new BooleanBuilder();
         builder.and(community.id.gt(0L));
@@ -134,9 +138,11 @@ public class SearchCommunityRepositoryImpl
                         t.get(community.id),
                         t.get(community.title),
                         t.get(community.author),
+                        t.get(community.content),
                         t.get(community.recommendCount),
                         t.get(image.fileName),
                         t.get(community.createdDate),
+                        t.get(member.profileImageUrl),
                         t.get(style.casual),
                         t.get(style.street),
                         t.get(style.formal),
@@ -154,6 +160,7 @@ public class SearchCommunityRepositoryImpl
                 .leftJoin(temp).on(community.id.eq(temp.id))
                 .leftJoin(image).on(image.community.id.eq(community.id)
                         .and(image.isRep.isTrue()))
+                .leftJoin(member).on(member.eq(community.author))
                 .where(builder)
                 .fetchCount();
 
