@@ -1,3 +1,5 @@
+// /js/list.js
+
 // 공통 유틸: 1k 포맷
 function formatCount(n) {
   const num = Number(n || 0);
@@ -9,25 +11,41 @@ function formatCount(n) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 카드 hover scale은 CSS로 처리, 클릭 시 상세 모달 로드
+  // 카드 클릭 → 상세 모달
   document.querySelectorAll(".post-card").forEach((card) => {
-    card.addEventListener("click", (e) => {
-      // 액션 버튼 클릭 시 카드 클릭 막기
-      if (e.target.closest(".btn-action")) return;
-
+    card.addEventListener("click", async (e) => {
+      if (e.target.closest(".btn-action")) return; // 액션 예외
       e.preventDefault();
-      const postId = card.getAttribute("data-id");
 
-      fetch(`/community/detail/${postId}`)
-        .then((res) => res.text())
-        .then((html) => {
-          document.getElementById("modal-fragment").innerHTML = html;
-          new bootstrap.Modal(document.getElementById("detailModal")).show();
+      const postId = card.getAttribute("data-id");
+      try {
+        const res = await fetch(`/community/detail/${postId}`, { credentials: "same-origin" });
+        const html = await res.text();
+
+        const host = document.getElementById("modal-fragment");
+        host.innerHTML = html; // fragment(.modal-content) 주입
+
+        // 💡 주입 후 모달 내부 이벤트 바인딩
+        if (window.initDetailModal) {
+          window.initDetailModal(host);
+        }
+
+        if (!window.bootstrap || !window.bootstrap.Modal) {
+          console.error("Bootstrap JS가 로드되지 않았습니다.");
+          return;
+        }
+        const modal = new bootstrap.Modal(document.getElementById("detailModal"), {
+          backdrop: true,
+          focus: true,
         });
+        modal.show();
+      } catch (err) {
+        console.error(err);
+      }
     });
   });
 
-  // 숫자 포맷팅 적용
+  // 숫자 포맷팅
   document.querySelectorAll(".count").forEach((el) => {
     const n = el.getAttribute("data-count");
     el.textContent = formatCount(n);
@@ -44,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const liked = icon.classList.contains("bi-heart-fill");
 
       fetch(`/community/recommend/${id}`, { method: "POST" })
-        .catch(() => {}) // 실패해도 UI는 낙관적 반영
+        .catch(() => {})
         .finally(() => {
           if (liked) {
             icon.classList.remove("bi-heart-fill");
@@ -61,29 +79,29 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 북마크 토글(맨 오른쪽)
+  // 북마크 토글
   document.querySelectorAll(".btn-bookmark").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
       const id = btn.getAttribute("data-id");
       const icon = btn.querySelector(".bi");
-      const checked = icon.classList.contains("bi-bookmark-check-fill");
+      const checked = icon.classList.contains("bi-bookmark-fill");
 
       fetch(`/community/bookmark/${id}`, { method: "POST" })
         .catch(() => {})
         .finally(() => {
           if (checked) {
-            icon.classList.remove("bi-bookmark-check-fill");
+            icon.classList.remove("bi-bookmark-fill");
             icon.classList.add("bi-bookmark");
           } else {
             icon.classList.remove("bi-bookmark");
-            icon.classList.add("bi-bookmark-check-fill");
+            icon.classList.add("bi-bookmark-fill");
           }
         });
     });
   });
 
-  // 댓글 버튼: 카드 클릭(모달)과 동일 동작
+  // 댓글 버튼 = 카드 클릭
   document.querySelectorAll(".btn-comment").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();

@@ -43,7 +43,7 @@ public class CommunityController {
 
         Page<CommunityDTO> pageData = communityService.getPage(page);
 
-        // 사용자별(좋아요/북마크/멀티이미지) 상태 적용
+        // 사용자별(좋아요/북마크 등) 상태 적용
         Member me = null;
         if (authMemberDTO != null) {
             me = memberRepository
@@ -77,8 +77,20 @@ public class CommunityController {
     }
 
     @GetMapping("/detail/{id}")
-    public String detail(@PathVariable Long id, Model model) {
+    public String detail(
+            @PathVariable Long id,
+            @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
+            Model model) {
+
         CommunityDTO postDto = communityService.get(id);
+
+        // ✅ 모달에서도 likedByMe / bookmarkedByMe 초기 상태가 잡히도록 보장
+        if (authMemberDTO != null) {
+            Member me = memberRepository
+                    .findByEmailAndFromSocial(authMemberDTO.getEmail(), authMemberDTO.isFromSocial());
+            communityService.applyUserFlags(List.of(postDto), me);
+        }
+
         model.addAttribute("post", postDto);
         model.addAttribute("comments", commentService.getComments(id));
         return "community/detail :: detailCard";
@@ -136,7 +148,7 @@ public class CommunityController {
         communityService.register(dto, loginMember, imageFiles, repImageIndex, weatherData);
         return "redirect:/community/list";
     }
-    
+
     @DeleteMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         communityService.remove(id);

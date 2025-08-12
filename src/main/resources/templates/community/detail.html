@@ -1,320 +1,141 @@
-<div th:fragment="detailCard" class="modal-content container detail-container">
-  <div class="modal-body d-flex flex-row">
-    <!-- 게시글 이미지 -->
-    <div class="images flex-fill">
-      <!-- 이미지 슬라이드 -->
-      <div
-        id="carouselIndicators"
-        class="carousel carousel-dark slide"
-        data-bs-ride="carousel"
-        data-bs-touch="true"
-      >
-        <div class="carousel-indicators">
-          <button
-            type="button"
-            data-bs-target="#carouselIndicators"
-            data-bs-slide-to="0"
-            class="active"
-            aria-current="true"
-            aria-label="Slide 1"
-          ></button>
-        </div>
-
-        <div class="carousel-inner" id="inner">
+<!-- templates/community/detail.html -->
+<div th:fragment="detailCard" class="ig-modal modal-content">
+  <div class="ig-wrap">
+    <!-- 왼쪽 미디어 영역 -->
+    <div class="ig-media">
+      <div id="igCarousel" class="carousel slide" data-bs-ride="false">
+        <div class="carousel-inner">
           <!-- 대표 이미지 -->
-          <div
-            th:if="${post.repImageUrl != null}"
-            class="mb-3 carousel-item active repImg"
-          >
-            <img
-              th:src="@{'/uploads/' + ${post.repImageUrl}}"
-              alt="대표사진"
-              class="detail-image d-block w-100"
-            />
+          <div class="carousel-item active" th:if="${post.repImageUrl != null}">
+            <img class="ig-photo" th:src="@{'/uploads/' + ${post.repImageUrl}}" alt="image" />
           </div>
-
-          <!-- 추가 이미지들 -->
-          <div th:if="${post.extraImageUrls != null}" class="mb-3 extraImgs">
-            <div
-              th:each="url : ${post.extraImageUrls}"
-              class="mb-3 carousel-item extraImg"
-            >
-              <img
-                th:src="@{'/uploads/' + ${url}}"
-                alt="추가사진"
-                class="detail-image d-block w-100"
-              />
+          <!-- 추가 이미지 -->
+          <div th:if="${post.extraImageUrls != null}">
+            <div class="carousel-item" th:each="url : ${post.extraImageUrls}">
+              <img class="ig-photo" th:src="@{'/uploads/' + ${url}}" alt="image" />
             </div>
           </div>
         </div>
 
-        <button
-          class="carousel-control-prev"
-          data-bs-target="#carouselIndicators"
-          type="button"
-          data-bs-slide="prev"
-        >
+        <button class="carousel-control-prev" type="button" data-bs-target="#igCarousel" data-bs-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only"></span>
+          <span class="visually-hidden">Prev</span>
         </button>
-        <button
-          class="carousel-control-next"
-          data-bs-target="#carouselIndicators"
-          type="button"
-          data-bs-slide="next"
-        >
+        <button class="carousel-control-next" type="button" data-bs-target="#igCarousel" data-bs-slide="next">
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only"></span>
+          <span class="visually-hidden">Next</span>
         </button>
       </div>
 
-      <!-- 이미지 모달 창 -->
-      <div
-        id="imgModal"
-        class="modal fade"
-        role="dialog"
-        aria-hidden="true"
-        tabindex="-1"
-      >
-        <div
-          class="modal-dialog modal-fullscreen"
-          role="document"
-          id="modal-main"
-        >
-          <div class="modal-content" id="content">
-            <div class="modal-body">
-              <button
-                type="button"
-                class="btn-close btn-close-white xBtn"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-              <div class="prevSec">
-                <button class="prevImg" onclick="showPrevImg()"></button>
-              </div>
-              <div class="modal-img">
-                <img src="" id="selectedImg" />
-                <canvas id="zoomed1"></canvas>
-                <canvas id="zoomed2"></canvas>
-                <canvas id="zoomed3"></canvas>
-              </div>
-              <div class="nextSec">
-                <button class="nextImg" onclick="showNextImg()"></button>
-              </div>
-            </div>
-            <div class="modal-bottom">
-              <div class="noSec">
-                <span class="imgNo"></span>
-              </div>
-              <ul class="imgList"></ul>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- (작성자 전용) 삭제 버튼: 사진 우측 하단 -->
+      <form class="ig-del-form"
+            th:if="${#authentication.name} == ${post.author.email}"
+            th:action="@{/community/delete/{id}(id=${post.id})}"
+            method="post"
+            onsubmit="return confirm('정말 삭제하시겠습니까?');">
+        <input type="hidden" name="_method" value="delete" />
+        <button type="submit" class="ig-del-btn" title="삭제">
+          <i class="bi bi-trash"></i>
+        </button>
+      </form>
     </div>
 
-    <!-- 게시글 내용 -->
-    <div class="contents flex-fill">
-      <div class="contents-header">
-        <img
-          class="profileImg profile"
-          th:src="@{${post.profileImageUrl}}"
-          alt="프로필 사진"
-          width="48"
-          height="48"
-        />
-        <a
-          th:href="@{/messages/{email}(email=${post.author.email})}"
-          target="_blank"
-          class="emailLink"
-        >
-          <span class="authorName" th:text="${post.author.nickname}"></span>
-        </a>
-        <!-- <span
-          class="badge bg-max day"
-          th:text="${'최고  ' + post.maxTemp + '℃'}"
-        ></span>
-        <span
-          class="badge bg-min night"
-          th:text="${'최저  ' + post.minTemp + '℃'}"
-        ></span> -->
-        <div class="dropdown">
-          <button
-            class="dropdown-toggle-btn btn-dd"
-            type="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            <i class="bi bi-three-dots"></i>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li>
-              <a
-                th:href="@{/community/edit/{id}(id=${post.id})}"
-                class="dropdown-item"
-                th:if="${#authentication.name} == ${post.author.email} or ${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
-                >수정</a
-              >
-            </li>
-            <li>
-              <form
-                th:action="@{/community/delete/{id}(id=${post.id})}"
-                method="post"
-                th:if="${#authentication.name} == ${post.author.email} or ${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
-                onsubmit="return confirm('정말 삭제하시겠습니까?');"
-                class="d-inline btn-form"
-              >
-                <input type="hidden" name="_method" value="delete" />
-                <button type="submit" class="dropdown-item">삭제</button>
-              </form>
-            </li>
-          </ul>
+    <!-- 오른쪽 사이드 -->
+    <div class="ig-side">
+      <!-- 헤더 -->
+      <div class="ig-header">
+        <img class="ig-avatar" th:src="@{${post.profileImageUrl}}" alt="프로필" />
+        <div class="ig-user">
+          <a class="ig-name" th:href="@{/messages/{email}(email=${post.author.email})}" target="_blank"
+             th:text="${post.author.nickname}">닉네임</a>
+        </div>
+
+        <!-- 우측 상단: 날씨/온도 -->
+        <div class="ig-weather ms-auto">
+          <i class="bi"
+             th:classappend="
+               ${post.sky}=='맑음' ? ' bi-sun' :
+               (${post.sky}=='흐림' ? ' bi-cloud-sun' :
+               (${post.sky}=='구름 많음' ? ' bi-clouds' :
+               (${post.sky}=='비' ? ' bi-cloud-rain' :
+               (${post.sky}=='눈' ? ' bi-cloud-snow' : ''))))">
+          </i>
+          <span class="temp" th:text="${post.maxTemp + '°'}"></span>
+          <span class="temp" th:text="${post.minTemp + '°'}"></span>
         </div>
       </div>
 
-      <!-- 작성자, 날짜, 추천 수, 조회수 -->
-      <div class="detail-meta">
-        <!-- 본문 내용 -->
-        <div class="detail-content" th:text="${post.content}">게시글 내용</div>
-        <span th:text="${post.displayDate}"></span>
-      </div>
-
-      <!-- 스타일 배지 -->
-      <!-- <div class="badge-list mb-3">
-        <span th:if="${post.male&&!post.female}" class="badge bg-primary"
-          >남성</span
-        >
-        <span th:if="${post.female&&!post.male}" class="badge bg-danger"
-          >여성</span
-        >
-        <span th:if="${post.male&&post.female}" class="badge bg-success"
-          >공용</span
-        >
-        <span th:if="${post.casual}" class="badge bg-secondary">캐주얼</span>
-        <span th:if="${post.street}" class="badge bg-secondary">스트리트</span>
-        <span th:if="${post.formal}" class="badge bg-secondary">포멀</span>
-        <span th:if="${post.outdoor}" class="badge bg-secondary">아웃도어</span>
-      </div> -->
-
-      <!-- 댓글 목록 -->
-      <div class="commentsList">
-        <div th:each="c : ${comments}" class="mb-3">
-          <span
-            class="comment-author"
-            th:text="${c.author != null && c.author.nickname.trim().length()>0
-                         ? c.author.nickname : '익명'}"
-          >
-            익명
-          </span>
-          &nbsp;
-          <span class="comment-content" th:text="${c.content}">댓글 내용</span>
-          <p class="comment-date" th:text="${c.createdDate}">시간</p>
-        </div>
-      </div>
-
-      <div class="contents-footer">
-        <!-- 액션 버튼 -->
-        <div class="detail-actions">
-          <form
-            th:action="@{/community/recommend/{id}(id=${post.id})}"
-            method="post"
-            class="d-inline btn-form recommend"
-          >
-            <button type="submit" class="btn-recommend">
-              <span class="recommend-icon">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="#ff0000"
-                  class="bi bi-heart-fill"
-                  viewBox="0 0 16 16"
-                  th:if="${post.recommendCount > 0}"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
-                  />
-                </svg>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="#ff0000"
-                  class="bi bi-heart"
-                  viewBox="0 0 16 16"
-                  th:if="${post.recommendCount == 0}"
-                >
-                  <path
-                    d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"
-                  />
-                </svg>
-              </span>
-            </button>
-          </form>
-          <span class="viewCount">
-            <!-- 눈 SVG 아이콘 -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              fill="currentColor"
-              class="bi bi-eye"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"
-              />
-              <path
-                d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"
-              />
-            </svg>
-            <span th:text="${post.viewCount}">0</span>
-          </span>
-          <form
-            th:action="@{/community/bookmark/{id}(id=${post.id})}"
-            method="post"
-            class="d-inline bookmark"
-          >
-            <button type="submit" class="btn-bookmark">
-              <i class="bookmark bi bi-bookmark"></i>
-            </button>
-          </form>
-          <div class="recommendCountArea">
-            <span th:text="${'추천 ' + post.recommendCount + '개'}"></span>
-          </div>
-          <div class="dateArea">
-            <span th:text="${post.displayDate}"></span>
+      <!-- 본문 + 댓글 스크롤 영역 -->
+      <div class="ig-body" id="igBody">
+        <!-- 캡션(본문) -->
+        <div class="ig-caption" th:if="${post.content != null and post.content.trim().length() > 0}">
+          <img class="ig-avatar" th:src="@{${post.profileImageUrl}}" alt="프로필" />
+          <div>
+            <a class="ig-name" th:href="@{/messages/{email}(email=${post.author.email})}" target="_blank"
+               th:text="${post.author.nickname}">닉네임</a>
+            <span class="ig-text" th:text="${post.content}">내용</span>
+            <div class="ig-time" th:text="${post.displayDate}">1시간 전</div>
           </div>
         </div>
 
-        <!-- 댓글 작성 (로그인한 사용자만) -->
-        <div sec:authorize="isAuthenticated()" class="commentArea">
-          <form
-            th:action="@{/community/detail/{id}/comments(id=${post.id})}"
-            method="post"
-            class="mt-3 mb-4 commentForm"
-          >
-            <div class="mb-2 commentText">
-              <textarea
-                name="content"
-                class="comment-input"
-                rows="3"
-                placeholder="댓글 쓰기"
-                required
-              ></textarea>
+        <!-- 댓글 목록 -->
+        <ul class="ig-comments" id="igComments">
+          <li class="ig-comment" th:each="c : ${comments}">
+            <img class="ig-c-avatar" th:src="@{${post.profileImageUrl}}" alt="프로필" />
+            <div class="ig-c-wrap">
+              <span class="ig-c-name"
+                    th:text="${c.author != null && c.author.nickname != null && c.author.nickname.trim().length()>0 ? c.author.nickname : '익명'}">익명</span>
+              <span class="ig-c-text" th:text="${c.content}">댓글내용</span>
+              <time class="ig-c-time js-rel"
+                    th:attr="data-time=${#temporals.format(c.createdDate,'yyyy-MM-dd''T''HH:mm:ss')}">
+                1시간 전
+              </time>
             </div>
-            <button type="submit" class="btn-comment">게시</button>
-          </form>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 액션바 -->
+      <div class="ig-actions">
+        <div class="left">
+          <!-- ✅ 초기 상태: likedByMe → 빨간 하트 -->
+          <button type="button" class="icon-btn btn-like" th:attr="data-id=${post.id}" title="좋아요">
+            <i class="bi"
+               th:classappend="${post.likedByMe} ? ' bi-heart-fill' : ' bi-heart'"></i>
+          </button>
+          <span class="ig-count" id="igLikeCount"
+                th:attr="data-count=${post.recommendCount}"
+                th:text="${post.recommendCount}">0</span>
+
+          <button type="button" class="icon-btn btn-chat" title="댓글">
+            <i class="bi bi-chat"></i>
+          </button>
+          <span class="ig-count" id="igCommentCount"
+                th:attr="data-count=${#lists.size(comments)}"
+                th:text="${#lists.size(comments)}">0</span>
         </div>
 
-        <!-- 비로그인 시 안내 및 로그인 페이지로 이동 -->
-        <div sec:authorize="!isAuthenticated()" class="mt-3 mb-4 text-center">
-          <p class="text-muted">
-            댓글을 작성하려면
-            <a th:href="@{/member/login}">로그인</a>이 필요합니다.
-          </p>
+        <div class="right">
+          <!-- ✅ 초기 상태: bookmarkedByMe → 파란 책갈피 -->
+          <button type="button" class="icon-btn btn-bookmark" th:attr="data-id=${post.id}" title="북마크">
+            <i class="bi"
+               th:classappend="${post.bookmarkedByMe} ? ' bi-bookmark-fill' : ' bi-bookmark'"></i>
+          </button>
         </div>
+      </div>
+
+      <div class="ig-time" th:text="${post.displayDate}">1시간 전</div>
+
+      <!-- 댓글 입력 -->
+      <div class="ig-input" sec:authorize="isAuthenticated()">
+        <form class="ig-form" th:action="@{/community/detail/{id}/comments(id=${post.id})}" method="post">
+          <textarea class="ig-textarea" name="content" placeholder="댓글 쓰기" required></textarea>
+          <button type="submit" class="ig-submit">게시</button>
+        </form>
+      </div>
+
+      <div class="ig-login-hint text-center text-muted" sec:authorize="!isAuthenticated()">
+        댓글을 작성하려면 <a th:href="@{/member/login}">로그인</a>이 필요합니다.
       </div>
     </div>
   </div>

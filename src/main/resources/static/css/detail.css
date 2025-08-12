@@ -1,353 +1,100 @@
-.detail-container {
-  width: 100%;
-  height: 100%;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  padding: 0;
-  display: block;
+/* static/css/detail.css */
+
+/* 전역 아바타 크기 */
+:root{ --ig-avatar-size: 36px; }
+
+/* 모달 컨테이너 */
+.ig-modal{ border-radius:0 !important; background:#fff; border:none; }
+
+/* 2열 래퍼: 반응형 비율(62:38) */
+.ig-wrap{
+  display:grid;
+  grid-template-columns: minmax(360px, 62vw) minmax(300px, 38vw);
+  width: min(1100px, calc(100vw - 32px));
+  height: min(80vh, calc(100vh - 32px));
+  max-height: calc(100vh - 32px);
 }
-.images {
-  width: 720px;
-  border-right: 1px solid #111;
+
+/* 왼쪽: 이미지 영역 */
+.ig-media{
+  position:relative; background:#000;
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden; border-right:1px solid #eee;
 }
-.contents {
-  width: 480px;
+.ig-photo{ max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain; display:block; }
+
+/* (작성자 전용) 삭제 버튼 — 사진 우측 하단 */
+.ig-del-form{ position:absolute; right:10px; bottom:10px; z-index:4; }
+.ig-del-btn{ border:0; background:rgba(0,0,0,.55); color:#fff; padding:6px 8px; border-radius:0; cursor:pointer; line-height:1; }
+.ig-del-btn i{ font-size:1.1rem; vertical-align:middle; }
+.ig-del-btn:hover{ background:rgba(0,0,0,.7); }
+
+/* 오른쪽: 사이드 */
+.ig-side{ display:flex; flex-direction:column; background:#fff; }
+
+/* 헤더 */
+.ig-header{ display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid #eee; }
+
+/* 아바타 공통 */
+.ig-avatar, .ig-c-avatar{
+  width:var(--ig-avatar-size); height:var(--ig-avatar-size);
+  aspect-ratio:1/1; border-radius:50%; object-fit:cover; display:block; flex:0 0 var(--ig-avatar-size); border:none;
 }
-.btn-dd {
-  position: absolute;
-  right: 8px;
-  background-color: #fff;
-  border: none;
-  font-size: 32px;
-  margin-top: 7px;
+
+/* 사용자 이름/시간 묶음 */
+.ig-user{ display:flex; flex-direction:column; }
+.ig-name{ font-weight:700; text-decoration:none; color:#111; }
+.ig-name:hover{ text-decoration:underline; }
+.ig-time{ font-size:.8rem; color:#8e8e8e; }
+
+/* 우측 상단 날씨 */
+.ig-weather{ margin-left:auto; display:flex; align-items:center; gap:8px; color:#6b7280; }
+.ig-weather .bi{ font-size:1rem; }
+.ig-weather .temp{ font-size:.9rem; }
+
+/* 본문/댓글 스크롤 */
+.ig-body{ padding:12px 14px; overflow:auto; flex:1 1 auto; }
+
+/* 본문 캡션 */
+.ig-caption{ display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; }
+.ig-caption > div{ min-width:0; }
+.ig-caption .ig-name{ display:inline; font-weight:700; margin-right:6px; line-height:1.2; vertical-align:baseline; }
+.ig-caption .ig-text{ display:inline; white-space:pre-wrap; word-break:keep-all; overflow-wrap:break-word; vertical-align:baseline; margin:0; }
+.ig-caption .ig-time{ display:block; font-size:.8rem; color:#8e8e8e; line-height:1.2; margin-top:2px; }
+
+/* 댓글 리스트 */
+.ig-comments{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px; }
+.ig-comment{ display:flex; align-items:flex-start; gap:10px; }
+.ig-c-wrap{ display:block; min-width:0; }
+.ig-c-name{ display:inline; font-weight:700; margin-right:6px; vertical-align:baseline; }
+.ig-c-text{ display:inline; white-space:pre-wrap; word-break:keep-all; overflow-wrap:break-word; vertical-align:baseline; }
+.ig-c-time{ display:block; font-size:12px; line-height:1.2; color:#9aa0a6; margin-top:2px; }
+
+/* 액션바 */
+.ig-actions{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-top:1px solid #eee; }
+.icon-btn{ border:0; background:transparent; padding:0; cursor:pointer; line-height:1; }
+.icon-btn i{ font-size:1.4rem; vertical-align:middle; color:#111; }
+.ig-count{ margin:0 12px 0 6px; font-size:.95rem; color:#111; }
+
+/* ✅ 채움 아이콘(좋아요/북마크) 색상 */
+.btn-like .bi-heart-fill{ color:#e74c3c; }
+.btn-bookmark .bi-bookmark-fill{ color:#0d6efd; }
+
+/* 입력 */
+.ig-input{ padding:8px 12px; border-top:1px solid #eee; }
+.ig-form{ display:flex; gap:8px; align-items:center; }
+.ig-textarea{ flex:1; border:none; resize:none; outline:none; font-size:.95rem; height:42px; padding:10px 0; }
+.ig-submit{ background:transparent; border:none; color:#0d6efd; font-weight:600; height:42px; padding:0 4px; cursor:pointer; }
+
+/* 로그인 힌트 */
+.ig-login-hint{ padding:10px 0 14px; }
+
+/* 반응형 */
+@media (max-width:1150px){
+  .ig-wrap{ grid-template-columns:minmax(360px, 60vw) minmax(300px, 40vw); width:min(100%, calc(100vw - 32px)); }
 }
-.detail-meta {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 16px;
-  margin-left: 7px;
-}
-.contents-header {
-  border-bottom: 1px solid #dee2e6;
-  height: 70px;
-  position: relative;
-  margin-left: 7px;
-}
-.profile {
-  margin-top: 10px;
-}
-.emailLink {
-  position: absolute;
-  text-decoration: none;
-  left: 70px;
-  margin-top: 15px;
-}
-.authorName {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #111;
-}
-.badge-list span.badge {
-  font-size: 0.85rem;
-  padding: 0.4em 0.8em;
-  margin-right: 6px;
-}
-.detail-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: 8px;
-  cursor: pointer;
-}
-.detail-content {
-  font-size: 1.2rem;
-  line-height: 1.3;
-  white-space: pre-wrap;
-  margin-bottom: 5px;
-  margin-top: 5px;
-}
-.detail-actions {
-  position: relative;
-  width: 99%;
-  height: 90px;
-  gap: 8px;
-  border-bottom: 1px solid #dee2e6;
-}
-.detail-actions .btn {
-  width: 100px;
-  height: 38px;
-}
-.btn-form {
-  height: 38px;
-}
-.comment-author {
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-.comment-content {
-  font-size: 1.2rem;
-}
-.comment-date {
-  font-size: 0.85rem;
-}
-.view-icon {
-  width: 1.2em;
-  height: 1.2em;
-  vertical-align: middle;
-  margin-bottom: 2px;
-  margin-left: 4px;
-  margin-right: 2px;
-}
-.btn-recommend {
-  background-color: #fff;
-  border: none;
-}
-.recommend-icon {
-  color: #e94e77;
-  margin-right: 2px;
-  font-size: 1.1em;
-  vertical-align: middle;
-}
-.bookmark {
-  right: 15px;
-}
-.btn-bookmark {
-  background-color: #fff;
-  border: none;
-  font-size: 24px;
-}
-.bg-max {
-  color: rgb(253, 152, 67);
-  font-size: 1.5rem;
-  padding: 0;
-  position: absolute;
-  right: 90px;
-}
-.bg-min {
-  position: absolute;
-  color: rgb(163, 112, 247);
-  font-size: 1.5rem;
-  padding: 0;
-  right: 8px;
-}
-.repImg {
-  height: 720px;
-}
-.modal-header {
-  position: relative;
-}
-.commentsList {
-  margin-left: 7px;
-}
-.commentArea {
-  height: fit-content;
-}
-.commentForm {
-  display: flex;
-  flex-direction: row;
-  height: fit-content;
-  margin: 0 !important;
-}
-.commentText {
-  height: fit-content;
-}
-.comment-input {
-  width: 472px;
-  height: 55px;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #212529;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: none;
-  resize: none;
-}
-.btn-comment {
-  color: dodgerblue;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: none;
-  height: 55px;
-}
-.imgNo {
-  color: #111;
-  font-size: 24px;
-  left: 48%;
-  text-align: center;
-}
-#title {
-  justify-content: center;
-  text-align: center;
-  font-weight: bold;
-  font-size: 2rem;
-}
-.edit:hover {
-  background-image: url(https://img.icons8.com/?size=32&id=RgcsUF7ERmty&format=png&color=999999);
-}
-.modal-body {
-  display: flex;
-  padding: 0;
-  height: 520px;
-  width: 100%;
-  height: 100%;
-}
-#modal-main {
-  margin-top: 0;
-}
-#content {
-  background-color: rgba(0, 0, 0, 0.5);
-}
-.prevSec {
-  display: block;
-  left: 1.5%;
-  width: 48px;
-  height: 100%;
-}
-.prevImg {
-  display: inline-block;
-  position: fixed;
-  background-image: url(https://img.icons8.com/?size=48&id=40217&format=png&color=00000080);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: rgba(0, 0, 0, 0);
-  border-radius: 100%;
-  border: none;
-  top: 50%;
-  width: 48px;
-  height: 48px;
-  z-index: 120;
-  filter: invert(1) grayscale(100%) brightness(200%);
-}
-.prevImg:hover {
-  background-image: url(https://img.icons8.com/?size=48&id=40217&format=png&color=000000C0);
-  background-repeat: no-repeat;
-  background-position: center;
-}
-.modal-img {
-  display: flex;
-  background-color: rgba(0, 0, 0, 0);
-  border-radius: 5%;
-  width: 1774px;
-  height: 750px;
-  top: 25px;
-  left: 72px;
-  overflow: hidden;
-}
-#selectedImg {
-  display: inline-block;
-  max-width: 750px;
-  object-fit: cover;
-  justify-content: center;
-  margin: auto;
-  cursor: zoom-in;
-}
-#zoomed1 {
-  display: none;
-  max-width: 750px;
-  object-fit: cover;
-  justify-content: center;
-  margin: auto;
-  cursor: zoom-in;
-  width: 750px;
-  height: 750px;
-}
-#zoomed2 {
-  display: none;
-  max-width: 750px;
-  object-fit: cover;
-  justify-content: center;
-  margin: auto;
-  cursor: zoom-in;
-  width: 750px;
-  height: 750px;
-}
-#zoomed3 {
-  display: none;
-  max-width: 750px;
-  object-fit: cover;
-  justify-content: center;
-  margin: auto;
-  cursor: zoom-in;
-  width: 750px;
-  height: 750px;
-}
-.nextSec {
-  display: block;
-  right: 1%;
-  width: 48px;
-  height: 100%;
-}
-.nextImg {
-  display: inline-block;
-  position: fixed;
-  background-image: url(https://img.icons8.com/?size=48&id=7849&format=png&color=00000080);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: rgba(0, 0, 0, 0);
-  border-radius: 100%;
-  border: none;
-  top: 50%;
-  width: 48px;
-  height: 48px;
-  z-index: 120s;
-  filter: invert(1) grayscale(100%) brightness(200%);
-}
-.nextImg:hover {
-  background-image: url(https://img.icons8.com/?size=48&id=7849&format=png&color=000000C0);
-  background-repeat: no-repeat;
-  background-position: center;
-}
-.modal-bottom {
-  position: relative;
-  display: flex;
-  height: 120px;
-  justify-content: center;
-  margin-left: 33px;
-}
-.imgList {
-  display: none;
-  flex-direction: row;
-  justify-content: center;
-  margin: 0 auto;
-  padding: 0;
-  opacity: 0;
-}
-.noSec {
-  display: none;
-  height: 36px;
-  margin: 0 auto;
-  justify-content: center;
-  opacity: 0;
-}
-.xBtn {
-  position: absolute;
-  width: 2em;
-  height: 2em;
-  background-size: 1.5em;
-  right: 10px;
-  top: 10px;
-}
-.bi-heart {
-  margin-bottom: 3px;
-}
-.bi-heart-fill {
-  margin-bottom: 3px;
-}
-.carousel-indicators button {
-  cursor: pointer;
-}
-#carouselIndicators {
-  height: 720px;
-}
-#inner {
-  height: 720px;
-}
-.contents-footer {
-  position: fixed;
-  width: 532px;
-  bottom: 195px;
-  margin-left: 7px;
-  border-top: 1px solid #dee2e6;
+@media (max-width:900px){
+  .ig-wrap{ grid-template-columns:1fr; width:min(100%, calc(100vw - 32px)); }
+  .ig-media{ min-height:40vh; height:40vh; }
+  .ig-side{ min-height:40vh; }
 }
