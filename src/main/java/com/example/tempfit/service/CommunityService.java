@@ -11,7 +11,6 @@ import com.example.tempfit.entity.CommunityStyle;
 import com.example.tempfit.entity.CommunityTemp;
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Recommend;
-import com.example.tempfit.entity.Sex;
 import com.example.tempfit.repository.*;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
@@ -61,10 +60,10 @@ public class CommunityService {
 
     // 게시글 등록 + 이미지 저장 (대표 인덱스로 구분)
     public Long register(CommunityDTO dto,
-            Member currentUser,
-            List<MultipartFile> imageFiles,
-            int repImageIndex,
-            List<SelectedWeatherDTO> weatherData) throws IOException {
+                         Member currentUser,
+                         List<MultipartFile> imageFiles,
+                         int repImageIndex,
+                         List<SelectedWeatherDTO> weatherData) throws IOException {
 
         Community community = Community.builder()
                 .title(dto.getTitle())
@@ -157,6 +156,7 @@ public class CommunityService {
                     .skip(1)
                     .map(CommunityImage::getFileName)
                     .collect(Collectors.toList()));
+            dto.setHasMultiImages(imgs.size() > 1);
         }
 
         communityStyleRepository.findById(id).ifPresent(style -> {
@@ -194,9 +194,9 @@ public class CommunityService {
     }
 
     public Page<CommunityDTO> searchPageRaw(String type,
-            String keyword,
-            List<String> styleNames,
-            int page) {
+                                            String keyword,
+                                            List<String> styleNames,
+                                            int page) {
         Pageable pageable = PageRequest.of(page - 1, 10,
                 Sort.by(Sort.Direction.DESC, "createdDate"));
         return communityRepository.list(type, keyword, styleNames, null, pageable)
@@ -204,8 +204,8 @@ public class CommunityService {
     }
 
     public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
-            boolean removeRepImage, List<SelectedWeatherDTO> weatherData) throws IOException {
-        // 생략: 필요 시 기존 방식 유지
+                       boolean removeRepImage, List<SelectedWeatherDTO> weatherData) throws IOException {
+        // 필요 시 구현
     }
 
     public void remove(Long id) {
@@ -224,8 +224,8 @@ public class CommunityService {
     }
 
     private void saveCommunityImage(Community community,
-            MultipartFile file,
-            boolean isRep) throws IOException {
+                                    MultipartFile file,
+                                    boolean isRep) throws IOException {
         File uploadPathDir = new File(uploadDir);
         if (!uploadPathDir.exists())
             uploadPathDir.mkdirs();
@@ -336,14 +336,12 @@ public class CommunityService {
         Optional<Bookmark> existBook = bookmarkRepository.findByMemberAndCommunity(member, community);
         if (existBook.isPresent()) {
             bookmarkRepository.delete(existBook.get());
-            // community.setRecommendCount(community.getRecommendCount() - 1);
         } else {
             Bookmark rec = Bookmark.builder()
                     .community(community)
                     .member(member)
                     .build();
             bookmarkRepository.save(rec);
-            // community.setRecommendCount(community.getRecommendCount() + 1);
         }
         communityRepository.save(community);
     }
@@ -383,5 +381,28 @@ public class CommunityService {
                 .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
         community.setViewCount(community.getViewCount() + 1);
         communityRepository.save(community);
+    }
+
+    // ===== 리스트 표시용 사용자 상태/이미지 개수 세팅 =====
+    @Transactional(readOnly = true)
+    public void applyUserFlags(List<CommunityDTO> dtos, Member me) {
+        for (CommunityDTO dto : dtos) {
+            // 이미지 여러 장 여부
+            List<CommunityImage> imgs = communityImageRepository
+                    .findByCommunity_IdOrderByIsRepDescIdAsc(dto.getId());
+            dto.setHasMultiImages(imgs != null && imgs.size() > 1);
+
+            // 로그인 O일 때만 좋아요/북마크 표시
+            if (me != null) {
+                Community ref = communityRepository.getReferenceById(dto.getId());
+                boolean liked = recommendRepository.findByMemberAndCommunity(me, ref).isPresent();
+                boolean bookmarked = bookmarkRepository.findByMemberAndCommunity(me, ref).isPresent();
+                dto.setLikedByMe(liked);
+                dto.setBookmarkedByMe(bookmarked);
+            } else {
+                dto.setLikedByMe(false);
+                dto.setBookmarkedByMe(false);
+            }
+        }
     }
 }

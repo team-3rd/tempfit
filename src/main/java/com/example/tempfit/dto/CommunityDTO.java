@@ -57,14 +57,19 @@ public class CommunityDTO {
     private LocalDateTime createdDate;
     private LocalDateTime upDateTime;
 
-    private int viewCount; // ★★★ 조회수 필드
+    private int viewCount; // 조회수
+
+    // ▼ 리스트에서 사용할 사용자별 상태
+    private boolean likedByMe;      // 내가 추천(찜)했는지
+    private boolean bookmarkedByMe; // 내가 북마크했는지
+    private boolean hasMultiImages; // 이미지가 여러 장인지
 
     /**
      * 상대 시간 표시:
-     * - 등록 후 1분 미만: "방금 전"
-     * - 1분 이상 1시간 미만: "N분 전"
-     * - 1시간 이상 24시간 미만: "N시간 전"
-     * - 24시간 이상: "MM-dd"
+     * - 1시간 미만: "N분 전"
+     * - 24시간 미만: "N시간 전"
+     * - 30일 미만: "N일 전"
+     * - 30일 이상: "MM-dd"
      */
     public String getDisplayDate() {
         LocalDateTime now = LocalDateTime.now();
@@ -82,7 +87,10 @@ public class CommunityDTO {
         if (hours < 24) {
             return hours + "시간 전";
         }
-        // 24시간 이상 경과 시 월-일 표시
+        long days = diff.toDays();
+        if (days < 30) {
+            return days + "일 전";
+        }
         return createdDate.format(DateTimeFormatter.ofPattern("MM-dd"));
     }
 }

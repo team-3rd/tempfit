@@ -1,212 +1,55 @@
-/* list.css */
-
 /* 전체 배경 */
-body {
-  background: #f5f6fa;
-}
+body { background:#f5f6fa; font-family:Pretendard,system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif; }
 
-/* ── 검색폼 & 버튼 ── */
-.search-form .form-select {
-  width: 8rem;
-  height: 2rem;
-  font-size: 0.75rem;
-  padding: 0.25rem;
-}
+/* 검색 폼 */
+.search-form .form-select{width:8rem;height:2rem;font-size:.75rem;padding:.25rem;}
+.search-form .form-control{width:20rem;height:2rem;font-size:.75rem;padding:.25rem;}
+.search-form .btn,.search-form .reset-btn,.create-btn{width:4rem;height:2rem;font-size:.75rem;display:flex;align-items:center;justify-content:center;padding:0 .5rem;}
 
-.search-form .form-control {
-  width: 20rem;
-  height: 2rem;
-  font-size: 0.75rem;
-  padding: 0.25rem;
-}
+/* 그리드 */
+.post-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px;margin-top:24px;}
 
-.search-form .btn,
-.search-form .reset-btn,
-.create-btn {
-  width: 4rem;
-  height: 2rem;
-  font-size: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 0.5rem;
-}
+/* 카드 */
+.post-card{display:flex;flex-direction:column;background:#fff;border-radius:0!important;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden;transition:transform .18s ease,box-shadow .18s ease;text-decoration:none;color:inherit;height:auto;}
+.post-card:hover{transform:scale(1.015);box-shadow:0 6px 16px rgba(0,0,0,.12);}
 
-/* ── 커뮤니티 카드 그리드 ── */
-.post-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 30px;
-  margin-top: 40px;
-}
+/* 상단 */
+.card-top{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #eee;}
+.card-top .left{display:flex;align-items:center;gap:8px;}
+.profileImg{width:28px;height:28px;border-radius:50%;object-fit:cover;border:none;}
+.name-time{line-height:1.1;}
+.nickname{font-size:.9rem;font-weight:600;margin:0;}
+.time{font-size:.75rem;color:#8e8e8e;margin:0;}
 
-/* ── 카드 컨테이너 (이제 <a> 태그) ── */
-.post-card {
-  display: flex;
-  flex-direction: column;
-  background: #fff;
-  border-radius: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  text-decoration: none; /* 링크 밑줄 제거 */
-  color: inherit; /* 텍스트 색상 상속 */
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  transform-origin: center center;
-  width: 250px;
-  height: 358px;
-  margin-right: 7px;
-}
-.post-card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  z-index: 10;
-}
+/* 날씨(오른쪽) */
+.weather{display:flex;align-items:center;gap:6px;color:#6b7280;}
+.weather .bi{font-size:1rem;}
+.weather .temp{font-size:.8rem;}
 
-/* ── 카드 상단 시간 (생성일시) ── */
-.card-header {
-  position: relative;
-  flex-direction: row;
-  margin-top: 10px;
-  margin-bottom: 5px;
-  justify-content: center;
-  height: 36px;
-}
-.profileImg {
-  position: absolute;
-  margin-right: 5px;
-  margin-left: 5px;
-  float: left;
-  border-radius: 100%;
-  border: 2px solid #222;
-}
-.author {
-  position: absolute;
-  font-size: 1rem;
-  font-weight: bold;
-  margin: 5px 5px 0 5px;
-  left: 40px;
-}
-.postDate {
-  left: 42%;
-  position: absolute;
-  margin-top: 5px;
-}
-.weathers {
-  position: absolute;
-  right: 5px;
-  margin-top: 5px;
-}
-.card-time {
-  text-align: center;
-  padding: 8px 16px;
-}
-.card-time small {
-  font-size: 0.75rem;
-  color: #666;
-}
+/* 이미지 정방형 */
+.image-wrap{position:relative;width:100%;background:#fafafa;}
+.card-img-top{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;border-radius:0!important;}
+.multi-indicator{position:absolute;top:8px;right:8px;font-size:1.1rem;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.45);}
 
-/* ── 카드 상단 이미지 ── */
-.card-img-top {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  display: block;
-  border-radius: 0;
-}
+/* 본문(액션/캡션) */
+.card-body-ig{padding:10px 12px 14px;border-top:1px solid #eee;}
+.actions{display:flex;align-items:center;justify-content:space-between;}
+.left-actions{display:flex;align-items:center;gap:16px;}
+.action-group{display:flex;align-items:center;gap:6px;}
 
-/* ── 카드 본문 ── */
-.card-body {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
+.btn-action{appearance:none;border:0;background:transparent;padding:0;cursor:pointer;line-height:1;}
+.btn-action .bi{font-size:1.3rem;vertical-align:middle;color:#262626;}
+.btn-like .bi-heart-fill{color:#e74c3c;}
+/* 북마크 체크(활성) 파란색 */
+.btn-bookmark .bi-bookmark-check-fill{color:#0d6efd;}
+/* .btn-bookmark:hover .bi-bookmark{color:#0d6efd;} */
 
-/* ── 제목 ── */
-.card-title {
-  margin: 0 0 4px;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #333;
-}
+.count{font-size:.9rem;color:#262626;min-width:1.5ch;}
 
-/* ── 작성자 (파란 텍스트) ── */
-.card-subtitle {
-  margin: 0 0 2px;
-  font-size: 0.85rem;
-  color: #007bff;
-}
+/* 캡션 */
+.caption{margin-top:8px;font-size:.9rem;color:#262626;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.caption .name{font-weight:700;margin-right:6px;}
 
-/* ── 스타일 배지 그룹 ── */
-.badge-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: auto;
-}
-.badge-list .badge {
-  font-size: 0.75rem;
-  padding: 0.25em 0.5em;
-}
-
-/* ── 온도 배지 그룹 ── */
-.temp-badge-list {
-  display: flex;
-  gap: 6px;
-  margin-top: 8px;
-}
-.temp-badge-list .badge {
-  font-size: 0.75rem;
-  padding: 0.25em 0.5em;
-}
-
-/* ── 낮/밤 배지 ── */
-.bg-day {
-  color: gray;
-  font-size: 0.75em;
-  padding-left: 3px;
-  padding-right: 2px;
-  margin: 0;
-}
-.bg-night {
-  color: gray;
-  font-size: 0.75em;
-  padding-left: 2px;
-  padding-right: 1px;
-}
-
-/* ── (이전 .card-footer 자리였던) ── */
-/* 이제 .card-time 을 쓰므로 필요 없지만, 
-   혹시 다른 곳에서 남아있다면 아래 유지하세요. */
-.card-footer {
-  padding: 8px 16px;
-}
-.card-footer small {
-  font-size: 0.75rem;
-  color: #666;
-}
-.bi-eye {
-  margin-top: 3px;
-}
-.bi-heart {
-  margin-bottom: 2px;
-}
-.bi-heart-fill {
-  margin-bottom: 2px;
-}
-.icon-box {
-  margin-bottom: 10px;
-}
-.nickname {
-  margin: 0;
-}
-.postContent {
-  margin: 0;
-}
-.bookmark {
-  float: right;
-}
-#modal-fragment {
-  width: 840px;
-}
+/* 사용 안 함 */
+.card-footer,.card-time{display:none;}
+#modal-fragment{width:840px;}

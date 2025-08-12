@@ -38,8 +38,18 @@ public class CommunityController {
     @GetMapping("/list")
     public String list(
             @RequestParam(value = "page", defaultValue = "1") int page,
+            @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
             Model model) {
+
         Page<CommunityDTO> pageData = communityService.getPage(page);
+
+        // 사용자별(좋아요/북마크/멀티이미지) 상태 적용
+        Member me = null;
+        if (authMemberDTO != null) {
+            me = memberRepository
+                    .findByEmailAndFromSocial(authMemberDTO.getEmail(), authMemberDTO.isFromSocial());
+        }
+        communityService.applyUserFlags(pageData.getContent(), me);
 
         int currentPage;
         int totalPages = pageData.getTotalPages();
