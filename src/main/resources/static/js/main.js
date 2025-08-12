@@ -2,19 +2,37 @@
 
 // ─── 전역 저장 변수 ───
 let lastTempNum = null;
-let guideData = null;
+// 기존 guideData는 더 이상 직접 쓰지 않고, 성별별 캐시로 분리
+let guideData = null; // 남겨두되 사용 안 함
 let tempRanges = [];
 let currentGender = window.initialGender || "male";
 
-// AI 모드 변수
+// 모드
 let useAiGuide = false;
-let aiResults = [];
-let indexByCat = {};
-const categories = ["상의", "아우터", "하의", "신발"];
 
-// 인덱스 순환용 유틸 함수
-function clamp(i, len) {
-  return len ? ((i % len) + len) % len : 0;
+// ─── 캐시: 4개의 가상 페이지 ───
+// DB 가이드 캐시: 성별별로 따로 보관
+const dbCache = { male: null, female: null };
+// AI 결과 캐시: 성별별로 따로 보관
+const aiCache = { male: null, female: null };
+
+// ─── 텍스트 유틸 ───
+function stripTags(s) {
+  return s ? s.replace(/<[^>]*>/g, "") : "";
+}
+function escapeHtml(s) {
+  if (s == null) return "";
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+function formatBrandAndNameBold(brand, name) {
+  const b = escapeHtml((brand || "").trim());
+  const n = escapeHtml((name || "").trim());
+  return b ? `<b>${b}</b>${n ? " " + n : ""}` : n;
 }
 
 // ─── 로딩 스피너 제어 ───
@@ -51,15 +69,17 @@ function renderSlots(data, gender) {
   renderSlot("top", data.top, row1);
   // 아우터
   renderSlotOrEmpty("outer", data.outer, row1);
+
   // 하의 (원피스 예외)
   const onePieceTops = ["피케/카라 원피스", "원피스", "맥시드레스"];
-  const topName = data.top.productName || data.top.name;
-  const isOnePiece = onePieceTops.includes(topName);
-  if (gender === "female" && isOnePiece) {
+  const topName = data.top?.productName || data.top?.name;
+  const isOnePiece = gender === "female" && topName && onePieceTops.includes(topName);
+  if (isOnePiece) {
     row2.innerHTML += emptySlotMarkup("하의");
   } else {
     renderSlotOrEmpty("bottom", data.bottom, row2);
   }
+
   // 신발
   renderSlot("shoes", data.shoes, row2);
 
@@ -68,7 +88,8 @@ function renderSlots(data, gender) {
 
 function renderSlotOrEmpty(part, item, container) {
   const labelMap = { top: "상의", outer: "아우터", bottom: "하의", shoes: "신발" };
-  if (item && (item.productName || item.name)) {
+  const name = item?.productName || item?.name;
+  if (name) {
     renderSlot(part, item, container);
   } else {
     container.innerHTML += emptySlotMarkup(labelMap[part]);
@@ -97,7 +118,7 @@ function renderSlot(part, item, container) {
         </a>
       </div>
       <b style="display:block;margin-bottom:2px;">${labelMap[part]}</b>
-      <span class="product-name" style="font-size:14px;line-height:1.2;">${name}</span>
+      <span class="product-name" style="font-size:14px;line-height:1.2;">${escapeHtml(name)}</span>
     </div>`;
 }
 
@@ -117,74 +138,136 @@ function emptySlotMarkup(label) {
     </div>`;
 }
 
-// ─── DB 가이드 로드 ───
-function loadClothingGuide(tempNum) {
-  useAiGuide = false;
-  showGuideLoading();
-  fetch(`/api/coordi/guide?temp=${tempNum}`)
-    .then(res => res.json())
-    .then(data => {
-      guideData = data;
-      renderByGender(currentGender);
-      hideGuideLoading();
-    })
-    .catch(() => {
+// ─── DB 가이드 로드: 둘 다 가져와 캐시에 분리 저장 ───
+async function fetchDbGuideBoth(tempNum, { silent = false } = {}) {
+  if (!silent) showGuideLoading();
+  try {
+    // 랜덤화를 위해 r 파라미터 추가
+    const res = await fetch(`/api/coordi/guide?temp=${tempNum}&r=${Date.now()}`);
+    if (!res.ok) throw new Error(res.status);
+    const data = await res.json(); // { male: {...}, female: {...} }
+    dbCache.male = data.male || null;
+    dbCache.female = data.female || null;
+  } catch (e) {
+    console.error("DB 가이드 로드 실패", e);
+    if (!silent) {
       document.getElementById("clothing-guide-row1").textContent = "추천 코디 정보를 가져오지 못했습니다";
       document.getElementById("clothing-guide-row2").textContent = "";
-      hideGuideLoading();
-    });
-}
-
-// ─── AI 가이드 로드 ───
-async function fetchAiRecommendations(tempNum, gender) {
-  useAiGuide = true;
-  showGuideLoading();
-  try {
-    // ① JS 에서 프롬프트 직접 생성
-    const koreaGender = gender === 'male' ? '남성' : '여성';
-    const prompt = `섭씨 ${tempNum}도 날씨에 어울리는 ${koreaGender} 옷 추천해줘. 브랜드와 상품명 추천해주고, 상의, 아우터, 하의, 신발 순으로 추천해줘. 다른 부가설명은 하지마.`;
-
-    // ② POST /api/aiguide 로 요청
-    const res = await fetch('/api/aiguide', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt })
-    });
-    if (!res.ok) throw new Error(res.status);
-
-    // ③ 컨트롤러가 반환하는 List<OpenAIStylistRecommendationResult>
-    aiResults = await res.json();
-
-    // ④ 카테고리별 인덱스 초기화
-    indexByCat = {};
-    aiResults.forEach(block => {
-      indexByCat[block.product.category] = 0;
-    });
-
-    // ⑤ 렌더
-    renderAiRecommendations();
-  } catch (e) {
-    console.error("AI 추천 정보 로드 실패", e);
-    document.getElementById("clothing-guide-row1").textContent = "AI 추천 정보를 가져오지 못했습니다.";
-    document.getElementById("clothing-guide-row2").textContent = "";
+    }
   } finally {
-    hideGuideLoading();
+    if (!silent) hideGuideLoading();
   }
 }
 
+// ─── DB 가이드 부분 갱신: 현재 성별만 새로 받아 해당 캐시만 대체 ───
+async function fetchDbGuideForGender(tempNum, gender, { silent = false } = {}) {
+  if (!silent) showGuideLoading();
+  try {
+    const res = await fetch(`/api/coordi/guide?temp=${tempNum}&r=${Date.now()}`);
+    if (!res.ok) throw new Error(res.status);
+    const data = await res.json();
+    if (gender === "male") dbCache.male = data.male || null;
+    else dbCache.female = data.female || null;
+  } catch (e) {
+    console.error("DB 가이드(성별별) 로드 실패", e);
+    if (!silent) {
+      document.getElementById("clothing-guide-row1").textContent = "추천 코디 정보를 가져오지 못했습니다";
+      document.getElementById("clothing-guide-row2").textContent = "";
+    }
+  } finally {
+    if (!silent) hideGuideLoading();
+  }
+}
 
-function renderAiRecommendations() {
+// ─── AI 가이드: temp만으로 male/female 동시 로드(초기 프리페치/온도변경 시) ───
+async function fetchAiBoth(tempNum, { silent = false } = {}) {
+  if (!silent) showGuideLoading();
+  try {
+    const res = await fetch(`/api/aiguide?temp=${tempNum}`);
+    if (!res.ok) throw new Error(res.status);
+    const data = await res.json(); // { male: [...], female: [...] }
+    aiCache.male = data.male || [];
+    aiCache.female = data.female || [];
+  } catch (e) {
+    console.error("AI 추천 로드 실패", e);
+    aiCache.male = aiCache.male || [];
+    aiCache.female = aiCache.female || [];
+    if (!silent) {
+      document.getElementById("clothing-guide-row1").textContent = "AI 추천 정보를 가져오지 못했습니다.";
+      document.getElementById("clothing-guide-row2").textContent = "";
+    }
+  } finally {
+    if (!silent) hideGuideLoading();
+  }
+}
+
+// ─── AI 가이드 부분 갱신: 현재 성별만 재호출하여 해당 캐시만 대체 ───
+async function fetchAiForGender(gender, tempNum, { silent = false } = {}) {
+  if (!silent) showGuideLoading();
+  try {
+    const res = await fetch(`/api/aiguide?temp=${tempNum}&r=${Date.now()}`);
+    if (!res.ok) throw new Error(res.status);
+    const data = await res.json();
+    if (gender === "male") aiCache.male = data.male || [];
+    else aiCache.female = data.female || [];
+  } catch (e) {
+    console.error("AI 추천(성별별) 로드 실패", e);
+    if (!silent) {
+      document.getElementById("clothing-guide-row1").textContent = "AI 추천 정보를 가져오지 못했습니다.";
+      document.getElementById("clothing-guide-row2").textContent = "";
+    }
+  } finally {
+    if (!silent) hideGuideLoading();
+  }
+}
+
+// ─── DB 렌더 ───
+function renderDbByGender(gender) {
+  document.getElementById("gender-label").textContent =
+    gender === "male" ? "- 남성 -" : "- 여성 -";
+
+  const data = dbCache[gender];
+  if (!data) {
+    document.getElementById("clothing-guide-row1").textContent = "추천 코디 정보를 가져오지 못했습니다";
+    document.getElementById("clothing-guide-row2").textContent = "";
+    return;
+  }
+  renderSlots(data, gender);
+}
+
+// ─── AI 렌더 ───
+async function renderAiByGender(gender) {
+  document.getElementById("gender-label").textContent =
+    gender === "male" ? "- 남성 (AI) -" : "- 여성 (AI) -";
+
+  const results = aiCache[gender] || [];
   const row1 = document.getElementById("clothing-guide-row1");
   const row2 = document.getElementById("clothing-guide-row2");
   row1.innerHTML = "";
   row2.innerHTML = "";
 
-  aiResults.forEach(block => {
-    const cat = block.product.category;
+  if (!results.length) {
+    row1.innerHTML = "<div class='text-muted'>AI 추천 결과가 없습니다.</div>";
+    row2.innerHTML = "";
+    return;
+  }
+
+  results.forEach(block => {
+    const cat = block.product.category; // "상의/아우터/하의/신발"
     const items = block.items || [];
-    const idx = clamp(indexByCat[cat], items.length);
-    const item = items[idx] || {};
+    const item = items.length ? items[0] : null;
     const container = (cat === "상의" || cat === "아우터") ? row1 : row2;
+
+    const brand = block.product.brandName || "";
+    // 표시용 이름은 "브랜드 + 상품명"을 우리 쪽에서 조합 (네이버의 <b> 태그 무시)
+    const productNameFallback = stripTags(item?.title || "");
+    const pname = block.product.productName || productNameFallback;
+    const displayTitle = formatBrandAndNameBold(brand, pname);
+
+    if (!item) {
+      container.innerHTML += emptySlotMarkup(cat);
+      return;
+    }
 
     container.innerHTML += `
       <div style="display:inline-block;width:150px;text-align:center;margin:0 6px;">
@@ -196,35 +279,43 @@ function renderAiRecommendations() {
              overflow:hidden;margin-bottom:6px;">
           <a href="${item.link || '#'}" target="_blank" rel="noreferrer"
              style="display:block;width:100%;height:100%;color:inherit;">
-            <img src="${item.image || ''}" alt="${item.title || ''}"
+            <img src="${item.image || ''}" alt="${escapeHtml(productNameFallback)}"
                  style="width:100%;height:100%;object-fit:cover;" />
           </a>
         </div>
         <b style="display:block;margin-bottom:2px;">${cat}</b>
-        <span class="product-name" style="font-size:14px;line-height:1.2;">
-          ${item.title || ''}
-        </span>
+        <span class="product-name" style="font-size:14px;line-height:1.2;">${displayTitle}</span>
       </div>`;
   });
 }
 
 // ─── BEST LOOKS 로드 ───
 function loadBestLooksData(tempNum) {
+  showBestLoading();
   fetch(`/api/community/best?temp=${tempNum}`)
     .then(res => res.json())
     .then(renderBestLooks)
     .catch(() => {
       const area = document.getElementById("best-looks-area");
       if (area) area.innerHTML = "<div class='text-danger'>※BEST LOOKS 정보를 가져올 수 없습니다!※</div>";
-    });
+    })
+    .finally(hideBestLoading);
 }
 
 // ─── 날씨 로드 시 의상+베스트룩 ───
-window.addEventListener("weatherLoaded", e => {
+window.addEventListener("weatherLoaded", async (e) => {
   lastTempNum = e.detail.tempNum;
   updateCurrentTempTag(lastTempNum);
-  loadClothingGuide(lastTempNum);
+
+  // DB 가이드: 둘 다 프리페치
+  await fetchDbGuideBoth(lastTempNum, { silent: true });
+  renderDbByGender(currentGender);
+
+  // BEST LOOKS
   loadBestLooksData(lastTempNum);
+
+  // AI: 둘 다 프리페치
+  await fetchAiBoth(lastTempNum, { silent: true });
 });
 
 // ─── 온도범위 로드 ───
@@ -262,15 +353,27 @@ document.addEventListener("DOMContentLoaded", async () => {
   // 성별 토글
   const toggleBtn = document.getElementById("toggle-gender-btn");
   if (toggleBtn) {
-    toggleBtn.innerHTML = currentGender === "male"
-      ? '<i class="bi bi-gender-male text-primary"></i>'
-      : '<i class="bi bi-gender-female text-danger"></i>';
-    toggleBtn.addEventListener("click", () => {
-      currentGender = currentGender === "male" ? "female" : "male";
-      toggleBtn.innerHTML = currentGender === "male"
+    const renderIcon = () =>
+      currentGender === "male"
         ? '<i class="bi bi-gender-male text-primary"></i>'
         : '<i class="bi bi-gender-female text-danger"></i>';
-      renderByGender(currentGender);
+    toggleBtn.innerHTML = renderIcon();
+    toggleBtn.addEventListener("click", async () => {
+      currentGender = currentGender === "male" ? "female" : "male";
+      toggleBtn.innerHTML = renderIcon();
+
+      // 현재 모드에 맞게, 캐시 렌더만 수행(없으면 해당 성별만 새로 로드)
+      if (useAiGuide) {
+        if (!aiCache[currentGender]) {
+          await fetchAiForGender(currentGender, lastTempNum, { silent: false });
+        }
+        await renderAiByGender(currentGender);
+      } else {
+        if (!dbCache[currentGender]) {
+          await fetchDbGuideForGender(lastTempNum, currentGender, { silent: false });
+        }
+        renderDbByGender(currentGender);
+      }
     });
   }
 
@@ -278,67 +381,76 @@ document.addEventListener("DOMContentLoaded", async () => {
   const aiBtn = document.getElementById("ai-btn");
   if (aiBtn) {
     aiBtn.innerHTML = '<i class="bi bi-openai text-dark"></i>';
-    aiBtn.addEventListener("click", () => {
+    aiBtn.addEventListener("click", async () => {
       useAiGuide = !useAiGuide;
-      aiBtn.innerHTML = useAiGuide
-        ? '<i class="bi bi-grid"></i>'
-        : '<i class="bi bi-openai text-dark"></i>';
-      if (lastTempNum != null) {
-        if (useAiGuide) fetchAiRecommendations(lastTempNum, currentGender);
-        else loadClothingGuide(lastTempNum);
+      aiBtn.innerHTML = useAiGuide ? '<i class="bi bi-grid"></i>' : '<i class="bi bi-openai text-dark"></i>';
+
+      if (lastTempNum == null) return;
+
+      // 모드 전환 시에는 현재 보이는 카드만 렌더(필요 시 해당 성별만 로드)
+      if (useAiGuide) {
+        if (!aiCache[currentGender]) {
+          await fetchAiForGender(currentGender, lastTempNum, { silent: false });
+        }
+        await renderAiByGender(currentGender);
+      } else {
+        if (!dbCache[currentGender]) {
+          await fetchDbGuideForGender(lastTempNum, currentGender, { silent: false });
+        }
+        renderDbByGender(currentGender);
       }
     });
   }
 
-  // 리프레시 버튼
+  // 리프레시 버튼: 현재 보이는 "가상페이지"만 갱신
   const refreshBtn = document.getElementById("refresh-images-btn");
   if (refreshBtn) {
-    refreshBtn.addEventListener("click", () => {
+    refreshBtn.addEventListener("click", async () => {
       if (lastTempNum == null) return;
+
       if (useAiGuide) {
-        categories.forEach(cat => {
-          const block = aiResults.find(b => b.product.category === cat);
-          const len = (block?.items.length) || 1;
-          indexByCat[cat] = clamp(indexByCat[cat] + 1, len);
-        });
-        renderAiRecommendations();
+        // 남성 AI / 여성 AI 각각 독립적으로 새로고침
+        await fetchAiForGender(currentGender, lastTempNum, { silent: false });
+        await renderAiByGender(currentGender);
       } else {
-        loadClothingGuide(lastTempNum);
+        // 남성 DB / 여성 DB 각각 독립적으로 새로고침
+        await fetchDbGuideForGender(lastTempNum, currentGender, { silent: false });
+        renderDbByGender(currentGender);
       }
     });
   }
 
-  // 날씨 위젯 변화 감지
+  // 날씨 위젯 변화 감지(온도 바뀌면 캐시 전체를 새 온도로 갱신)
   const weatherTempEl = document.getElementById("weather-temp");
   if (weatherTempEl) {
-    new MutationObserver(() => {
+    new MutationObserver(async () => {
       const m = weatherTempEl.textContent.match(/(-?\d+)\s*℃/);
       if (m) {
         const newTemp = parseInt(m[1], 10);
         if (newTemp !== lastTempNum) {
           lastTempNum = newTemp;
           updateCurrentTempTag(newTemp);
-          loadClothingGuide(newTemp);
+
+          // 새 온도 기준으로 DB/AI 캐시 모두 프리페치(둘 다 갱신)
+          await fetchDbGuideBoth(newTemp, { silent: true });
+          await fetchAiBoth(newTemp, { silent: true });
+
+          // BEST LOOKS 갱신
           loadBestLooksData(newTemp);
+
+          // 현재 모드/성별 다시 렌더
+          if (useAiGuide) await renderAiByGender(currentGender);
+          else renderDbByGender(currentGender);
         }
       }
     }).observe(weatherTempEl, { childList: true, subtree: true, characterData: true });
   }
 });
 
-// ─── DB 가이드 렌더 ───
-function renderDbByGender(gender) {
-  document.getElementById("gender-label").textContent =
-    gender === "male" ? "- 남성 -" : "- 여성 -";
-  renderSlots(guideData[gender], gender);
-}
-
 // ─── 통합 렌더 ───
 function renderByGender(gender) {
   if (useAiGuide) {
-    document.getElementById("gender-label").textContent =
-      gender === "male" ? "- 남성 (AI) -" : "- 여성 (AI) -";
-    renderAiRecommendations();
+    renderAiByGender(gender);
   } else {
     renderDbByGender(gender);
   }

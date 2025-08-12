@@ -14,6 +14,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OpenAIStylistNaverShoppingRes {
+public class OpenAIStylistNaverShoppingResponse {
     private List<Map<String, Object>> items;
 }

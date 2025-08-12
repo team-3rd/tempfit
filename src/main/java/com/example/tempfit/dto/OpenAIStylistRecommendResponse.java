@@ -13,6 +13,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OpenAIStylistRecommendRes {
+public class OpenAIStylistRecommendResponse {
     private List<OpenAIStylistProductDTO> products;
 }
