@@ -1,4 +1,3 @@
-// src/main/java/com/example/tempfit/service/OpenAIStylistRecommendationService.java
 package com.example.tempfit.service;
 
 import java.util.ArrayList;
@@ -48,6 +47,14 @@ public class OpenAIStylistRecommendationService {
         int temp = 20; // 임시 기본값
         return pipelineFromOpenAI(first, temp, koGender);
     }
+
+    // ===[ 호환용 alias ]========================================================
+    // 기존 컨트롤러가 recommendationService.recommend(req.getPrompt()) 를 호출해도
+    // 동작하도록 시그니처를 추가합니다.
+    public List<OpenAIStylistRecommendationResult> recommend(String userPrompt) {
+        return recommendFromPrompt(userPrompt);
+    }
+    // ==========================================================================
 
     // ───────────────────────────────────────────────────────────────────
     // 메인 파이프라인(온도/성별 기준) – 하드코딩 백업 없이 OpenAI로 보강
