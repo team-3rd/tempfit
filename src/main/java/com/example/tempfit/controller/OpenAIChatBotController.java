@@ -3,7 +3,7 @@ package com.example.tempfit.controller;
 
 import com.example.tempfit.dto.OpenAIChatbotMessageRequest;
 import com.example.tempfit.dto.OpenAIChatbotMessageResponse;
-import com.example.tempfit.service.ChatSessionContext;
+import com.example.tempfit.service.OpenAIChatSessionContext;
 import com.example.tempfit.service.OpenAIChatbotService;
 import com.example.tempfit.repository.MemberRepository;
 import com.example.tempfit.entity.Member;
@@ -92,9 +92,9 @@ public class OpenAIChatBotController {
         }
 
         // 세션 컨텍스트 로드/생성
-        ChatSessionContext ctx = (ChatSessionContext) httpSession.getAttribute("CHAT_CTX");
+        OpenAIChatSessionContext ctx = (OpenAIChatSessionContext) httpSession.getAttribute("CHAT_CTX");
         if (ctx == null) {
-            ctx = new ChatSessionContext();
+            ctx = new OpenAIChatSessionContext();
             httpSession.setAttribute("CHAT_CTX", ctx);
         }
 

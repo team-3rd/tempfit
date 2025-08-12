@@ -40,7 +40,7 @@ public class OpenAIChatbotService {
 
     /** 메인 진입 */
     public OpenAIChatbotMessageResponse chat(OpenAIChatbotMessageRequest request,
-                                             ChatSessionContext ctx) {
+                                             OpenAIChatSessionContext ctx) {
         try {
             final ZoneId KST = ZoneId.of("Asia/Seoul");
             final LocalDate today = LocalDate.now(KST);
