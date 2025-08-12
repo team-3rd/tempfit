@@ -3,7 +3,6 @@ package com.example.tempfit.repository;
 import com.example.tempfit.entity.Community;
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.repository.search.SearchCommunityRepository;
-import com.example.tempfit.repository.CustomCommunityRepository;
 
 import java.util.List;
 

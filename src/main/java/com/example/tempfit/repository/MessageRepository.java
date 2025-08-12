@@ -1,7 +1,6 @@
 package com.example.tempfit.repository;
 
 import com.example.tempfit.dto.ChatUserDTO;
-import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Message;
 
 import java.util.List;

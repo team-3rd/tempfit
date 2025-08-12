@@ -17,7 +17,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RequiredArgsConstructor
-@Service
+@Service("memberDetailsService")
 public class MemberDetailsService implements UserDetailsService{
 
     private final MemberRepository memberRepository;

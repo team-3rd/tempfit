@@ -1,12 +1,14 @@
 package com.example.tempfit.controller;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -72,20 +74,35 @@ public class MemberController {
     }
 
     @GetMapping("/{email}")
-    public String viewProfile(@PathVariable String email,
-                           @AuthenticationPrincipal AuthMemberDTO authMember,
-                           Model model) {
+    public String getProfile(@PathVariable String email, @AuthenticationPrincipal AuthMemberDTO authMemberDTO, Model model, CsrfToken csrfToken) {
 
-    Member profileMember = memberRepository.findByEmail(email).get();
+        Member profileMember = memberRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("해당 회원이 존재하지 않습니다."));
+        String myEmail = null;
+        if(authMemberDTO != null)
+            myEmail = authMemberDTO.getEmail();
 
-    boolean isFollowing = followService.isFollowing(authMember.getEmail(), email);
+        boolean isOwner = authMemberDTO != null && myEmail.equals(email);
 
-    model.addAttribute("profile", profileMember);
-    model.addAttribute("isFollowing", isFollowing);
+        boolean isFollowing = false;
+        if (!isOwner && authMemberDTO != null) {
+            isFollowing = followService.isFollowing(myEmail, email);
+        }
+        long followerCount = followService.countFollowers(profileMember);
+        long followingCount = followService.countFollowing(profileMember);
 
-    return "member/profile";
-}
+        List<CommunityDTO> posts = communityService.getPostsByMember(profileMember);
 
+        model.addAttribute("profile", profileMember);
+        model.addAttribute("isOwner", isOwner);
+        model.addAttribute("isFollowing", isFollowing);
+        model.addAttribute("followerCount", followerCount);
+        model.addAttribute("followingCount", followingCount);
+        model.addAttribute("posts", posts);
+        model.addAttribute("_csrf", csrfToken);
+
+        return "member/profile";
+    }
+    
     @GetMapping("/mychange")
     public void getMychange(Authentication authentication, Model model){
         log.info("Mychange 요청");
@@ -106,15 +123,6 @@ public class MemberController {
         return "redirect:/member/mypage";
     }
 
-    @GetMapping("/mypage/posts")
-    public String myPosts(@AuthenticationPrincipal AuthMemberDTO authMemberDTO, Model model) {
-    Member member = memberRepository.findByEmailAndFromSocial(
-            authMemberDTO.getEmail(), authMemberDTO.isFromSocial());
-
-    List<CommunityDTO> posts = communityService.getPostsByMember(member);
-    model.addAttribute("myPosts", posts);
-    return "member/myposts";
-}
     @PostMapping("/{email}/profile-image")
     public ResponseEntity<String> updateProfileImage(
             @PathVariable String email,
