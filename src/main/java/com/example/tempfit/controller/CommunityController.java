@@ -136,48 +136,7 @@ public class CommunityController {
         communityService.register(dto, loginMember, imageFiles, repImageIndex, weatherData);
         return "redirect:/community/list";
     }
-
-    @GetMapping("/edit/{id}")
-    public String editPost(@PathVariable Long id, Model model) {
-        CommunityDTO dto = communityService.get(id);
-        model.addAttribute("communityDTO", dto);
-        return "community/edit";
-    }
-
-    @PostMapping("/edit/{id}")
-    public String editPost(
-            @PathVariable Long id,
-            @ModelAttribute("communityDTO") CommunityDTO dto,
-            @RequestParam(value = "styleNames", required = false) List<String> styleNames,
-            @RequestParam(value = "repImage", required = false) MultipartFile repImage,
-            @RequestParam(value = "extraImages", required = false) List<MultipartFile> extraImages,
-            @RequestParam(value = "removeRepImage", defaultValue = "false") boolean removeRepImage,
-            @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
-            @RequestParam(value = "sexSet", required = false) List<Sex> sexSet) throws IOException {
-        if (sexSet != null) {
-            dto.setSexSet(sexSet);
-            dto.setMale(sexSet.contains(Sex.MALE));
-            dto.setFemale(sexSet.contains(Sex.FEMALE));
-        }
-        if (styleNames != null) {
-            dto.setStyleNames(styleNames);
-            dto.setCasual(styleNames.contains("CASUAL"));
-            dto.setStreet(styleNames.contains("STREET"));
-            dto.setFormal(styleNames.contains("FORMAL"));
-            dto.setOutdoor(styleNames.contains("OUTDOOR"));
-        }
-
-        LocalDate dates = dto.getDates();
-        CoordsDTO coords = new CoordsDTO(dto.getLon(), dto.getLat());
-        GridDTO grid = weatherService.changeCoords(coords);
-        List<SelectedWeatherDTO> weatherData = selectedWeatherService.getWeatherApi(grid, dates);
-
-        Member loginMember = memberRepository.findByEmailAndFromSocial(
-                authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
-        communityService.modify(dto, loginMember, repImage, extraImages, removeRepImage, weatherData);
-        return "redirect:/community/detail/" + id;
-    }
-
+    
     @DeleteMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         communityService.remove(id);

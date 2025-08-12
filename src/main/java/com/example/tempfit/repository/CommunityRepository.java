@@ -13,10 +13,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  * Community 엔티티용 JPA 레포지토리
  * - 기본 CRUD + 커스텀 검색(SearchCommunityRepository) 확장
  */
-public interface CommunityRepository
-        extends JpaRepository<Community, Long>,
-                SearchCommunityRepository,
-                CustomCommunityRepository,
-                JpaSpecificationExecutor<Community> {
-                        List<Community> findByAuthor(Member author);
+public interface CommunityRepository extends JpaRepository<Community, Long>, SearchCommunityRepository, CustomCommunityRepository, JpaSpecificationExecutor<Community> {
+        List<Community> findByAuthor(Member author);
+        List<Community> findByIdIn(List<Long> ids);
 }

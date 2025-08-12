@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.tempfit.dto.CommunityDTO;
 import com.example.tempfit.dto.MemberDTO;
 import com.example.tempfit.entity.Member;
+import com.example.tempfit.repository.BookmarkRepository;
 import com.example.tempfit.repository.MemberRepository;
 import com.example.tempfit.security.AuthMemberDTO;
 import com.example.tempfit.service.CommunityService;
@@ -41,6 +42,7 @@ import lombok.extern.log4j.Log4j2;
 public class MemberController {
 
     private final MemberRepository memberRepository;
+    private final BookmarkRepository bookmarkRepository;
     private final MemberService memberService;
     private final CommunityService communityService;
     private final FollowService followService;
@@ -91,6 +93,7 @@ public class MemberController {
         long followingCount = followService.countFollowing(profileMember);
 
         List<CommunityDTO> posts = communityService.getPostsByMember(profileMember);
+        List<CommunityDTO> bookmarks = communityService.getPostsByIds(bookmarkRepository.findCommunityIdsByMemberEmail(email));
 
         model.addAttribute("profile", profileMember);
         model.addAttribute("isOwner", isOwner);
@@ -98,6 +101,7 @@ public class MemberController {
         model.addAttribute("followerCount", followerCount);
         model.addAttribute("followingCount", followingCount);
         model.addAttribute("posts", posts);
+        model.addAttribute("bookmarks", bookmarks);
         model.addAttribute("_csrf", csrfToken);
 
         return "member/profile";

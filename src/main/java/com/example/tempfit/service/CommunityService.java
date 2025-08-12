@@ -16,6 +16,7 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,6 +55,7 @@ public class CommunityService {
     private final BookmarkRepository bookmarkRepository;
     private final CommentRepository commentRepository;
     private final CommunityTempRepository communityTempRepository;
+
 
     @Value("${upload.path}")
     private String uploadDir;
@@ -203,11 +205,6 @@ public class CommunityService {
                 .map(this::arrayToDTO);
     }
 
-    public void modify(CommunityDTO dto, Member currentUser, MultipartFile repImage, List<MultipartFile> extraImages,
-                       boolean removeRepImage, List<SelectedWeatherDTO> weatherData) throws IOException {
-        // 필요 시 구현
-    }
-
     public void remove(Long id) {
         Community post = communityRepository.findById(id).get();
         commentRepository.deleteAll(commentRepository.findByPostIdOrderByCreatedDateAsc(id));
@@ -344,6 +341,16 @@ public class CommunityService {
             bookmarkRepository.save(rec);
         }
         communityRepository.save(community);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CommunityDTO> getPostsByIds(List<Long> bookmarkIds) {
+        List<Community> bookmarkedPosts = communityRepository.findByIdIn(bookmarkIds);
+
+        List<CommunityDTO> dtoList = bookmarkedPosts.stream()
+            .map(this::entityToDTO)
+            .collect(Collectors.toList());
+        return dtoList;
     }
 
     public Map<String, List<CommunityDTO>> getPostsByTempAndStyle(int temp, int pageSize) {
