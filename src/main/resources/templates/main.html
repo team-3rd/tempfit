@@ -5,12 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>템핏 TempFit - 날씨 기반 의상 추천</title>
+    <title>템핏 TempFit</title>
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/variable/pretendardvariable.css"
-      rel="stylesheet"
-    />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -21,6 +17,9 @@
     <link href="/css/darkmode.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
     <link href="css/main.css" rel="stylesheet" />
+    <!-- 리스트/디테일 카드 스타일 추가 -->
+    <link rel="stylesheet" href="/css/list.css" />
+    <link rel="stylesheet" href="/css/detail.css" />
     <!-- Pretendard Variable 웹폰트 (jsDelivr) -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -28,6 +27,10 @@
       /*<![CDATA[*/
       window.initialGender = /*[[${initialGender}]]*/ "male";
       /*]]>*/
+          <link
+      href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/variable/pretendardvariable.css"
+      rel="stylesheet"
+    />
     </script>
   </head>
   <body>
@@ -113,80 +116,33 @@
       <!-- 2) BEST LOOKS -->
       <div class="row mb-4">
         <div class="col-12">
-          <div class="card shadow-sm">
-
-              <div class="text-center mb-4">
-                            <div class="card-body p-4">
-              <!-- 로딩 오버레이 -->
-              <div id="best-loading-overlay" class="loading-wrap" style="display: none"></div>
-
-              <!-- 로딩 스피너 -->
-              <div id="best-loading-spinner" class="loading-spinner" style="display: none"></div>
-
-              <!-- 로딩 텍스트 -->
+          <!-- <div class="card shadow-sm"> -->
+            <!-- <div class="card-body p-4"> -->
+              <!-- 로딩 오버레이/스피너/텍스트 -->
               <div id="best-loading-text" class="loading-text" style="display: none">베스트룩 불러오는 중...</div>
-                <div class="best-looks-title-box" title="일주일마다 초기화 됩니다.">
-                  <div class="current-temp-text1">
-                    현재 온도 기준( <span id="current-temp-tag" class="current-temp-tag">-℃</span>
-                    <span class="current-temp-text2">)</span>
-                  </div>
-                  <div class="style-best">
-                   <span class="best-looks"><i class="bi bi-trophy-fill text-warning"></i>명예의 전당<i class="bi bi-trophy-fill text-warning"></i></span>
-                  </div>
+              
+              <!-- 타이틀 -->
+              <div class="best-looks-title-box" title="일주일마다 초기화 됩니다.">
+                <div class="current-temp-text1">
+                  현재 온도 기준( <span id="current-temp-tag" class="current-temp-tag">-℃</span>
+                  <span class="current-temp-text2">)</span>
+                </div>
+                <div class="style-best">
+                  <span class="best-looks">
+                    <i class="bi bi-trophy-fill text-warning"></i>명예의 전당<i class="bi bi-trophy-fill text-warning"></i>
+                  </span>
                 </div>
               </div>
-              <div id="best-looks-area" class="row g-4 gx-lg-5 mt-4 ms-3">
-                <th:block th:each="entry : ${postsByStyle}">
-                  <div class="col-12 col-sm-6 col-lg-3 d-flex align-items-stretch">
-                    <div class="card shadow-sm w-100 d-flex flex-column">
-                      <!-- 스타일명 헤더 -->
-                      <div class="card-style-header" th:text="${entry.key}">STYLE</div>
-                      <div class="card-body d-flex flex-column align-items-center justify-content-start flex-grow-1">
-                        <div th:if="${entry.value.size() > 0}">
-                          <a th:href="@{/community/detail/{id}(id=${entry.value[0].id})}">
-                            <img
-                              th:src="@{/uploads/{f}(f=${entry.value[0].repImageUrl})}"
-                              class="mb-3"
-                              style="max-width: 130px; max-height: 130px; border-radius: 10px"
-                              alt="코디 이미지"
-                            />
-                          </a>
-                          <div class="post-title mb-2" th:text="${entry.value[0].title}">제목</div>
-                          <div class="badge-list mb-2">
-                            <span th:if="${entry.value[0].casual}" class="badge bg-secondary me-1">캐주얼</span>
-                            <span th:if="${entry.value[0].formal}" class="badge bg-secondary me-1">포멀</span>
-                            <span th:if="${entry.value[0].street}" class="badge bg-secondary me-1">스트리트</span>
-                            <span th:if="${entry.value[0].outdoor}" class="badge bg-secondary me-1">기타</span>
-                          </div>
-                          <div class="text-muted mb-1" th:text="${entry.value[0].author.nickname}">익명</div>
-                          <div class="text-muted mb-3" th:text="'추천수: ' + ${entry.value[0].recommendCount}">
-                            추천수: 0
-                          </div>
-                        </div>
-                        <div
-                          th:unless="${entry.value.size() > 0}"
-                          class="d-flex align-items-center justify-content-center flex-grow-1"
-                        >
-                          <div class="text-muted">게시글 없음</div>
-                        </div>
-                      </div>
-                      <div class="card-footer bg-white border-top-0">
-                        <a
-                          th:href="@{/community/list(type='',keyword='',styleNames=${entry.key})}"
-                          class="btn btn-primary btn-sm w-100"
-                          th:text="${entry.key} + ' 게시글 보기'"
-                        >
-                          게시글 보기
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </th:block>
-              </div>
-            </div>
-          </div>
+              
+              <!-- 여기로 JS가 카드 4개 렌더링 -->
+              <!-- <div id="best-loading-overlay" class="loading-wrap" style="display: none"></div>
+              <div id="best-loading-spinner" class="loading-spinner" style="display: none"></div> -->
+              <div id="best-looks-area" class="row g-4 gx-lg-5 mt-3"></div>
+            <!-- </div> -->
+          <!-- </div> -->
         </div>
       </div>
+      
     </div>
 
     <!-- Footer -->
@@ -198,5 +154,20 @@
     <script src="js/main.js"></script>
     <script src="js/address.js"></script>
     <script src="js/weatherLoad.js" type="module"></script>
+
+    <!-- BEST LOOKS 상세 모달 -->
+<div class="modal fade" id="bestDetailModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+      </div>
+      <div class="modal-body p-0">
+        <!-- 가장 간단하고 안전한 방식: detail.html 전체를 iframe으로 띄우기 -->
+        <iframe id="detailFrame" style="width:100%;height:75vh;border:0;"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
   </body>
 </html>

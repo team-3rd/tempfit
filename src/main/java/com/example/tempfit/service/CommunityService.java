@@ -39,6 +39,10 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import java.time.LocalDate;
+import java.time.temporal.WeekFields;
+import java.util.Locale;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -56,16 +60,15 @@ public class CommunityService {
     private final CommentRepository commentRepository;
     private final CommunityTempRepository communityTempRepository;
 
-
     @Value("${upload.path}")
     private String uploadDir;
 
     // 게시글 등록 + 이미지 저장 (대표 인덱스로 구분)
     public Long register(CommunityDTO dto,
-                         Member currentUser,
-                         List<MultipartFile> imageFiles,
-                         int repImageIndex,
-                         List<SelectedWeatherDTO> weatherData) throws IOException {
+            Member currentUser,
+            List<MultipartFile> imageFiles,
+            int repImageIndex,
+            List<SelectedWeatherDTO> weatherData) throws IOException {
 
         Community community = Community.builder()
                 .title(dto.getTitle())
@@ -196,9 +199,9 @@ public class CommunityService {
     }
 
     public Page<CommunityDTO> searchPageRaw(String type,
-                                            String keyword,
-                                            List<String> styleNames,
-                                            int page) {
+            String keyword,
+            List<String> styleNames,
+            int page) {
         Pageable pageable = PageRequest.of(page - 1, 10,
                 Sort.by(Sort.Direction.DESC, "createdDate"));
         return communityRepository.list(type, keyword, styleNames, null, pageable)
@@ -221,8 +224,8 @@ public class CommunityService {
     }
 
     private void saveCommunityImage(Community community,
-                                    MultipartFile file,
-                                    boolean isRep) throws IOException {
+            MultipartFile file,
+            boolean isRep) throws IOException {
         File uploadPathDir = new File(uploadDir);
         if (!uploadPathDir.exists())
             uploadPathDir.mkdirs();
@@ -348,38 +351,9 @@ public class CommunityService {
         List<Community> bookmarkedPosts = communityRepository.findByIdIn(bookmarkIds);
 
         List<CommunityDTO> dtoList = bookmarkedPosts.stream()
-            .map(this::entityToDTO)
-            .collect(Collectors.toList());
+                .map(this::entityToDTO)
+                .collect(Collectors.toList());
         return dtoList;
-    }
-
-    public Map<String, List<CommunityDTO>> getPostsByTempAndStyle(int temp, int pageSize) {
-        TemperatureRange range = TemperatureRange.fromTemperature(temp);
-        Map<String, String> styleFieldMap = Map.of(
-                "CASUAL", "casual",
-                "FORMAL", "formal",
-                "STREET", "street",
-                "OUTDOOR", "outdoor");
-
-        Map<String, List<CommunityDTO>> result = new LinkedHashMap<>();
-        styleFieldMap.forEach((label, fieldName) -> {
-            Specification<Community> spec = (root, query, cb) -> {
-                Join<Community, CommunityStyle> styleJoin = root.join("communityStyle");
-                Join<Community, CommunityTemp> tempJoin = root.join("communityTemp");
-                Predicate stylePred = cb.isTrue(styleJoin.get(fieldName));
-                Predicate tempPred = cb.between(tempJoin.get("avgTemp"), range.getMinTemp(), range.getMaxTemp());
-                return cb.and(stylePred, tempPred);
-            };
-
-            Pageable pg = PageRequest.of(0, pageSize, Sort.by(Sort.Direction.DESC, "recommendCount"));
-            List<CommunityDTO> dtos = communityRepository.findAll(spec, pg)
-                    .getContent()
-                    .stream()
-                    .map(this::entityToDTO)
-                    .collect(Collectors.toList());
-            result.put(label, dtos);
-        });
-        return result;
     }
 
     @Transactional
@@ -411,5 +385,45 @@ public class CommunityService {
                 dto.setBookmarkedByMe(false);
             }
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<CommunityDTO> getTopPostsByTemp(int temp, int limit) {
+        // 1) 온도 구간 매핑
+        TemperatureRange range = TemperatureRange.fromTemperature(temp);
+
+        // 2) 주간 로테이션을 위해 상위 풀(pool) 넉넉히 확보
+        // (추천수 desc, 작성일 desc 기준 상위 N개 중에서 4개만 주마다 회전)
+        final int poolSize = Math.max(limit * 5, 20);
+
+        Specification<Community> spec = (root, query, cb) -> {
+            Join<Community, CommunityTemp> t = root.join("communityTemp");
+            // avgTemp가 현재 온도 구간에 들어오는 글만
+            return cb.between(t.get("avgTemp"), range.getMinTemp(), range.getMaxTemp());
+        };
+
+        Pageable pageable = PageRequest.of(
+                0,
+                poolSize,
+                Sort.by(Sort.Direction.DESC, "recommendCount")
+                        .and(Sort.by(Sort.Direction.DESC, "createdDate")));
+
+        List<CommunityDTO> pool = communityRepository.findAll(spec, pageable)
+                .getContent()
+                .stream()
+                .map(this::entityToDTO)
+                .collect(Collectors.toList());
+
+        // 3) 풀 크기가 4 이하라면 그대로 반환
+        if (pool.size() <= limit) {
+            return pool;
+        }
+
+        // 4) 주차(weekOfWeekBasedYear) 기반 고정 로테이션
+        // → 같은 주에는 동일 결과, 주가 바뀌면 다른 구간으로 이동
+        int week = LocalDate.now().get(WeekFields.ISO.weekOfWeekBasedYear());
+        int start = week % (pool.size() - limit + 1);
+
+        return new ArrayList<>(pool.subList(start, start + limit));
     }
 }

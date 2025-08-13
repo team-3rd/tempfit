@@ -1,5 +1,3 @@
-// src/main/resources/static/js/main.js
-
 // ─── 전역 저장 변수 ───
 let lastTempNum = null;
 // 기존 guideData는 더 이상 직접 쓰지 않고, 성별별 캐시로 분리
@@ -47,16 +45,16 @@ function hideGuideLoading() {
   document.getElementById("guide-loading-text").style.display = "none";
 }
 
-function showBestLoading() {
-  document.getElementById("best-loading-overlay").style.display = "block";
-  document.getElementById("best-loading-spinner").style.display = "block";
-  document.getElementById("best-loading-text").style.display = "block";
-}
-function hideBestLoading() {
-  document.getElementById("best-loading-overlay").style.display = "none";
-  document.getElementById("best-loading-spinner").style.display = "none";
-  document.getElementById("best-loading-text").style.display = "none";
-}
+// function showBestLoading() {
+//   document.getElementById("best-loading-overlay").style.display = "block";
+//   document.getElementById("best-loading-spinner").style.display = "block";
+//   document.getElementById("best-loading-text").style.display = "block";
+// }
+// function hideBestLoading() {
+//   document.getElementById("best-loading-overlay").style.display = "none";
+//   document.getElementById("best-loading-spinner").style.display = "none";
+//   document.getElementById("best-loading-text").style.display = "none";
+// }
 
 // ─── 공통 슬롯 렌더 헬퍼 ───
 function renderSlots(data, gender) {
@@ -142,7 +140,6 @@ function emptySlotMarkup(label) {
 async function fetchDbGuideBoth(tempNum, { silent = false } = {}) {
   if (!silent) showGuideLoading();
   try {
-    // 랜덤화를 위해 r 파라미터 추가
     const res = await fetch(`/api/coordi/guide?temp=${tempNum}&r=${Date.now()}`);
     if (!res.ok) throw new Error(res.status);
     const data = await res.json(); // { male: {...}, female: {...} }
@@ -259,7 +256,6 @@ async function renderAiByGender(gender) {
     const container = (cat === "상의" || cat === "아우터") ? row1 : row2;
 
     const brand = block.product.brandName || "";
-    // 표시용 이름은 "브랜드 + 상품명"을 우리 쪽에서 조합 (네이버의 <b> 태그 무시)
     const productNameFallback = stripTags(item?.title || "");
     const pname = block.product.productName || productNameFallback;
     const displayTitle = formatBrandAndNameBold(brand, pname);
@@ -291,15 +287,18 @@ async function renderAiByGender(gender) {
 
 // ─── BEST LOOKS 로드 ───
 function loadBestLooksData(tempNum) {
-  showBestLoading();
-  fetch(`/api/community/best?temp=${tempNum}`)
+  // showBestLoading(); // ← 스피너/오버레이 표시 (비활성화)
+
+  fetch(`/api/community/best?temp=${tempNum}`, { credentials: "same-origin" })
     .then(res => res.json())
     .then(renderBestLooks)
     .catch(() => {
       const area = document.getElementById("best-looks-area");
       if (area) area.innerHTML = "<div class='text-danger'>※BEST LOOKS 정보를 가져올 수 없습니다!※</div>";
     })
-    .finally(hideBestLoading);
+    .finally(() => {
+      // hideBestLoading(); // ← 스피너/오버레이 숨김 (비활성화)
+    });
 }
 
 // ─── 날씨 로드 시 의상+베스트룩 ───
@@ -362,7 +361,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       currentGender = currentGender === "male" ? "female" : "male";
       toggleBtn.innerHTML = renderIcon();
 
-      // 현재 모드에 맞게, 캐시 렌더만 수행(없으면 해당 성별만 새로 로드)
       if (useAiGuide) {
         if (!aiCache[currentGender]) {
           await fetchAiForGender(currentGender, lastTempNum, { silent: false });
@@ -387,7 +385,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (lastTempNum == null) return;
 
-      // 모드 전환 시에는 현재 보이는 카드만 렌더(필요 시 해당 성별만 로드)
       if (useAiGuide) {
         if (!aiCache[currentGender]) {
           await fetchAiForGender(currentGender, lastTempNum, { silent: false });
@@ -409,18 +406,16 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (lastTempNum == null) return;
 
       if (useAiGuide) {
-        // 남성 AI / 여성 AI 각각 독립적으로 새로고침
         await fetchAiForGender(currentGender, lastTempNum, { silent: false });
         await renderAiByGender(currentGender);
       } else {
-        // 남성 DB / 여성 DB 각각 독립적으로 새로고침
         await fetchDbGuideForGender(lastTempNum, currentGender, { silent: false });
         renderDbByGender(currentGender);
       }
     });
   }
 
-  // 날씨 위젯 변화 감지(온도 바뀌면 캐시 전체를 새 온도로 갱신)
+  // 날씨 위젯 변화 감지
   const weatherTempEl = document.getElementById("weather-temp");
   if (weatherTempEl) {
     new MutationObserver(async () => {
@@ -430,15 +425,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (newTemp !== lastTempNum) {
           lastTempNum = newTemp;
           updateCurrentTempTag(newTemp);
-
-          // 새 온도 기준으로 DB/AI 캐시 모두 프리페치(둘 다 갱신)
           await fetchDbGuideBoth(newTemp, { silent: true });
           await fetchAiBoth(newTemp, { silent: true });
-
-          // BEST LOOKS 갱신
           loadBestLooksData(newTemp);
-
-          // 현재 모드/성별 다시 렌더
           if (useAiGuide) await renderAiByGender(currentGender);
           else renderDbByGender(currentGender);
         }
@@ -456,52 +445,256 @@ function renderByGender(gender) {
   }
 }
 
-// ─── BEST LOOKS 렌더 ───
+// ─── 모달 유틸 (detail.html fragment 로드) ───
+function ensureDetailModal() {
+  let modal = document.getElementById("detailModal");
+  if (modal) return modal;
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+  <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content"></div>
+    </div>
+  </div>`;
+  document.body.appendChild(wrap.firstElementChild);
+  return document.getElementById("detailModal");
+}
+async function openDetailModal(postId) {
+  const modalEl = ensureDetailModal();
+  const content = modalEl.querySelector(".modal-content");
+  content.innerHTML = ""; // 초기화
+  try {
+    // ✅ 경로 수정: /fragment 제거 + 쿠키 포함
+    const res = await fetch(`/community/detail/${postId}`, { credentials: "same-origin" });
+    content.innerHTML = await res.text();
+    // detail.js 초기화
+    if (window.initDetailModal) window.initDetailModal(content);
+  } catch (e) {
+    content.innerHTML = `<div class="p-4">상세 정보를 불러오지 못했습니다.</div>`;
+  }
+  const bsModal = new bootstrap.Modal(modalEl);
+  bsModal.show();
+}
+
+// ─── BEST LOOKS 렌더(Top 4, 스타일 구분 없음) ───
 function renderBestLooks(data) {
   const area = document.getElementById("best-looks-area");
   if (!area) return;
-  const styleList = [
-    { key: "CASUAL", label: "캐주얼" },
-    { key: "STREET", label: "스트리트" },
-    { key: "FORMAL", label: "포멀" },
-    { key: "OUTDOOR", label: "기타" },
-  ];
-  let html = "";
-  styleList.forEach(({ key, label }) => {
-    const post = data[key];
-    html += `<div class="col-md-3 mb-4 d-flex">
-      <div class="card flex-fill h-100">
-        <div class="card-style-header">${label}</div>
-        <div class="card-body d-flex flex-column align-items-center">`;
-    if (post) {
-      html += `
-          <div class="post-title mb-2" style="font-size:1.25rem;font-weight:600;">${post.title}</div>
-          <div class="badge-list mb-3">
-            ${post.casual ? '<span class="badge bg-secondary me-1">캐주얼</span>' : ""}
-            ${post.street ? '<span class="badge bg-secondary me-1">스트리트</span>' : ""}
-            ${post.formal ? '<span class="badge bg-secondary me-1">포멀</span>' : ""}
-            ${post.outdoor ? '<span class="badge bg-secondary me-1">기타</span>' : ""}
-          </div>
-          <a href="/community/detail/${post.id}">
-            <img src="/uploads/${post.repImageUrl}" class="mb-3"
-                 style="max-width:130px;max-height:130px;border-radius:10px;" alt="코디 이미지"/>
-          </a>
-          <div class="text-muted mb-1">${post.authorNickname}</div>
-          <div class="text-muted mb-3">추천수: ${post.recommendCount}</div>
-      `;
-    } else {
-      html += `<div class="mt-5 text-muted">게시글 없음</div>`;
+
+  // 응답이 배열(신규) or 맵(구버전 호환) 모두 처리
+  const list = Array.isArray(data)
+    ? data
+    : Object.values(data || {}).filter(Boolean);
+
+  // Top 4만 사용
+  const posts = list.slice(0, 4);
+
+  // 헬퍼들
+  const timeAgo = (iso) => {
+    if (!iso) return "";
+    const t = new Date(iso).getTime();
+    const s = Math.max(0, (Date.now() - t) / 1000);
+    if (s < 60) return `${Math.floor(s)}초 전`;
+    if (s < 3600) return `${Math.floor(s / 60)}분 전`;
+    if (s < 86400) return `${Math.floor(s / 3600)}시간 전`;
+    return `${Math.floor(s / 86400)}일 전`;
+  };
+  const skyIcon = (sky) => {
+    switch (sky) {
+      case "맑음":
+        return "bi-sun";
+      case "흐림":
+        return "bi-cloud-sun";
+      case "구름 많음":
+        return "bi-clouds";
+      case "비":
+        return "bi-cloud-rain";
+      case "눈":
+        return "bi-cloud-snow";
+      default:
+        return "";
     }
-    html += `
+  };
+  const k = (n) => {
+    const num = Number(n || 0);
+    if (Math.abs(num) >= 1000) {
+      const v = (num / 1000).toFixed(1).replace(/\.0$/, "");
+      return `${v}k`;
+    }
+    return String(num);
+  };
+
+  // 렌더 시작
+  area.innerHTML = "";
+
+  // 카드 생성 함수 (리스트와 동일 스타일)
+  const makeCardHtml = (post) => {
+    const id = post.id;
+    const nickname = post.authorNickname || post.author?.nickname || "익명";
+    const profile =
+      post.profileImageUrl || post.author?.profileImageUrl || "/assets/default-profile.png";
+    const created = timeAgo(post.createdDate);
+    const icon = skyIcon(post.sky);
+    const maxT = Number.isFinite(post.maxTemp) ? `${post.maxTemp}°` : "";
+    const minT = Number.isFinite(post.minTemp) ? `${post.minTemp}°` : "";
+    const img = post.repImageUrl ? `/uploads/${post.repImageUrl}` : "/assets/no-image.png";
+    const hasExtra = Array.isArray(post.extraImageUrls) && post.extraImageUrls.length > 0;
+
+    const likeCount = post.recommendCount ?? 0;
+    const commentCount = post.commentCount ?? 0;
+    const content = escapeHtml(post.content || post.title || "");
+
+    const liked = !!post.likedByMe;
+    const bookmarked = !!post.bookmarkedByMe;
+
+    return `
+      <a href="/community/detail/${id}" class="post-card text-decoration-none text-reset h-100" data-id="${id}">
+        <div class="card-top">
+          <div class="left">
+            <img class="profileImg" src="${profile}" alt="프로필"/>
+            <div class="name-time">
+              <p class="nickname">${escapeHtml(nickname)}</p>
+              <p class="time">${created}</p>
+            </div>
+          </div>
+          <div class="weather">
+            ${icon ? `<i class="bi ${icon}"></i>` : ""}
+            ${maxT ? `<span class="temp">${maxT}</span>` : ""}
+            ${minT ? `<span class="temp">${minT}</span>` : ""}
+          </div>
         </div>
-        <div class="card-footer bg-white border-top-0">
-          <a class="btn btn-primary btn-sm w-100"
-             href="/community/list?type=&keyword=&styleNames=${key}">
-            ${label} 게시글보기
-          </a>
+
+        <div class="image-wrap">
+          <img src="${img}" alt="대표사진" class="card-img-top"/>
+          ${hasExtra ? `<i class="bi bi-stickies-fill multi-indicator"></i>` : ""}
+        </div>
+
+        <div class="card-body-ig">
+          <div class="actions">
+            <div class="left-actions">
+              <div class="action-group">
+                <button type="button" class="btn-action btn-like" data-id="${id}" title="좋아요">
+                  <i class="bi ${liked ? "bi-heart-fill" : "bi-heart"}"></i>
+                </button>
+                <span class="count like-count" data-count="${likeCount}">${k(likeCount)}</span>
+              </div>
+              <div class="action-group">
+                <button type="button" class="btn-action btn-comment" data-id="${id}" title="댓글">
+                  <i class="bi bi-chat"></i>
+                </button>
+                <span class="count" data-count="${commentCount}">${k(commentCount)}</span>
+              </div>
+            </div>
+            <div class="right-actions">
+              <button type="button" class="btn-action btn-bookmark" data-id="${id}" title="북마크">
+                <i class="bi ${bookmarked ? "bi-bookmark-fill" : "bi-bookmark"}"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="caption">
+            <span class="name">${escapeHtml(nickname)}</span>
+            <span class="content">${content}</span>
+          </div>
+        </div>
+      </a>
+    `;
+  };
+
+  // 카드 0~4개 렌더
+  posts.forEach((post) => {
+    const col = document.createElement("div");
+    col.className = "col-12 col-sm-6 col-lg-3 d-flex";
+    col.innerHTML = makeCardHtml(post);
+    area.appendChild(col);
+  });
+
+  // 부족하면 빈 카드 채우기(레이아웃 유지)
+  for (let i = posts.length; i < 4; i++) {
+    const col = document.createElement("div");
+    col.className = "col-12 col-sm-6 col-lg-3 d-flex";
+    col.innerHTML = `
+      <div class="post-card h-100" style="display:flex;flex-direction:column;">
+        <div class="card-top">
+          <div class="left">
+            <img class="profileImg" src="/assets/default-profile.png" alt="프로필"/>
+            <div class="name-time">
+              <p class="nickname">게시글 없음</p>
+              <p class="time">&nbsp;</p>
+            </div>
+          </div>
+        </div>
+        <div class="image-wrap" style="display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;background:#fafafa;">
+          <span class="text-muted">없음</span>
+        </div>
+        <div class="card-body-ig">
+          <div class="caption"><span class="name">-</span><span class="content">해당 온도의 게시글이 아직 없어요.</span></div>
         </div>
       </div>
-    </div>`;
+    `;
+    area.appendChild(col);
+  }
+
+// ── 상호작용(모달/좋아요/북마크) 바인딩: 동적 렌더이므로 여기서 직접 연결 ──
+area.querySelectorAll(".post-card").forEach((card) => {
+  card.addEventListener("click", (e) => {
+    if (e.target.closest(".btn-action")) return; // 액션 버튼 클릭은 무시
+    e.preventDefault();
+    const postId = card.getAttribute("data-id");
+    openDetailModal(postId); // ✅ 공용 유틸 사용
   });
-  area.innerHTML = `<div class="row gx-4 gx-lg-5 d-flex align-items-stretch">${html}</div>`;
+});
+
+area.querySelectorAll(".btn-like").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const id = btn.getAttribute("data-id");
+    const icon = btn.querySelector(".bi");
+    const countEl = btn.parentElement.querySelector(".like-count");
+    let current = Number(countEl.getAttribute("data-count") || 0);
+    const liked = icon.classList.contains("bi-heart-fill");
+
+    fetch(`/community/recommend/${id}`, { method: "POST" })
+      .catch(() => {})
+      .finally(() => {
+        if (liked) {
+          icon.classList.remove("bi-heart-fill");
+          icon.classList.add("bi-heart");
+          current = Math.max(0, current - 1);
+        } else {
+          icon.classList.remove("bi-heart");
+          icon.classList.add("bi-heart-fill");
+          current = current + 1;
+        }
+        countEl.setAttribute("data-count", current);
+        countEl.textContent = k(current);
+      });
+  });
+});
+
+area.querySelectorAll(".btn-bookmark").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const id = btn.getAttribute("data-id");
+    const icon = btn.querySelector(".bi");
+    const checked = icon.classList.contains("bi-bookmark-fill");
+
+    fetch(`/community/bookmark/${id}`, { method: "POST" })
+      .catch(() => {})
+      .finally(() => {
+        icon.classList.toggle("bi-bookmark-fill", !checked);
+        icon.classList.toggle("bi-bookmark", checked);
+      });
+  });
+});
+
+area.querySelectorAll(".btn-comment").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    btn.closest(".post-card")?.click();
+  });
+});
 }

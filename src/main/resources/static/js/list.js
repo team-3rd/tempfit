@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let current = Number(countEl.getAttribute("data-count") || 0);
       const liked = icon.classList.contains("bi-heart-fill");
 
-      fetch(`/community/recommend/${id}`, { method: "POST" })
+      fetch(`/community/recommend/${id}`, { method: "POST", credentials: "same-origin" })
         .catch(() => {})
         .finally(() => {
           if (liked) {
@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const icon = btn.querySelector(".bi");
       const checked = icon.classList.contains("bi-bookmark-fill");
 
-      fetch(`/community/bookmark/${id}`, { method: "POST" })
+      fetch(`/community/bookmark/${id}`, { method: "POST", credentials: "same-origin" })
         .catch(() => {})
         .finally(() => {
           if (checked) {

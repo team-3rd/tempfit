@@ -5,77 +5,268 @@ body {
 }
 
 /* 검색 폼 */
-.search-form .form-select { width: 8rem; height: 2rem; font-size: 0.75rem; padding: 0.25rem; }
-.search-form .form-control { width: 20rem; height: 2rem; font-size: 0.75rem; padding: 0.25rem; }
-.search-form .btn, .search-form .reset-btn, .create-btn {
-  width: 4rem; height: 2rem; font-size: 0.75rem; display:flex; align-items:center; justify-content:center; padding:0 .5rem;
+.search-form .form-select {
+  width: 8rem;
+  height: 2rem;
+  font-size: 0.75rem;
+  padding: 0.25rem;
+}
+.search-form .form-control {
+  width: 20rem;
+  height: 2rem;
+  font-size: 0.75rem;
+  padding: 0.25rem;
+}
+.search-form .btn,
+.search-form .reset-btn,
+.create-btn {
+  width: 4rem;
+  height: 2rem;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.5rem;
 }
 
 /* 그리드 */
-.post-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:24px; margin-top:24px; }
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
 
 /* 카드 */
 .post-card {
-  display:flex; flex-direction:column; background:#fff; border-radius:0 !important;
-  box-shadow:0 2px 8px rgba(0,0,0,.06); overflow:hidden; transition:transform .18s ease, box-shadow .18s ease;
-  text-decoration:none; color:inherit; height:auto;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  text-decoration: none;
+  color: inherit;
+  height: auto;
 }
-.post-card:hover { transform:scale(1.015); box-shadow:0 6px 16px rgba(0,0,0,.12); }
+.post-card:hover {
+  transform: scale(1.015);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
 
 /* 상단 */
-.card-top { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #eee; }
-.card-top .left { display:flex; align-items:center; gap:8px; }
-.profileImg { width:28px; height:28px; border-radius:50%; object-fit:cover; border:none; }
-.name-time { line-height:1.1; }
-.nickname { font-size:.9rem; font-weight:600; margin:0; }
-.time { font-size:.75rem; color:#8e8e8e; margin:0; }
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+}
+.card-top .left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.profileImg {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: none;
+}
+.name-time {
+  line-height: 1.1;
+}
+.nickname {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0;
+}
+.time {
+  font-size: 0.75rem;
+  color: #8e8e8e;
+  margin: 0;
+}
 
 /* 날씨(오른쪽) */
-.weather { display:flex; align-items:center; gap:6px; color:#6b7280; }
-.weather .bi { font-size:1rem; }
-.weather .temp { font-size:.8rem; }
+.weather {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #6b7280;
+}
+.weather .bi {
+  font-size: 1rem;
+}
+.weather .temp {
+  font-size: 0.8rem;
+}
 
 /* 이미지 정방형 */
-.image-wrap { position:relative; width:100%; background:#fafafa; }
-.card-img-top { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; border-radius:0 !important; }
+.image-wrap {
+  position: relative;
+  width: 100%;
+  background: #fafafa;
+}
+.card-img-top {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  display: block;
+  border-radius: 0 !important;
+}
 
 /* 여러장 인디케이터 */
 .multi-indicator {
-  position:absolute; top:8px; right:8px; font-size:1.05rem; line-height:1;
-  color:#fff; background:rgba(0,0,0,.55); padding:4px 5px; border-radius:0; box-shadow:0 1px 2px rgba(0,0,0,.35); z-index:4;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 1.05rem;
+  line-height: 1;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 4px 5px;
+  border-radius: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  z-index: 4;
 }
 
 /* 본문(액션/캡션) */
-.card-body-ig { padding:10px 12px 14px; border-top:1px solid #eee; }
-.actions { display:flex; align-items:center; justify-content:space-between; }
-.left-actions { display:flex; align-items:center; gap:16px; }
-.action-group { display:flex; align-items:center; gap:6px; }
-.btn-action { appearance:none; border:0; background:transparent; padding:0; cursor:pointer; line-height:1; }
-.btn-action .bi { font-size:1.3rem; vertical-align:middle; color:#262626; }
-.btn-like .bi-heart-fill { color:#e74c3c; }
-.btn-bookmark .bi-bookmark-fill { color:#0d6efd; }
-.count { font-size:.9rem; color:#262626; min-width:1.5ch; }
+.card-body-ig {
+  padding: 10px 12px 14px;
+  border-top: 1px solid #eee;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.left-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.action-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-action {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  line-height: 1;
+}
+.btn-action .bi {
+  font-size: 1.3rem;
+  vertical-align: middle;
+  color: #262626;
+}
+.btn-like .bi-heart-fill {
+  color: #e74c3c;
+}
+.btn-bookmark .bi-bookmark-fill {
+  color: #0d6efd;
+}
+.count {
+  font-size: 0.9rem;
+  color: #262626;
+  min-width: 1.5ch;
+}
 
 /* 캡션 */
-.caption { margin-top:8px; font-size:.9rem; color:#262626; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.caption .name { font-weight:700; margin-right:6px; }
+.caption {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #262626;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.caption .name {
+  font-weight: 700;
+  margin-right: 6px;
+}
 
 /* ───── 모달 중앙 정렬 ───── */
 /* 숨겨진 상태에선 절대 보이지 않게(클릭 차단 방지) */
-#detailModal.modal:not(.show){ display:none !important; }
+#detailModal.modal:not(.show) {
+  display: none !important;
+}
 
 /* 가로 중앙 */
-#detailModal .modal-dialog{
-  max-width:none;
-  width:auto;
-  margin:0.5rem auto;
+#detailModal .modal-dialog {
+  max-width: none;
+  width: auto;
+  margin: 0.5rem auto;
 }
 
 /* 세로 중앙 */
-#detailModal .modal-dialog-centered{
-  display:flex;
-  align-items:center;
-  min-height:calc(100% - 1rem);
+#detailModal .modal-dialog-centered {
+  display: flex;
+  align-items: center;
+  min-height: calc(100% - 1rem);
 }
 
-#detailModal .modal-content{ border:0; border-radius:0; }
+#detailModal .modal-content {
+  border: 0;
+  border-radius: 0;
+}
+
+/* BEST LOOKS – 카드 상단의 '몇 시간 전' 위치 고정 (전역 .time 충돌 해결) */
+#best-looks-area .card-top .time {
+  position: static !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  display: block !important;
+  height: auto !important;
+  line-height: 1.1 !important;
+  font-size: 0.75rem;
+  color: #8e8e8e;
+}
+
+/* 상단 닉네임 블록 라인 높이 */
+#best-looks-area .card-top .name-time {
+  line-height: 1.1;
+}
+
+/* 캡션 영역 색/두께를 리스트와 동일하게 */
+#best-looks-area .caption {
+  color: #262626;
+}
+#best-looks-area .caption .name {
+  color: #262626;
+  font-weight: 700;
+  margin-right: 6px;
+}
+
+/* (선택) 상단 닉네임 컬러도 살짝 진하게 */
+#best-looks-area .card-top .nickname {
+  color: #222;
+}
+
+/* BEST LOOKS 캡션(리스트 카드 스타일로 강제) */
+#best-looks-area .post-card .card-body-ig .caption {
+  font-size: 0.9rem;
+  color: #262626;
+}
+
+#best-looks-area .post-card .card-body-ig .caption .name {
+  font-size: 0.9rem; /* 전역 .name(1.1rem) 무효화 */
+  font-weight: 700; /* list.css와 동일 */
+  margin-right: 6px;
+  line-height: 1.2;
+  color: #262626; /* list 카드와 동일 톤 */
+}
+
+.post-card {
+  cursor: pointer;
+}
+
+/* 캡션 줄높이 통일 + 닉네임 베이스라인 맞춤 */
+.caption { line-height: 1.2; }             /* ← 캡션 전체 줄높이 고정 */
+.caption .name { line-height: 1.2; vertical-align: baseline; }  /* ← 닉네임 정렬 */

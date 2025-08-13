@@ -188,4 +188,13 @@ public class CommunityController {
         communityService.bookmarkPost(id, member);
         return "redirect:/community/detail/" + id;
     }
+
+    @GetMapping("/detail/{id}/fragment")
+public String detailFragment(
+        @PathVariable Long id,
+        @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
+        Model model) {
+    // 기존 detail() 로직 재사용(중복 없음)
+    return detail(id, authMemberDTO, model);
+}
 }
