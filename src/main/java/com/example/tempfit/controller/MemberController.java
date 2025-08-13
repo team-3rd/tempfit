@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.tempfit.dto.CommunityDTO;
 import com.example.tempfit.dto.MemberDTO;
+import com.example.tempfit.dto.ProductsDTO;
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.repository.BookmarkRepository;
 import com.example.tempfit.repository.MemberRepository;
@@ -30,6 +31,7 @@ import com.example.tempfit.service.CommunityService;
 import com.example.tempfit.service.FileStorageService;
 import com.example.tempfit.service.FollowService;
 import com.example.tempfit.service.MemberService;
+import com.example.tempfit.service.ProductsService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +48,7 @@ public class MemberController {
     private final MemberService memberService;
     private final CommunityService communityService;
     private final FollowService followService;
+    private final ProductsService productsService;
 
     //@PreAuthorize("permitAll()")
     @GetMapping("/login")
@@ -94,6 +97,7 @@ public class MemberController {
 
         List<CommunityDTO> posts = communityService.getPostsByMember(profileMember);
         List<CommunityDTO> bookmarks = communityService.getPostsByIds(bookmarkRepository.findCommunityIdsByMemberEmail(email));
+        List<ProductsDTO> products = memberService.getDibList(email);
 
         model.addAttribute("profile", profileMember);
         model.addAttribute("isOwner", isOwner);
@@ -102,6 +106,7 @@ public class MemberController {
         model.addAttribute("followingCount", followingCount);
         model.addAttribute("posts", posts);
         model.addAttribute("bookmarks", bookmarks);
+        model.addAttribute("products", products);
         model.addAttribute("_csrf", csrfToken);
 
         return "member/profile";
@@ -122,9 +127,9 @@ public class MemberController {
         if(memberService.checkPw(dto.getEmail(), dto.getPassword()))
         {
             memberService.update(email,dto);
-            return "redirect:/member/mypage";
+            return "redirect:/member/" + dto.getEmail();
         }
-        return "redirect:/member/mypage";
+        return "redirect:/member/" + dto.getEmail();
     }
 
     @PostMapping("/{email}/profile-image")

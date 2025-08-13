@@ -46,7 +46,7 @@
       <div class="ig-header">
         <img class="ig-avatar" th:src="@{${post.profileImageUrl}}" alt="프로필" />
         <div class="ig-user">
-          <a class="ig-name" th:href="@{/messages/{email}(email=${post.author.email})}" target="_blank"
+          <a class="ig-name" th:href="@{/member/{email}(email=${post.author.email})}" target="_blank"
              th:text="${post.author.nickname}">닉네임</a>
         </div>
 
@@ -71,7 +71,7 @@
         <div class="ig-caption" th:if="${post.content != null and post.content.trim().length() > 0}">
           <img class="ig-avatar" th:src="@{${post.profileImageUrl}}" alt="프로필" />
           <div>
-            <a class="ig-name" th:href="@{/messages/{email}(email=${post.author.email})}" target="_blank"
+            <a class="ig-name" th:href="@{/member/{email}(email=${post.author.email})}" target="_blank"
                th:text="${post.author.nickname}">닉네임</a>
             <span class="ig-text" th:text="${post.content}">내용</span>
             <div class="ig-time" th:text="${post.displayDate}">1시간 전</div>

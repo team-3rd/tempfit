@@ -106,7 +106,7 @@ public class CommunityController {
                 authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
 
         commentService.addComment(id, member, content);
-        return "redirect:/community/detail/" + id;
+        return "redirect:/community/list";
     }
 
     @GetMapping("/create")
@@ -162,7 +162,7 @@ public class CommunityController {
         Member member = memberRepository.findByEmail(
                 authMemberDTO.getEmail()).get();
         communityService.recommendPost(id, member);
-        return "redirect:/community/detail/" + id;
+        return "redirect:/community/list";
     }
 
     @PostMapping("/bookmark/{id}")
@@ -172,6 +172,6 @@ public class CommunityController {
         Member member = memberRepository.findByEmail(
                 authMemberDTO.getEmail()).get();
         communityService.bookmarkPost(id, member);
-        return "redirect:/community/detail/" + id;
+        return "redirect:/community/list";
     }
 }

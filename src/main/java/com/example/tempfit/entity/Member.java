@@ -49,7 +49,7 @@ public class Member {
     // @OneToMany(mappedBy = "member")
     @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
-    private Set<Community> dibsList = new HashSet<>();
+    private Set<Products> dibsList = new HashSet<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)

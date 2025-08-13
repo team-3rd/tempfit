@@ -1,8 +1,10 @@
 // src/main/java/com/example/tempfit/controller/OpenAIChatBotController.java
 package com.example.tempfit.controller;
 
+import com.example.tempfit.dto.ChatUserDTO;
 import com.example.tempfit.dto.OpenAIChatbotMessageRequest;
 import com.example.tempfit.dto.OpenAIChatbotMessageResponse;
+import com.example.tempfit.service.MessageService;
 import com.example.tempfit.service.OpenAIChatSessionContext;
 import com.example.tempfit.service.OpenAIChatbotService;
 import com.example.tempfit.repository.MemberRepository;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -27,6 +30,7 @@ public class OpenAIChatBotController {
 
     private final OpenAIChatbotService chatService;
     private final MemberRepository memberRepository;
+    private final MessageService messageService;
 
     @GetMapping("/chatbot")
     public String chatbotPage(
@@ -40,12 +44,15 @@ public class OpenAIChatBotController {
         ZoneId kst = ZoneId.of("Asia/Seoul");
         LocalDate today = LocalDate.now(kst);
 
+        List<ChatUserDTO> chatUsers = messageService.getChatPartners(authentication.getName());
+
         model.addAttribute("ctxTemp", temp);
         model.addAttribute("ctxLoc", loc);
         model.addAttribute("ctxDate", (date != null ? date : today).toString());
         model.addAttribute("ctxLat", lat);
         model.addAttribute("ctxLon", lon);
         model.addAttribute("todayKst", today.toString());
+        model.addAttribute("chatUsers", chatUsers);
 
         boolean isLoggedIn = authentication != null
                 && authentication.isAuthenticated()

@@ -2,9 +2,11 @@ package com.example.tempfit.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -15,21 +17,25 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.Authentication;
 
 import com.example.tempfit.entity.Comment;
 import com.example.tempfit.entity.Community;
-import com.example.tempfit.entity.CommunityImage;
 import com.example.tempfit.entity.Member;
+import com.example.tempfit.entity.Products;
+import com.example.tempfit.entity.Recommend;
 import com.example.tempfit.entity.Role;
 import com.example.tempfit.repository.MemberRepository;
+import com.example.tempfit.repository.ProductsRepository;
 import com.example.tempfit.security.AuthMemberDTO;
 import com.example.tempfit.security.LoginMemberDetails;
 import com.example.tempfit.dto.CommentDTO;
 import com.example.tempfit.dto.CommunityDTO;
 import com.example.tempfit.dto.MemberDTO;
+import com.example.tempfit.dto.ProductsDTO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -39,6 +45,8 @@ import lombok.extern.log4j.Log4j2;
 @Service
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final ProductsRepository productsRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     @Value("${upload.path}" + "/profile/")
@@ -114,6 +122,31 @@ public class MemberService {
 
     public boolean checkPw(String id, String pw){
         return true;
+    }
+    
+    public List<ProductsDTO> getDibList(String email)
+    {
+        Member member = memberRepository.findById(email)
+                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
+        List<Products> dibList = new ArrayList<>(member.getDibsList());
+         List<ProductsDTO> dtoList = dibList.stream()
+            .map(p -> new ProductsDTO(p.getBrandName(), p.getProductName(), p.getImageUrl(), p.getLinkUrl()))
+                    .collect(Collectors.toList());
+        return dtoList;
+    }
+
+    @Transactional
+    public void addDibs(Long productId, Member member) throws Exception {
+        if(member == null) throw new Exception("유저를 찾을 수 없습니다.");
+        Products product = productsRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
+
+        if (member.getDibsList().contains(product)) {
+            member.getDibsList().remove(product);
+        } else {
+            member.getDibsList().add(product);
+        }
+        memberRepository.save(member);
     }
 
     public void updateProfileImage(String email, MultipartFile file) throws IOException {
@@ -193,6 +226,7 @@ public class MemberService {
                         .sex(dto.getSex())
                         .fromSocial(false)
                         .profileImageUrl(defaultProfileImageUrl)
+                        .dibsList(null)
                         .build();
         member.addMemberRole(Role.USER);
         return member;

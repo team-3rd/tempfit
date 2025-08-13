@@ -26,7 +26,10 @@
   <input type="hidden" id="ctxLoggedIn" th:value="${isLoggedIn}" />
 
   <div class="container chat-container flex-grow-1 row">
-    <div class="col-md-12">
+    <div class="col-md-3">
+      <div th:replace="~{fragments/chatUserList :: chatUserList(${chatUsers})}"></div>
+    </div>
+  <div class="col-md-9">
       <h4 class="mb-4 text-center">TempFit 챗봇</h4>
 
       <div class="chat-box shadow-sm mb-3" id="chatBox"></div>
