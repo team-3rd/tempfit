@@ -8,9 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -59,10 +59,13 @@ public class CommunityDTO {
 
     private int viewCount; // 조회수
 
-    // ▼ 리스트에서 사용할 사용자별 상태
-    private boolean likedByMe;      // 내가 추천(찜)했는지
-    private boolean bookmarkedByMe; // 내가 북마크했는지
-    private boolean hasMultiImages; // 이미지가 여러 장인지
+    // 리스트/디테일 공통으로 사용할 사용자별 상태
+    private boolean likedByMe;       // 내가 추천했는지
+    private boolean bookmarkedByMe;  // 내가 북마크했는지
+    private boolean hasMultiImages;  // 이미지 여러 장인지
+
+    // 댓글 수 (list/detail 모두 이 값을 사용)
+    private int commentCount;
 
     /**
      * 상대 시간 표시:
@@ -72,6 +75,7 @@ public class CommunityDTO {
      * - 30일 이상: "MM-dd"
      */
     public String getDisplayDate() {
+        if (createdDate == null) return "";
         LocalDateTime now = LocalDateTime.now();
         Duration diff = Duration.between(createdDate, now);
         long seconds = diff.getSeconds();

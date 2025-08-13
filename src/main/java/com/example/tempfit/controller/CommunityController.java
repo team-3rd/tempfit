@@ -23,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/community")
@@ -51,6 +53,15 @@ public class CommunityController {
         }
         communityService.applyUserFlags(pageData.getContent(), me);
 
+        // 댓글 수 채우기 (간단 구현: N번 조회)
+        List<Long> ids = pageData.getContent().stream()
+                .map(CommunityDTO::getId)
+                .collect(Collectors.toList());
+        Map<Long, Integer> countMap = commentService.getCommentCounts(ids);
+        pageData.getContent().forEach(dto ->
+                dto.setCommentCount(countMap.getOrDefault(dto.getId(), 0)));
+
+        // 페이징 계산
         int currentPage;
         int totalPages = pageData.getTotalPages();
         int pageBlock = 10;
@@ -84,12 +95,15 @@ public class CommunityController {
 
         CommunityDTO postDto = communityService.get(id);
 
-        // ✅ 모달에서도 likedByMe / bookmarkedByMe 초기 상태가 잡히도록 보장
+        // 모달 초기 상태 (좋아요/북마크) 반영
         if (authMemberDTO != null) {
             Member me = memberRepository
                     .findByEmailAndFromSocial(authMemberDTO.getEmail(), authMemberDTO.isFromSocial());
             communityService.applyUserFlags(List.of(postDto), me);
         }
+
+        // 모달도 리스트와 동일하게 DTO에 댓글 수 세팅
+        postDto.setCommentCount(commentService.getCommentCount(id));
 
         model.addAttribute("post", postDto);
         model.addAttribute("comments", commentService.getComments(id));
@@ -106,7 +120,7 @@ public class CommunityController {
                 authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
 
         commentService.addComment(id, member, content);
-        return "redirect:/community/list";
+        return "redirect:/community/detail/" + id;
     }
 
     @GetMapping("/create")
@@ -162,7 +176,7 @@ public class CommunityController {
         Member member = memberRepository.findByEmail(
                 authMemberDTO.getEmail()).get();
         communityService.recommendPost(id, member);
-        return "redirect:/community/list";
+        return "redirect:/community/detail/" + id;
     }
 
     @PostMapping("/bookmark/{id}")
@@ -172,6 +186,6 @@ public class CommunityController {
         Member member = memberRepository.findByEmail(
                 authMemberDTO.getEmail()).get();
         communityService.bookmarkPost(id, member);
-        return "redirect:/community/list";
+        return "redirect:/community/detail/" + id;
     }
 }
