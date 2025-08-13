@@ -1,5 +1,3 @@
-// package: com.example.tempfit.repository
-
 package com.example.tempfit.repository;
 
 import com.example.tempfit.entity.ClothingGuideMale;
