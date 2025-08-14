@@ -3,9 +3,39 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark" th:fragment="navbar">
+  <nav class="navbar navbar-expand-lg navbar-dark glass-nav" th:fragment="navbar">
+    <style>
+      .glass-nav{
+        /* background: rgba(17, 24, 39, 0.55); */
+        background: rgba(156, 182, 211, 0.3);
+        -webkit-backdrop-filter: blur(5px) saturate(50%);
+        backdrop-filter: blur(5px) saturate(50%);
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+        border-radius: 0;
+        position: sticky;
+        top: 0;
+        z-index: 1030;
+      }
+      .glass-nav .nav-link{
+        color: rgba(255,255,255,0.9) !important;
+        line-height: 1;
+      }
+      .glass-nav .nav-link:hover{
+        color: #fff !important;
+      }
+      .glass-nav .navbar-toggler{
+        border-color: rgba(255,255,255,0.25);
+      }
+      .glass-nav .nav-link > i.bi{
+        font-size: 1.5rem !important;  /* 모든 아이콘 동일 크기 */
+        line-height: 1;
+        vertical-align: middle;
+      }
+    </style>
+
     <div class="container px-5">
-      <a class="navbar-brand" href="/">
+      <a class="navbar-brand" href="/" title="홈">
         <img src="/assets/tempfit-logo.png" alt="TempFit" style="height: 38px" />
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
@@ -30,7 +60,7 @@
           </li>
           <li class="nav-item" sec:authorize="isAuthenticated()">
             <a class="nav-link" th:href="@{/member/{id}(id=${#authentication.principal.email})}" title="프로필">
-              [[${#authentication.principal.nickname}]]님
+              <i class="bi bi-person-circle fs-4"></i>
             </a>
           </li>
           <li class="nav-item">

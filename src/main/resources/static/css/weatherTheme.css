@@ -1,0 +1,223 @@
+/* weatherTheme.css
+   - 각 날씨별 배경
+   - Rain/Snow: overlay 하단을 footer 높이만큼 띄워, footer 윗선에서 splat
+   - JS가 설정하는 CSS 변수:
+       --rain-ground-offset / --rain-fall-distance
+       --snow-ground-offset / --snow-fall-distance
+*/
+
+:root {
+  --rain-ground-offset: 0px;
+  --rain-fall-distance: 90vh;
+  --snow-ground-offset: 0px;
+  --snow-fall-distance: 90vh;
+}
+
+html, body { height: 100%; }
+
+body {
+  background-attachment: fixed;
+  transition: background 400ms ease, background-color 400ms ease, filter 400ms ease;
+}
+
+/* 오버레이는 클릭 막지 않도록 */
+body.weather-clear::before,
+body.weather-cloudy::before,
+body.weather-rain::before,
+body.weather-snow::before {
+  pointer-events: none;
+}
+
+/* ─── 맑음 ─── */
+body.weather-clear {
+  background: linear-gradient(180deg, #a8ddff 0%, #eaf6ff 55%, #ffffff 100%) fixed;
+}
+body.weather-clear::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(600px 600px at 10% -10%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 60%),
+    radial-gradient(140px 140px at 12% 8%, rgba(255,223,88,0.55) 0%, rgba(255,223,88,0) 70%);
+}
+
+/* ─── 흐림/구름 ─── */
+body.weather-cloudy {
+  background: linear-gradient(180deg, #b6c5d6 0%, #e3e9f1 60%, #f2f5f8 100%) fixed;
+}
+body.weather-cloudy::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(600px 180px at 20% 10%, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0) 70%),
+    radial-gradient(520px 160px at 60% 12%, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0) 70%),
+    radial-gradient(540px 160px at 40% 22%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 70%);
+  filter: blur(2px);
+}
+
+/* ─── 비 (DOM 오버레이) ─── */
+body.weather-rain {
+  background: linear-gradient(180deg, #6b7a87 0%, #9fb0bc 60%, #dfe5ea 100%) fixed;
+}
+body.weather-rain::before { content: none !important; }
+
+.weather-rain-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  bottom: var(--rain-ground-offset);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.rain {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.rain.front-row { z-index: 2; }
+.rain.back-row  {
+  display: none;           /* body.back-row-toggle에서 표시 */
+  z-index: 1;
+  opacity: 0.5;
+}
+body.back-row-toggle .rain.back-row { display: block; }
+
+.drop {
+  position: absolute;
+  bottom: 100%;
+  width: 15px;
+  height: 120px;
+  pointer-events: none;
+  animation: drop 0.5s linear infinite;
+  will-change: transform, opacity;
+}
+@keyframes drop {
+  0%   { transform: translateY(0); }
+  75%  { transform: translateY(calc(var(--rain-fall-distance) * 0.75)); }
+  100% { transform: translateY(var(--rain-fall-distance)); }
+}
+.stem {
+  width: 1px;
+  height: 60%;
+  margin-left: 7px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.25));
+  animation: stem 0.5s linear infinite;
+  will-change: opacity;
+}
+@keyframes stem {
+  0%,65% { opacity: 1; }
+  75%,100% { opacity: 0; }
+}
+.splat {
+  width: 15px;
+  height: 10px;
+  border-top: 2px dotted rgba(255,255,255,0.5);
+  border-radius: 50%;
+  opacity: 1;
+  transform: scale(0);
+  animation: splat 0.5s linear infinite;
+  display: none;
+  will-change: transform, opacity;
+}
+body.splat-toggle .splat { display: block; }
+@keyframes splat {
+  0%   { opacity: 1; transform: scale(0); }
+  80%  { opacity: 1; transform: scale(0); }
+  90%  { opacity: 0.5; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+
+/* ─── 눈 (DOM 오버레이) — 수직 낙하 전용 ─── */
+body.weather-snow {
+  background: linear-gradient(180deg, #cfe6ff 0%, #eef6ff 60%, #ffffff 100%) fixed;
+}
+body.weather-snow::before { content: none !important; }
+
+.weather-snow-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  bottom: var(--snow-ground-offset);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.snow {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.snow.front-row { z-index: 2; }
+.snow.back-row  {
+  display: none;            /* body.back-row-toggle에서 표시 */
+  z-index: 1;
+  opacity: 0.55;
+}
+body.back-row-toggle .snow.back-row { display: block; }
+
+/* 눈송이: 좌우 스웨이·회전 없음(정직한 수직 낙하) */
+.flake {
+  position: absolute;
+  bottom: 100%;
+  width: var(--flake-size);
+  height: var(--flake-size);
+  pointer-events: none;
+  /* 수직 낙하만 inner에 적용 → 여기엔 애니메이션 없음 */
+  will-change: transform;
+  filter: drop-shadow(0 0 2px rgba(255,255,255,0.25));
+}
+.flake.is-back { opacity: 0.75; }
+
+/* 낙하/스플랫은 내부 래퍼에만 적용 (회전 제거) */
+.flake-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  animation: snowFall var(--fall-dur) linear infinite;
+  will-change: transform, opacity;
+}
+
+/* 낙하: 루프 경계 점프 숨기기(0~2%/100% 투명) + 완전 수직 */
+@keyframes snowFall {
+  0%   { transform: translateY(0);                         opacity: 0; }
+  2%   {                                                   opacity: 1; }
+  95%  {                                                   opacity: 1; }
+  100% { transform: translateY(var(--snow-fall-distance)); opacity: 0; }
+}
+
+/* * 모양: 0°, 60°, 120° */
+.arm {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.95) 50%, rgba(255,255,255,0));
+  border-radius: 2px;
+  transform-origin: 50% 50%;
+}
+
+/* 바닥 스플랫 */
+.splat-snow {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: calc(var(--flake-size) * 1.1);
+  height: calc(var(--flake-size) * 0.6);
+  transform: translateX(-50%) scale(0);
+  border-top: 2px dotted rgba(255,255,255,0.7);
+  border-radius: 50%;
+  opacity: 0;
+  display: none;
+  animation: snowSplat var(--fall-dur) linear infinite;
+  will-change: transform, opacity;
+}
+body.splat-toggle .splat-snow { display: block; }
+
+@keyframes snowSplat {
+  0%, 88% { opacity: 0; transform: translateX(-50%) scale(0); }
+  93%     { opacity: 0.8; transform: translateX(-50%) scale(1); }
+  100%    { opacity: 0;   transform: translateX(-50%) scale(1.5); }
+}

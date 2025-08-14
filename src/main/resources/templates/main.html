@@ -32,10 +32,12 @@
       rel="stylesheet"
     />
     </script>
+      <!-- 날씨 테마 CSS (캐시 무력화 파라미터 포함) -->
+  <link rel="stylesheet" th:href="@{/css/weatherTheme.css(v=${#dates.createNow().time})}" />
   </head>
   <body>
     <!-- Navbar -->
-    <th:block th:replace="fragments/navbar :: navbar"></th:block>
+    <th:block th:replace="fragments/navbarMain :: navbar"></th:block>
     <th:block th:replace="fragments/toggle :: toggle"></th:block>
 
     <div class="container px-4 px-lg-5">
@@ -93,8 +95,8 @@
               <!-- 로딩 텍스트 -->
               <div id="guide-loading-text" class="loading-text" style="display: none">추천 코디 불러오는 중...</div>
 
-              <h2 class="mb-3 text-center" style="font-size: 1.6rem; font-weight: 500; letter-spacing: -1px">
-                【 오늘의 추천 코디 】
+              <h2 class="mb-3 text-center" style="font-size: 1.4rem; font-weight: 700; letter-spacing: -1px">
+                <i class="bi bi-clipboard-check"></i> 오늘의 추천 코디 <i class="bi bi-clipboard-check"></i>
               </h2>
               <!-- 성별 라벨: JS 에서 동적으로 채워넣음 -->
               <div id="gender-label" class="text-center mb-2" style="font-size: 1.3rem; font-weight: 600">
@@ -120,7 +122,6 @@
             <!-- <div class="card-body p-4"> -->
               <!-- 로딩 오버레이/스피너/텍스트 -->
               <div id="best-loading-text" class="loading-text" style="display: none">베스트룩 불러오는 중...</div>
-              
               <!-- 타이틀 -->
               <div class="best-looks-title-box" title="일주일마다 초기화 됩니다.">
                 <div class="current-temp-text1">
@@ -133,7 +134,6 @@
                   </span>
                 </div>
               </div>
-              
               <!-- 여기로 JS가 카드 4개 렌더링 -->
               <!-- <div id="best-loading-overlay" class="loading-wrap" style="display: none"></div>
               <div id="best-loading-spinner" class="loading-spinner" style="display: none"></div> -->
@@ -169,5 +169,7 @@
     </div>
   </div>
 </div>
+  <!-- 날씨 테마 JS (캐시 무력화 파라미터 포함) -->
+  <script th:src="@{/js/weatherTheme.js(v=${#dates.createNow().time})}"></script>
   </body>
 </html>

@@ -210,12 +210,12 @@ footer.py-5.bg-dark {
   background:#fff;
   border:none !important;        /* 테두리 제거 */
   border-radius:0 !important;    /* 각지게 */
-  box-shadow:0 2px 8px rgba(0,0,0,0.06); /* 카드와 동일한 그림자 */
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
   padding:16px 32px;
-  margin:0 auto 34px;
+  margin:0 auto 24px;
   font-size:1.18rem;
   font-weight:600;
-  max-width:600px;
+  max-width:590px;
   gap:6px;
 }
 .current-temp-tag {
@@ -235,9 +235,9 @@ footer.py-5.bg-dark {
 }
 .best-looks {
   /* color: RGB(255, 215, 0); */
-  font-weight: 700;
-  letter-spacing: 1px;
-  margin-left: 3px;
+  /* font-weight: 700; */
+  /* letter-spacing: 1px; */
+  /* margin-left: 3px; */
   /* text-shadow: 1px 1px 2px RGB(166,124,0); */
   /* text-shadow: 1px 1px 2px RGB(0, 0, 0); */
 }
