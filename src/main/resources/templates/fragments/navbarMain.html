@@ -1,76 +1,164 @@
 <!-- src/main/resources/templates/fragments/navbar.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<body>
-  <nav class="navbar navbar-expand-lg navbar-dark glass-nav" th:fragment="navbar">
-    <style>
-      .glass-nav{
-        /* background: rgba(17, 24, 39, 0.55); */
-        background: rgba(156, 182, 211, 0.3);
-        -webkit-backdrop-filter: blur(5px) saturate(50%);
-        backdrop-filter: blur(5px) saturate(50%);
-        border-bottom: 1px solid rgba(255,255,255,0.08);
-        box-shadow: 0 2px 16px rgba(0,0,0,0.12);
-        border-radius: 0;
-        position: sticky;
-        top: 0;
-        z-index: 1030;
-      }
-      .glass-nav .nav-link{
-        color: rgba(255,255,255,0.9) !important;
-        line-height: 1;
-      }
-      .glass-nav .nav-link:hover{
-        color: #fff !important;
-      }
-      .glass-nav .navbar-toggler{
-        border-color: rgba(255,255,255,0.25);
-      }
-      .glass-nav .nav-link > i.bi{
-        font-size: 1.5rem !important;  /* 모든 아이콘 동일 크기 */
-        line-height: 1;
-        vertical-align: middle;
-      }
-    </style>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark glass-nav" th:fragment="navbar">
+      <style>
+        .glass-nav {
+          /* background: rgba(17, 24, 39, 0.55); */
+          background: rgba(156, 182, 211, 0.3);
+          -webkit-backdrop-filter: blur(5px) saturate(50%);
+          backdrop-filter: blur(5px) saturate(50%);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
+          border-radius: 0;
+          position: sticky;
+          top: 0;
+          z-index: 1030;
+        }
+        .glass-nav .nav-link {
+          color: rgba(255, 255, 255, 0.9) !important;
+          line-height: 1;
+        }
+        .glass-nav .nav-link:hover {
+          color: #fff !important;
+        }
+        .glass-nav .navbar-toggler {
+          border-color: rgba(255, 255, 255, 0.25);
+        }
+        .glass-nav .nav-link > i.bi {
+          font-size: 1.5rem !important; /* 모든 아이콘 동일 크기 */
+          line-height: 1;
+          vertical-align: middle;
+        }
+                /* 검색 패널 (아이콘 클릭 시 노출) */
+        .nav-search { position: relative; }
+        .nav-search-panel{
+          position:absolute; right:0; top:100%;
+          background:rgba(17,24,39,0.96);
+          border:1px solid rgba(255,255,255,0.12);
+          padding:10px; width:260px; z-index:1050;
+          display:none; border-radius:0; /* 각지게 */
+          box-shadow:0 6px 20px rgba(0,0,0,0.25);
+        }
+        .nav-search-panel input{
+          width:100%; border-radius:0; border:1px solid rgba(255,255,255,0.15);
+          background:rgba(255,255,255,0.08); color:#fff; padding:6px 10px;
+        }
+        .nav-search-panel input::placeholder{ color:rgba(255,255,255,0.65); }
+      </style>
 
-    <div class="container px-5">
-      <a class="navbar-brand" href="/" title="홈">
-        <img src="/assets/tempfit-logo.png" alt="TempFit" style="height: 38px" />
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav ms-auto mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" href="/community/list" title="게시글">
-              <i class="bi bi-collection fs-4"></i>
+      <div class="container px-5">
+        <a class="navbar-brand" href="/" title="홈">
+          <img src="/assets/tempfit-logo.png" alt="TempFit" style="height: 38px" />
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-lg-0">
+            <!-- <li class="nav-item" id="nav-home-item">
+              <a class="nav-link" href="/" title="홈">
+                <i class="bi bi-house fs-4"></i>
+              </a>
+            </li> -->
+            <li class="nav-item">
+              <a class="nav-link" href="/community/list" title="게시글">
+                <i class="bi bi-collection fs-4"></i>
+              </a>
+            </li>
+            <!-- 검색 아이콘 (아이콘 클릭 시 작성자 검색창 표시) -->
+          <li class="nav-item nav-search" id="nav-search-item">
+            <a href="#" class="nav-link" id="nav-search-toggle" title="작성자 검색">
+              <i class="bi bi-search fs-4"></i>
             </a>
+            <div class="nav-search-panel" id="nav-search-panel">
+              <form id="nav-search-form" action="/community/list" method="get" autocomplete="off">
+                <!-- 백엔드 호환을 위해 type=a 고정(작성자 검색) -->
+                <input type="hidden" name="type" value="a">
+                <input type="text" name="keyword" id="nav-search-input" placeholder="닉네임 검색" />
+              </form>
+            </div>
           </li>
-          <li class="nav-item" sec:authorize="!isAuthenticated()">
-            <a class="nav-link" href="/member/register" title="회원가입">
-              <i class="bi bi-person-add fs-4"></i>
-            </a>
-          </li>
-          <li class="nav-item" sec:authorize="!isAuthenticated()">
-            <a class="nav-link" href="/member/login" title="로그인">
-              <i class="bi bi-box-arrow-in-left fs-4"></i>
-            </a>
-          </li>
-          <li class="nav-item" sec:authorize="isAuthenticated()">
-            <a class="nav-link" th:href="@{/member/{id}(id=${#authentication.principal.email})}" title="프로필">
-              <i class="bi bi-person-circle fs-4"></i>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/member/logout}" title="로그아웃">
-              <i class="bi bi-box-arrow-right fs-4"></i>
-            </a>
-          </li>
-        </ul>
+            <li class="nav-item" sec:authorize="!isAuthenticated()">
+              <a class="nav-link" href="/member/register" title="회원가입">
+                <i class="bi bi-person-add fs-4"></i>
+              </a>
+            </li>
+            <li class="nav-item" sec:authorize="!isAuthenticated()">
+              <a class="nav-link" href="/member/login" title="로그인">
+                <i class="bi bi-box-arrow-in-left fs-4"></i>
+              </a>
+            </li>
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+              <a class="nav-link" th:href="@{/member/{id}(id=${#authentication.principal.email})}" title="프로필">
+                <i class="bi bi-person-circle fs-4"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/member/logout}" title="로그아웃">
+                <i class="bi bi-box-arrow-right fs-4"></i>
+              </a>
+            </li>
+          </ul>
+                  <!-- 경로에 따른 게시글/글쓰기 아이콘 토글 + 검색 패널 제어 -->
+        <script>
+          (function () {
+            try {
+              // ---- list/create 토글 ----
+              var isListPage = location && location.pathname && location.pathname.indexOf('/community/list') === 0;
+              var listItem = document.getElementById('nav-community-list-item');
+              var createItem = document.getElementById('nav-community-create-item');
+              if (listItem) {
+                if (isListPage) {
+                  if (createItem) { listItem.style.display = 'none'; createItem.style.display = ''; }
+                  else            { listItem.style.display = ''; }
+                } else {
+                  listItem.style.display = '';
+                  if (createItem) createItem.style.display = 'none';
+                }
+              }
+
+              // ---- 검색 패널 ----
+              var toggle = document.getElementById('nav-search-toggle');
+              var panel  = document.getElementById('nav-search-panel');
+              var input  = document.getElementById('nav-search-input');
+              var form   = document.getElementById('nav-search-form');
+
+              if (toggle && panel && input && form) {
+                toggle.addEventListener('click', function (e) {
+                  e.preventDefault();
+                  var showing = panel.style.display !== 'none' && panel.style.display !== '';
+                  panel.style.display = showing ? 'none' : 'block';
+                  if (!showing) setTimeout(function(){ input.focus(); }, 0);
+                });
+
+                // 패널 밖 클릭 시 닫기
+                document.addEventListener('click', function (e) {
+                  if (!panel.contains(e.target) && !toggle.contains(e.target)) {
+                    panel.style.display = 'none';
+                  }
+                });
+
+                // Enter로 제출 (keyword만 사용)
+                form.addEventListener('submit', function (e) {
+                  e.preventDefault();
+                  var q = (input.value || '').trim();
+                  var url = '/community/list';
+                  if (q.length > 0) url += '?type=a&keyword=' + encodeURIComponent(q);
+                  location.href = url;
+                });
+
+                // 입력창에서 Enter 시 submit
+                input.addEventListener('keydown', function (e) {
+                  if (e.key === 'Enter') { e.preventDefault(); form.requestSubmit(); }
+                });
+              }
+            } catch (e) { /* no-op */ }
+          })();
+        </script>
+        </div>
       </div>
-    </div>
-  </nav>
-</body>
+    </nav>
+  </body>
 </html>
