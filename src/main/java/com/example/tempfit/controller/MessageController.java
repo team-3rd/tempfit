@@ -5,6 +5,7 @@ import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Message;
 import com.example.tempfit.repository.MemberRepository;
 import com.example.tempfit.security.AuthMemberDTO;
+import com.example.tempfit.security.LoginMemberDetails;
 import com.example.tempfit.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -51,11 +52,45 @@ public class MessageController {
         List<Message> messages = messageService.getConversation(senderId, receiverId);
 
         List<ChatUserDTO> chatUsers = messageService.getChatPartners(senderId);
-        
+
         model.addAttribute("messages", messages);
         model.addAttribute("chatUsers", chatUsers);
-       
+
         return "chat";
+    }
+
+    // 대화창 - fragment 용
+    @GetMapping("/chatfrag/{receiverId}")
+    public String viewMessagesFrag(@PathVariable String receiverId,
+            @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
+            Model model) {
+
+        if (authMemberDTO == null) {
+            return "redirect:/login"; // 인증 안 된 경우 로그인 페이지로
+        }
+
+        String senderId = authMemberDTO.getEmail();
+
+        try {
+            Member sender = memberRepository.findByEmail(senderId)
+                    .orElseThrow(() -> new IllegalArgumentException("발신자를 찾을 수 없습니다."));
+            Member receiver = memberRepository.findByEmail(receiverId)
+                    .orElseThrow(() -> new IllegalArgumentException("수신자를 찾을 수 없습니다."));
+            model.addAttribute("receiver", receiver);
+            model.addAttribute("sender", sender);
+
+        } catch (IllegalArgumentException e) {
+            return "redirect:/";
+        }
+
+        List<Message> messages = messageService.getConversation(senderId, receiverId);
+
+        List<ChatUserDTO> chatUsers = messageService.getChatPartners(senderId);
+
+        model.addAttribute("messages", messages);
+        model.addAttribute("chatUsers", chatUsers);
+
+        return "chatfrag :: chatCard";
     }
 
     /**
@@ -85,10 +120,10 @@ public class MessageController {
     }
 
     @GetMapping("/chat")
-    public String openChatPage(@AuthenticationPrincipal Member user, Model model) {
+    public String openChatPage(@AuthenticationPrincipal AuthMemberDTO user, Model model) {
         List<ChatUserDTO> chatUsers = messageService.getChatPartners(user.getEmail());
         model.addAttribute("chatUsers", chatUsers);
         model.addAttribute("currentUser", user);
-        return "chat/chatPage";
+        return "fragments/chatUserListFrag :: chatUserListFrag";
     }
 }

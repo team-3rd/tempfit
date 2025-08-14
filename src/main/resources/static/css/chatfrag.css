@@ -1,0 +1,246 @@
+/* 채팅 버튼 */
+.chat-btn {
+  position: fixed;
+  bottom: 0px;
+  left: 81%;
+  width: 359px;
+  height: 48px;
+  border: 1px solid rgba(0, 0, 0, 0.175);
+  appearance: none;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0;
+  box-sizing: border-box;
+  cursor: pointer;
+  z-index: 1050;
+  overflow: hidden;
+  transition: bottom 0.3s ease-in-out; /* 부드럽게 위치 이동 */
+  font-size: 24px;
+  align-items: center;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+}
+.chatTitle {
+  position: absolute;
+  left: 7px;
+  padding-left: 10px;
+}
+.chatToggle {
+  position: absolute;
+  width: 36px;
+  right: 10px;
+  border-radius: 100%;
+  background-color: transparent;
+  align-items: center;
+  margin: 0 auto;
+}
+.chatToggle:hover {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+.backBtn {
+  display: inline-block;
+  margin-right: 15px;
+  width: 36px;
+  border: none;
+  border-radius: 100%;
+  background-color: transparent;
+  z-index: 1051;
+}
+.backBtn:hover {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+/* 채팅 */
+#offcanvasBottom {
+  width: 359 !important;
+  height: fit-content;
+  max-width: 359px;
+  max-height: 953px;
+  left: 81%;
+  border: 1px solid rgba(0, 0, 0, 0.175) !important;
+  border-top: none;
+}
+.offcanvas-noLogin {
+  align-items: center;
+  margin-top: 45%;
+}
+.noLoginText {
+  text-align: center;
+  text-decoration: none;
+  font-size: 28px;
+}
+.noLoginText a {
+  text-decoration: none;
+}
+#offcanvas-body {
+  padding: 0;
+  width: fit-content;
+  height: fit-content;
+  max-width: 357px;
+}
+.chatting-list {
+  width: 357px;
+  height: 432px;
+}
+.chats {
+  padding-top: 5px !important;
+  max-width: 359px;
+}
+.chat-list {
+  cursor: pointer;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+.chat-list span {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  font-size: 18px;
+  text-align: center;
+  vertical-align: 5px;
+}
+.chat-header {
+  padding-bottom: 5px !important;
+}
+.chat-container {
+  width: 357px !important;
+  height: 432px !important;
+  margin: 0 auto;
+  padding: 0 !important;
+}
+#chatbot-body {
+  width: 357px;
+  height: fit-content;
+  min-height: 432px !important;
+}
+.chatbot {
+  width: 357px !important;
+  height: 432px;
+}
+
+/* 채팅창 */
+.chat-list-section {
+  flex: 0 0 auto;
+  width: 90px;
+  padding-right: 7px;
+}
+.chat-box {
+  height: 378px;
+  overflow-y: auto;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+/* .chat-box::-webkit-scrollbar {
+  z-index: 2000;
+  scrollbar-width: 7px;
+}
+.chat-box::-webkit-scrollbar-track {
+  width: 10px;
+}
+.chat-box::-webkit-scrollbar-thumb {
+  background-color: #d5d5d5;
+  width: 5px;
+  border-radius: 5px;
+}
+.chat-box::-webkit-scrollbar-button {
+  display: block;
+  background-color: #d5d5d5;
+} */
+.chat-section {
+  flex: 0 0 auto;
+  width: 357px;
+}
+
+/* 메시지 줄 */
+.message-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+/* 좌우 정렬 */
+.message-left {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.message-right {
+  align-items: flex-end;
+  text-align: right;
+}
+
+/* 말풍선 */
+.bubble {
+  max-width: 75%;
+  padding: 10px 15px;
+  border-radius: 1rem;
+  display: inline-block;
+  white-space: normal;
+  word-wrap: break-word;
+  text-align: center;
+  line-height: normal;
+}
+
+.bubble-left {
+  background-color: #e9ecef;
+  color: #000;
+  border-top-left-radius: 0;
+}
+
+.bubble-right {
+  background-color: #0d6efd;
+  color: #fff;
+  border-top-right-radius: 0;
+}
+
+.send-btn {
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+}
+
+/* 시간 표시 */
+.timestamp {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 4px;
+}
+
+/* 입력창 영역 */
+.chat-input {
+  padding-left: 7px;
+  padding-right: 7px;
+  height: 48px;
+  width: 357px;
+  vertical-align: middle;
+}
+
+.input-section {
+  background-color: #fafafa;
+  display: flex;
+  vertical-align: middle;
+  padding: 4px;
+  font-size: 26px;
+}
+
+.chat-input textarea {
+  flex-grow: 2;
+  resize: none;
+  border: none;
+  transition: none;
+}
+
+.chat-input textarea:focus {
+  box-shadow: none;
+}
+
+.chat-input button {
+  white-space: nowrap;
+  align-self: flex-end;
+  height: auto;
+  background-color: rgba(0, 0, 0, 0);
+  border: none;
+}

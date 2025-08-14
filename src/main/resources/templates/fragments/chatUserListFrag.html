@@ -1,0 +1,14 @@
+<div th:fragment="chatUserListFrag(${chatUsers})">
+  <ul class="list-group chatting-list">
+    <li class="list-group-item chat-list">
+      <span data-url="/chatbot/frag">TempFit 챗봇</span>
+    </li>
+    <li th:each="user : ${chatUsers}" class="list-group-item chat-list">
+      <span
+        th:text="${user.name}"
+        th:attr="data-url='/messages/chatfrag/' + ${user.email}"
+        >사용자 이름</span
+      >
+    </li>
+  </ul>
+</div>

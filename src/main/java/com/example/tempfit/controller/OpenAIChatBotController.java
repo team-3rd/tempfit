@@ -62,6 +62,37 @@ public class OpenAIChatBotController {
         return "chatbot";
     }
 
+    // chatbot fragment 용
+    @GetMapping("/chatbot/frag")
+    public String chatbotPageFrag(
+            @RequestParam(value = "temp", required = false) Double temp,
+            @RequestParam(value = "loc", required = false) String loc,
+            @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(value = "lat", required = false) Double lat,
+            @RequestParam(value = "lon", required = false) Double lon,
+            Model model,
+            org.springframework.security.core.Authentication authentication) {
+        ZoneId kst = ZoneId.of("Asia/Seoul");
+        LocalDate today = LocalDate.now(kst);
+
+        List<ChatUserDTO> chatUsers = messageService.getChatPartners(authentication.getName());
+
+        model.addAttribute("ctxTemp", temp);
+        model.addAttribute("ctxLoc", loc);
+        model.addAttribute("ctxDate", (date != null ? date : today).toString());
+        model.addAttribute("ctxLat", lat);
+        model.addAttribute("ctxLon", lon);
+        model.addAttribute("todayKst", today.toString());
+        model.addAttribute("chatUsers", chatUsers);
+
+        boolean isLoggedIn = authentication != null
+                && authentication.isAuthenticated()
+                && !"anonymousUser".equals(String.valueOf(authentication.getPrincipal()));
+        model.addAttribute("isLoggedIn", isLoggedIn);
+
+        return "chatbotfrag :: chatbotCard";
+    }
+
     @PostMapping(value = "/api/chatbot", consumes = "application/json", produces = "application/json")
     @ResponseBody
     public OpenAIChatbotMessageResponse chat(

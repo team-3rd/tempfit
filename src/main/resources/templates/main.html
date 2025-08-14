@@ -2,7 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>템핏 TempFit</title>
@@ -13,32 +16,66 @@
       integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
       crossorigin="anonymous"
     />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+
     <link href="/css/darkmode.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
     <link href="css/main.css" rel="stylesheet" />
+    <link href="css/chatfrag.css" rel="stylesheet" />
     <!-- 리스트/디테일 카드 스타일 추가 -->
     <link rel="stylesheet" href="/css/list.css" />
     <link rel="stylesheet" href="/css/detail.css" />
     <!-- Pretendard Variable 웹폰트 (jsDelivr) -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link
+      href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/variable/pretendardvariable.css"
+      rel="stylesheet"
+    />
     <script th:if="${initialGender != null}" th:inline="javascript">
       /*<![CDATA[*/
       window.initialGender = /*[[${initialGender}]]*/ "male";
       /*]]>*/
-      <link
-        href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/variable/pretendardvariable.css"
-        rel="stylesheet"
-      />;
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <!-- 날씨 테마 CSS (캐시 무력화 파라미터 포함) -->
-    <link rel="stylesheet" th:href="@{/css/weatherTheme.css(v=${#dates.createNow().time})}" />
+    <link
+      rel="stylesheet"
+      th:href="@{/css/weatherTheme.css(v=${#dates.createNow().time})}"
+    />
   </head>
   <body>
     <!-- Navbar -->
     <th:block th:replace="fragments/navbarMain :: navbar"></th:block>
-    <th:block th:replace="fragments/toggle :: toggle"></th:block>
+    <!-- <th:block th:replace="fragments/toggle :: toggle"></th:block> -->
+
+    <button
+      class="chat-btn shadow-sm"
+      id="chat-btn"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#offcanvasBottom"
+      aria-controls="offcanvasBottom"
+      sec:authorize="isAuthenticated()"
+    >
+      <span class="chatTitle">
+        <i class="bi bi-chat-dots"></i>
+      </span>
+      <i class="chatToggle bi bi-chevron-double-up"></i>
+    </button>
+    <div
+      class="offcanvas offcanvas-bottom shadow-sm"
+      tabindex="-1"
+      id="offcanvasBottom"
+      data-bs-backdrop="false"
+      data-bs-scroll="true"
+      sec:authorize="isAuthenticated()"
+    >
+      <div class="offcanvas-body" id="offcanvas-body"></div>
+    </div>
 
     <div class="container px-4 px-lg-5">
       <!-- 1) 상단: 날씨 카드 + 추천 코디 -->
@@ -49,7 +86,9 @@
         <!-- 오늘의 추천 코디 카드 (수정된 부분) -->
         <div class="col-12 col-lg-6 d-flex flex-column h-100">
           <div class="card shadow-sm mb-4 flex-grow-1 w-100 position-relative">
-            <div class="card-body d-flex flex-column align-items-center justify-content-start h-100 position-relative">
+            <div
+              class="card-body d-flex flex-column align-items-center justify-content-start h-100 position-relative"
+            >
               <!-- 성별 버튼 -->
               <button
                 id="toggle-gender-btn"
@@ -88,28 +127,65 @@
               </button>
 
               <!-- 로딩 오버레이 -->
-              <div id="guide-loading-overlay" class="loading-wrap" style="display: none"></div>
+              <div
+                id="guide-loading-overlay"
+                class="loading-wrap"
+                style="display: none"
+              ></div>
 
               <!-- 로딩 스피너 -->
-              <div id="guide-loading-spinner" class="loading-spinner" style="display: none"></div>
+              <div
+                id="guide-loading-spinner"
+                class="loading-spinner"
+                style="display: none"
+              ></div>
 
               <!-- 로딩 텍스트 -->
-              <div id="guide-loading-text" class="loading-text" style="display: none">추천 코디 불러오는 중...</div>
-
-              <h2 class="mb-3 text-center" style="font-size: 1.4rem; font-weight: 700; letter-spacing: -1px">
-                <i class="bi bi-clipboard-check"></i> 오늘의 추천 코디 <i class="bi bi-clipboard-check"></i>
+              <div
+                id="guide-loading-text"
+                class="loading-text"
+                style="display: none"
+              >
+                추천 코디 불러오는 중...
+              </div>
+              <h2
+                class="mb-3 text-center"
+                style="
+                  font-size: 1.4rem;
+                  font-weight: 700;
+                  letter-spacing: -1px;
+                "
+              >
+                <i class="bi bi-clipboard-check"></i> 오늘의 추천 코디
+                <i class="bi bi-clipboard-check"></i>
               </h2>
               <!-- 성별 라벨: JS 에서 동적으로 채워넣음 -->
-              <div id="gender-label" class="text-center mb-2" style="font-size: 1.3rem; font-weight: 600">
+              <div
+                id="gender-label"
+                class="text-center mb-2"
+                style="font-size: 1.3rem; font-weight: 600"
+              >
                 <!-- 여기에 <남성> 또는 <여성><br/><br/> 이 채워짐 -->
               </div>
               <!-- 2×2 그리드: 위행(outer, top) · 아래행(bottom, shoes) -->
-              <div id="clothing-guide" class="d-flex flex-column" style="gap: 16px">
+              <div
+                id="clothing-guide"
+                class="d-flex flex-column"
+                style="gap: 16px"
+              >
                 <!-- 위쪽 행: 상의 · 아우터 -->
-                <div id="clothing-guide-row1" class="d-flex justify-content-center" style="gap: 16px"></div>
+                <div
+                  id="clothing-guide-row1"
+                  class="d-flex justify-content-center"
+                  style="gap: 16px"
+                ></div>
 
                 <!-- 아래쪽 행: 하의 · 신발 -->
-                <div id="clothing-guide-row2" class="d-flex justify-content-center" style="gap: 16px"></div>
+                <div
+                  id="clothing-guide-row2"
+                  class="d-flex justify-content-center"
+                  style="gap: 16px"
+                ></div>
               </div>
             </div>
           </div>
@@ -122,16 +198,27 @@
           <!-- <div class="card shadow-sm"> -->
           <!-- <div class="card-body p-4"> -->
           <!-- 로딩 오버레이/스피너/텍스트 -->
-          <div id="best-loading-text" class="loading-text" style="display: none">베스트룩 불러오는 중...</div>
+          <div
+            id="best-loading-text"
+            class="loading-text"
+            style="display: none"
+          >
+            베스트룩 불러오는 중...
+          </div>
           <!-- 타이틀 -->
           <div class="best-looks-title-box" title="일주일마다 초기화 됩니다.">
             <div class="current-temp-text1">
-              현재 온도 기준(<span id="current-temp-tag" class="current-temp-tag">-℃</span>
+              현재 온도 기준(<span
+                id="current-temp-tag"
+                class="current-temp-tag"
+                >-℃</span
+              >
               <span class="current-temp-text2">)</span>
             </div>
             <div class="style-best">
               <span class="best-looks">
-                <i class="bi bi-trophy-fill text-warning"></i> 명예의 전당 <i class="bi bi-trophy-fill text-warning"></i>
+                <i class="bi bi-trophy-fill text-warning"></i> 명예의 전당
+                <i class="bi bi-trophy-fill text-warning"></i>
               </span>
             </div>
           </div>
@@ -153,24 +240,40 @@
     <script src="js/weather.js"></script>
     <script src="js/modalLoader.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/chatfrag.js"></script>
     <script src="js/address.js"></script>
     <script src="js/weatherLoad.js" type="module"></script>
 
     <!-- BEST LOOKS 상세 모달 -->
-    <div class="modal fade" id="bestDetailModal" tabindex="-1" aria-hidden="true">
+    <div
+      class="modal fade"
+      id="bestDetailModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
       <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
           <div class="modal-header border-0">
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="닫기"
+            ></button>
           </div>
           <div class="modal-body p-0">
             <!-- 가장 간단하고 안전한 방식: detail.html 전체를 iframe으로 띄우기 -->
-            <iframe id="detailFrame" style="width: 100%; height: 75vh; border: 0"></iframe>
+            <iframe
+              id="detailFrame"
+              style="width: 100%; height: 75vh; border: 0"
+            ></iframe>
           </div>
         </div>
       </div>
     </div>
     <!-- 날씨 테마 JS (캐시 무력화 파라미터 포함) -->
-    <script th:src="@{/js/weatherTheme.js(v=${#dates.createNow().time})}"></script>
+    <script
+      th:src="@{/js/weatherTheme.js(v=${#dates.createNow().time})}"
+    ></script>
   </body>
 </html>

@@ -18,7 +18,8 @@ const aiCache = { male: null, female: null };
 // (참고: 클라이언트 추정은 신뢰하지 않고, 최종 판단은 서버 응답으로 함)
 function isLoggedIn() {
   if (window.isLoggedIn === true) return true;
-  const bodyFlag = document.body && document.body.getAttribute("data-authenticated");
+  const bodyFlag =
+    document.body && document.body.getAttribute("data-authenticated");
   if (bodyFlag === "true") return true;
   const htmlFlag = document.documentElement.getAttribute("data-authenticated");
   if (htmlFlag === "true") return true;
@@ -59,7 +60,11 @@ function showCardNotice(cardEl, message) {
 function needsLogin(res) {
   const url = (res && res.url) || "";
   if (res.status === 401 || res.status === 403) return true;
-  if (res.redirected && (url.includes("/member/login") || url.includes("/login"))) return true;
+  if (
+    res.redirected &&
+    (url.includes("/member/login") || url.includes("/login"))
+  )
+    return true;
   return false;
 }
 
@@ -117,7 +122,8 @@ function renderSlots(data, gender) {
   // 하의 (원피스 예외)
   const onePieceTops = ["피케/카라 원피스", "원피스", "맥시드레스"];
   const topName = data.top?.productName || data.top?.name;
-  const isOnePiece = gender === "female" && topName && onePieceTops.includes(topName);
+  const isOnePiece =
+    gender === "female" && topName && onePieceTops.includes(topName);
   if (isOnePiece) {
     row2.innerHTML += emptySlotMarkup("하의");
   } else {
@@ -131,7 +137,12 @@ function renderSlots(data, gender) {
 }
 
 function renderSlotOrEmpty(part, item, container) {
-  const labelMap = { top: "상의", outer: "아우터", bottom: "하의", shoes: "신발" };
+  const labelMap = {
+    top: "상의",
+    outer: "아우터",
+    bottom: "하의",
+    shoes: "신발",
+  };
   const name = item?.productName || item?.name;
   if (name) {
     renderSlot(part, item, container);
@@ -145,7 +156,12 @@ function renderSlot(part, item, container) {
   if (!name) return;
   const imageUrl = item.imageUrl;
   const encoded = encodeURIComponent(name);
-  const labelMap = { top: "상의", outer: "아우터", bottom: "하의", shoes: "신발" };
+  const labelMap = {
+    top: "상의",
+    outer: "아우터",
+    bottom: "하의",
+    shoes: "신발",
+  };
 
   container.innerHTML += `
     <div class="guide-card" style="display:inline-block;width:150px;text-align:center;margin:0 6px;">
@@ -163,7 +179,9 @@ function renderSlot(part, item, container) {
         </a>
       </div>
       <b style="display:block;margin-bottom:2px;">${labelMap[part]}</b>
-      <span class="product-name" style="font-size:14px;line-height:1.2;">${escapeHtml(name)}</span>
+      <span class="product-name" style="font-size:14px;line-height:1.2;">${escapeHtml(
+        name
+      )}</span>
     </div>`;
 }
 
@@ -188,7 +206,9 @@ function emptySlotMarkup(label) {
 async function fetchDbGuideBoth(tempNum, { silent = false } = {}) {
   if (!silent) showGuideLoading();
   try {
-    const res = await fetch(`/api/coordi/guide?temp=${tempNum}&r=${Date.now()}`);
+    const res = await fetch(
+      `/api/coordi/guide?temp=${tempNum}&r=${Date.now()}`
+    );
     if (!res.ok) throw new Error(res.status);
     const data = await res.json(); // { male: {...}, female: {...} }
     dbCache.male = data.male || null;
@@ -196,7 +216,8 @@ async function fetchDbGuideBoth(tempNum, { silent = false } = {}) {
   } catch (e) {
     console.error("DB 가이드 로드 실패", e);
     if (!silent) {
-      document.getElementById("clothing-guide-row1").textContent = "추천 코디 정보를 가져오지 못했습니다";
+      document.getElementById("clothing-guide-row1").textContent =
+        "추천 코디 정보를 가져오지 못했습니다";
       document.getElementById("clothing-guide-row2").textContent = "";
     }
   } finally {
@@ -208,7 +229,9 @@ async function fetchDbGuideBoth(tempNum, { silent = false } = {}) {
 async function fetchDbGuideForGender(tempNum, gender, { silent = false } = {}) {
   if (!silent) showGuideLoading();
   try {
-    const res = await fetch(`/api/coordi/guide?temp=${tempNum}&r=${Date.now()}`);
+    const res = await fetch(
+      `/api/coordi/guide?temp=${tempNum}&r=${Date.now()}`
+    );
     if (!res.ok) throw new Error(res.status);
     const data = await res.json();
     if (gender === "male") dbCache.male = data.male || null;
@@ -216,7 +239,8 @@ async function fetchDbGuideForGender(tempNum, gender, { silent = false } = {}) {
   } catch (e) {
     console.error("DB 가이드(성별별) 로드 실패", e);
     if (!silent) {
-      document.getElementById("clothing-guide-row1").textContent = "추천 코디 정보를 가져오지 못했습니다";
+      document.getElementById("clothing-guide-row1").textContent =
+        "추천 코디 정보를 가져오지 못했습니다";
       document.getElementById("clothing-guide-row2").textContent = "";
     }
   } finally {
@@ -238,7 +262,8 @@ async function fetchAiBoth(tempNum, { silent = false } = {}) {
     aiCache.male = aiCache.male || [];
     aiCache.female = aiCache.female || [];
     if (!silent) {
-      document.getElementById("clothing-guide-row1").textContent = "AI 추천 정보를 가져오지 못했습니다.";
+      document.getElementById("clothing-guide-row1").textContent =
+        "AI 추천 정보를 가져오지 못했습니다.";
       document.getElementById("clothing-guide-row2").textContent = "";
     }
   } finally {
@@ -258,7 +283,8 @@ async function fetchAiForGender(gender, tempNum, { silent = false } = {}) {
   } catch (e) {
     console.error("AI 추천(성별별) 로드 실패", e);
     if (!silent) {
-      document.getElementById("clothing-guide-row1").textContent = "AI 추천 정보를 가져오지 못했습니다.";
+      document.getElementById("clothing-guide-row1").textContent =
+        "AI 추천 정보를 가져오지 못했습니다.";
       document.getElementById("clothing-guide-row2").textContent = "";
     }
   } finally {
@@ -268,11 +294,13 @@ async function fetchAiForGender(gender, tempNum, { silent = false } = {}) {
 
 // ─── DB 렌더 ───
 function renderDbByGender(gender) {
-  document.getElementById("gender-label").textContent = gender === "male" ? "- 남성 -" : "- 여성 -";
+  document.getElementById("gender-label").textContent =
+    gender === "male" ? "- 남성 -" : "- 여성 -";
 
   const data = dbCache[gender];
   if (!data) {
-    document.getElementById("clothing-guide-row1").textContent = "추천 코디 정보를 가져오지 못했습니다";
+    document.getElementById("clothing-guide-row1").textContent =
+      "추천 코디 정보를 가져오지 못했습니다";
     document.getElementById("clothing-guide-row2").textContent = "";
     return;
   }
@@ -281,7 +309,8 @@ function renderDbByGender(gender) {
 
 // ─── AI 렌더 ───
 async function renderAiByGender(gender) {
-  document.getElementById("gender-label").textContent = gender === "male" ? "- 남성 (AI) -" : "- 여성 (AI) -";
+  document.getElementById("gender-label").textContent =
+    gender === "male" ? "- 남성 (AI) -" : "- 여성 (AI) -";
 
   const results = aiCache[gender] || [];
   const row1 = document.getElementById("clothing-guide-row1");
@@ -311,7 +340,7 @@ async function renderAiByGender(gender) {
       return;
     }
 
-container.innerHTML += `
+    container.innerHTML += `
   <div class="guide-card" style="display:inline-block;width:150px;text-align:center;margin:0 6px;">
     <div class="guide-box" style="
          width:150px;height:150px;
@@ -320,9 +349,9 @@ container.innerHTML += `
          align-items:center;justify-content:center;
          overflow:hidden;margin-bottom:6px;
          box-shadow:0 3px 16px rgba(60,70,86,0.07);">
-      <a href="${item.link || '#'}" target="_blank" rel="noreferrer"
+      <a href="${item.link || "#"}" target="_blank" rel="noreferrer"
          style="display:block;width:100%;height:100%;color:inherit;">
-        <img src="${item.image || ''}" alt="${escapeHtml(productNameFallback)}"
+        <img src="${item.image || ""}" alt="${escapeHtml(productNameFallback)}"
              style="width:100%;height:100%;object-fit:cover;border-radius:0;" />
       </a>
     </div>
@@ -339,7 +368,9 @@ function loadBestLooksData(tempNum) {
     .then(renderBestLooks)
     .catch(() => {
       const area = document.getElementById("best-looks-area");
-      if (area) area.innerHTML = "<div class='text-danger'>※BEST LOOKS 정보를 가져올 수 없습니다!※</div>";
+      if (area)
+        area.innerHTML =
+          "<div class='text-danger'>※BEST LOOKS 정보를 가져올 수 없습니다!※</div>";
     });
 }
 
@@ -356,7 +387,7 @@ window.addEventListener("weatherLoaded", async (e) => {
   loadBestLooksData(lastTempNum);
 
   // AI: 둘 다 프리페치
-  await fetchAiBoth(lastTempNum, { silent: true });
+  // await fetchAiBoth(lastTempNum, { silent: true });
 });
 
 // ─── 온도범위 로드 ───
@@ -381,21 +412,25 @@ function updateCurrentTempTag(tempNum) {
 
   // 색상/아이콘 매핑 (FREEZING→VERY_HOT)
   const map = {
-    1: { cls: "text-primary", icon: "bi-thermometer-snow" },  // FREEZING
-    2: { cls: "text-primary",    icon: "bi-thermometer-snow"  },  // VERY_COLD
-    3: { cls: "text-primary",    icon: "bi-thermometer-low"  },  // COLD
-    4: { cls: "text-info", icon: "bi-thermometer-low"  },  // COOL
-    5: { cls: "text-info", icon: "bi-thermometer-half" },  // MILD
-    6: { cls: "text-warning", icon: "bi-thermometer-half" },  // WARM
-    7: { cls: "text-warning", icon: "bi-thermometer-high" },  // HOT
-    8: { cls: "text-danger",  icon: "bi-thermometer-sun"  },  // VERY_HOT
+    1: { cls: "text-primary", icon: "bi-thermometer-snow" }, // FREEZING
+    2: { cls: "text-primary", icon: "bi-thermometer-snow" }, // VERY_COLD
+    3: { cls: "text-primary", icon: "bi-thermometer-low" }, // COLD
+    4: { cls: "text-info", icon: "bi-thermometer-low" }, // COOL
+    5: { cls: "text-info", icon: "bi-thermometer-half" }, // MILD
+    6: { cls: "text-warning", icon: "bi-thermometer-half" }, // WARM
+    7: { cls: "text-warning", icon: "bi-thermometer-high" }, // HOT
+    8: { cls: "text-danger", icon: "bi-thermometer-sun" }, // VERY_HOT
   };
 
-  const { cls, icon } = map[code] || { cls: "text-body", icon: "bi-thermometer" };
+  const { cls, icon } = map[code] || {
+    cls: "text-body",
+    icon: "bi-thermometer",
+  };
   const iconHtml = `<i class="bi ${icon} me-1 ${cls} temp-shadow"></i>`;
 
-  document.getElementById("current-temp-tag").innerHTML =
-    `${iconHtml}<b class="${cls} temp-shadow">${tempNum}℃</b>`;
+  document.getElementById(
+    "current-temp-tag"
+  ).innerHTML = `${iconHtml}<b class="${cls} temp-shadow">${tempNum}℃</b>`;
 }
 
 // ─── 초기 바인딩 ───
@@ -421,7 +456,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         await renderAiByGender(currentGender);
       } else {
         if (!dbCache[currentGender]) {
-          await fetchDbGuideForGender(lastTempNum, currentGender, { silent: false });
+          await fetchDbGuideForGender(lastTempNum, currentGender, {
+            silent: false,
+          });
+          await fetchDbGuideForGender(lastTempNum, currentGender, {
+            silent: false,
+          });
         }
         renderDbByGender(currentGender);
       }
@@ -434,7 +474,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     aiBtn.innerHTML = '<i class="bi bi-openai text-dark"></i>';
     aiBtn.addEventListener("click", async () => {
       useAiGuide = !useAiGuide;
-      aiBtn.innerHTML = useAiGuide ? '<i class="bi bi-grid"></i>' : '<i class="bi bi-openai text-dark"></i>';
+      aiBtn.innerHTML = useAiGuide
+        ? '<i class="bi bi-grid"></i>'
+        : '<i class="bi bi-openai text-dark"></i>';
 
       if (lastTempNum == null) return;
 
@@ -445,7 +487,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         await renderAiByGender(currentGender);
       } else {
         if (!dbCache[currentGender]) {
-          await fetchDbGuideForGender(lastTempNum, currentGender, { silent: false });
+          await fetchDbGuideForGender(lastTempNum, currentGender, {
+            silent: false,
+          });
+          await fetchDbGuideForGender(lastTempNum, currentGender, {
+            silent: false,
+          });
         }
         renderDbByGender(currentGender);
       }
@@ -462,7 +509,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         await fetchAiForGender(currentGender, lastTempNum, { silent: false });
         await renderAiByGender(currentGender);
       } else {
-        await fetchDbGuideForGender(lastTempNum, currentGender, { silent: false });
+        await fetchDbGuideForGender(lastTempNum, currentGender, {
+          silent: false,
+        });
+        await fetchDbGuideForGender(lastTempNum, currentGender, {
+          silent: false,
+        });
         renderDbByGender(currentGender);
       }
     });
@@ -485,7 +537,11 @@ document.addEventListener("DOMContentLoaded", async () => {
           else renderDbByGender(currentGender);
         }
       }
-    }).observe(weatherTempEl, { childList: true, subtree: true, characterData: true });
+    }).observe(weatherTempEl, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
   }
 });
 
@@ -503,7 +559,9 @@ function renderBestLooks(data) {
   const area = document.getElementById("best-looks-area");
   if (!area) return;
 
-  const list = Array.isArray(data) ? data : Object.values(data || {}).filter(Boolean);
+  const list = Array.isArray(data)
+    ? data
+    : Object.values(data || {}).filter(Boolean);
   const posts = list.slice(0, 4);
 
   const timeAgo = (iso) => {
@@ -528,7 +586,6 @@ function renderBestLooks(data) {
       case "눈":
         return "bi-cloud-snow";
       default:
-        return "";
     }
   };
   const k = (n) => {
@@ -545,13 +602,22 @@ function renderBestLooks(data) {
   const makeCardHtml = (post) => {
     const id = post.id;
     const nickname = post.authorNickname || post.author?.nickname || "익명";
-    const profile = post.profileImageUrl || post.author?.profileImageUrl || "/assets/default-profile.png";
+    const profile =
+      post.profileImageUrl ||
+      post.author?.profileImageUrl ||
+      "/assets/default-profile.png";
+    post.profileImageUrl ||
+      post.author?.profileImageUrl ||
+      "/assets/default-profile.png";
     const created = timeAgo(post.createdDate);
     const icon = skyIcon(post.sky);
     const maxT = Number.isFinite(post.maxTemp) ? `${post.maxTemp}°` : "";
     const minT = Number.isFinite(post.minTemp) ? `${post.minTemp}°` : "";
-    const img = post.repImageUrl ? `/uploads/${post.repImageUrl}` : "/assets/no-image.png";
-    const hasExtra = Array.isArray(post.extraImageUrls) && post.extraImageUrls.length > 0;
+    const img = post.repImageUrl
+      ? `/uploads/${post.repImageUrl}`
+      : "/assets/no-image.png";
+    const hasExtra =
+      Array.isArray(post.extraImageUrls) && post.extraImageUrls.length > 0;
 
     const likeCount = post.recommendCount ?? 0;
     const commentCount = post.commentCount ?? 0;
@@ -579,7 +645,16 @@ function renderBestLooks(data) {
 
         <div class="image-wrap">
           <img src="${img}" alt="대표사진" class="card-img-top"/>
-          ${hasExtra ? `<i class="bi bi-stickies-fill multi-indicator"></i>` : ""}
+          ${
+            hasExtra
+              ? `<i class="bi bi-stickies-fill multi-indicator"></i>`
+              : ""
+          }
+          ${
+            hasExtra
+              ? `<i class="bi bi-stickies-fill multi-indicator"></i>`
+              : ""
+          }
         </div>
 
         <div class="card-body-ig">
@@ -589,18 +664,33 @@ function renderBestLooks(data) {
                 <button type="button" class="btn-action btn-like" data-id="${id}" title="좋아요">
                   <i class="bi ${liked ? "bi-heart-fill" : "bi-heart"}"></i>
                 </button>
-                <span class="count like-count" data-count="${likeCount}">${k(likeCount)}</span>
+                <span class="count like-count" data-count="${likeCount}">${k(
+      likeCount
+    )}</span>
+                <span class="count like-count" data-count="${likeCount}">${k(
+      likeCount
+    )}</span>
               </div>
               <div class="action-group">
                 <button type="button" class="btn-action btn-comment" data-id="${id}" title="댓글">
                   <i class="bi bi-chat"></i>
                 </button>
-                <span class="count" data-count="${commentCount}">${k(commentCount)}</span>
+                <span class="count" data-count="${commentCount}">${k(
+      commentCount
+    )}</span>
+                <span class="count" data-count="${commentCount}">${k(
+      commentCount
+    )}</span>
               </div>
             </div>
             <div class="right-actions">
               <button type="button" class="btn-action btn-bookmark" data-id="${id}" title="북마크">
-                <i class="bi ${bookmarked ? "bi-bookmark-fill" : "bi-bookmark"}"></i>
+                <i class="bi ${
+                  bookmarked ? "bi-bookmark-fill" : "bi-bookmark"
+                }"></i>
+                <i class="bi ${
+                  bookmarked ? "bi-bookmark-fill" : "bi-bookmark"
+                }"></i>
               </button>
             </div>
           </div>
@@ -657,33 +747,27 @@ function renderBestLooks(data) {
       const postId = card.getAttribute("data-id");
       if (!isValidId(postId)) return;
       // ✅ 공용 로더 호출
-      if (window.ModalLoader && typeof window.ModalLoader.openDetailModal === "function") {
+      if (
+        window.ModalLoader &&
+        typeof window.ModalLoader.openDetailModal === "function"
+      ) {
         window.ModalLoader.openDetailModal(postId);
       }
     });
   });
 
-  // 좋아요: 서버 응답으로 로그인 판별
   area.querySelectorAll(".btn-like").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
       e.preventDefault();
-
-      const card = btn.closest(".post-card");
       const id = btn.getAttribute("data-id");
       const icon = btn.querySelector(".bi");
       const countEl = btn.parentElement.querySelector(".like-count");
       let current = Number(countEl.getAttribute("data-count") || 0);
       const liked = icon.classList.contains("bi-heart-fill");
-
-      fetch(`/community/recommend/${id}`, { method: "POST", credentials: "same-origin" })
-        .then((res) => {
-          if (needsLogin(res)) {
-            showCardNotice(card, "로그인이 필요합니다.");
-            return;
-          }
-          if (!res.ok) throw new Error(String(res.status));
-          // 성공 시에만 UI 토글
+      fetch(`/community/recommend/${id}`, { method: "POST" })
+        .catch(() => {})
+        .finally(() => {
           if (liked) {
             icon.classList.remove("bi-heart-fill");
             icon.classList.add("bi-heart");
@@ -695,8 +779,7 @@ function renderBestLooks(data) {
           }
           countEl.setAttribute("data-count", current);
           countEl.textContent = k(current);
-        })
-        .catch(() => {});
+        });
     });
   });
 
@@ -711,7 +794,10 @@ function renderBestLooks(data) {
       const icon = btn.querySelector(".bi");
       const checked = icon.classList.contains("bi-bookmark-fill");
 
-      fetch(`/community/bookmark/${id}`, { method: "POST", credentials: "same-origin" })
+      fetch(`/community/bookmark/${id}`, {
+        method: "POST",
+        credentials: "same-origin",
+      })
         .then((res) => {
           if (needsLogin(res)) {
             showCardNotice(card, "로그인이 필요합니다.");

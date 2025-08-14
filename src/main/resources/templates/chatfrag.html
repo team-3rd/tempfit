@@ -1,0 +1,49 @@
+<!-- <th:block th:replace="fragments/navbar :: navbar"></th:block>
+  <th:block th:replace="fragments/toggle :: toggle"></th:block> -->
+
+<div th:fragment="chatCard" class="container chat-container chats d-flex">
+  <!-- <div class="chat-list-section">
+    <div
+      th:replace="~{fragments/chatUserListFrag :: chatUserListFrag(${chatUsers})}"
+    ></div>
+  </div> -->
+  <div class="chat-section">
+    <input type="hidden" id="senderEmail" th:attr="value=${sender.email}" />
+    <input type="hidden" id="receiverEmail" th:attr="value=${receiver.email}" />
+
+    <div class="chat-box" id="chatBox">
+      <div
+        th:each="msg : ${messages}"
+        th:class="|message-row ${msg.sender.email == sender.email ? 'message-right' : 'message-left'}|"
+      >
+        <div
+          th:class="|bubble ${msg.sender.email == sender.email ? 'bubble-right' : 'bubble-left'}|"
+          th:text="${msg.content}"
+        >
+          메시지 내용
+        </div>
+        <div
+          class="timestamp"
+          th:text="${#temporals.format(msg.sentAt, 'yyyy-MM-dd HH:mm')}"
+        >
+          시간
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <div class="input-section">
+        <textarea
+          id="msgInput"
+          class="form-control"
+          rows="1"
+          placeholder="메시지를 입력하세요"
+        ></textarea>
+        <button id="sendBtn" class="send">
+          <i class="send-btn bi bi-send"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <th:block th:replace="fragments/footer :: footer"></th:block> -->
