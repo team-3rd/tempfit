@@ -15,8 +15,9 @@ body {
 .product-card {
   display: flex;
   flex-direction: column;
+  position: relative;              /* ▶ 버튼 절대배치용 */
   background: #fff;
-  border-radius: 0 !important;
+  border-radius: 0 !important;     /* 각지게 */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   text-decoration: none;
@@ -31,6 +32,7 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   cursor: pointer;
 }
+
 /* 이미지 래퍼 */
 .product-img-wrapper {
   position: relative;
@@ -97,3 +99,60 @@ body {
 .product-card .product-img-wrapper {
   border-bottom: 1px solid #e5e5e5;
 }
+
+/* ========================= */
+/*  찜(가방) 버튼 스타일링   */
+/* ========================= */
+.dib-btn {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;                    /* 카드 오른쪽 아래 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 0;                /* 각지게 */
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+  opacity: 0;                      /* 기본은 숨김 */
+  transform: translateY(4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, background 0.12s ease;
+  z-index: 2;
+}
+.product-card:hover .dib-btn {
+  opacity: 1;                      /* 카드 호버 시 표시 */
+  transform: translateY(0);
+}
+.dib-btn:hover {
+  background: rgba(0,0,0,0.72);
+}
+.dib-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+.dib-btn i {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* 체크(활성) 상태 */
+.dib-btn.active {
+  background: rgba(20,20,20,0.85);
+}
+
+/* 키보드 접근성: 포커스 시도 보이기 */
+.dib-btn:focus-visible {
+  outline: 2px solid #333;
+  outline-offset: 2px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* (선택) 터치 환경에서 항상 보이게 하고 싶다면 아래 주석 해제
+@media (hover: none) and (pointer: coarse) {
+  .dib-btn { opacity: 1; transform: none; }
+}
+*/

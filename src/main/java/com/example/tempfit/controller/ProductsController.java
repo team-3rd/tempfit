@@ -53,6 +53,6 @@ public class ProductsController {
 
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", totalPages);
-        return "products/list";
+        return "products/products";
     }
 }
