@@ -627,7 +627,7 @@ h1 {
 }
 /* 온도 아이콘/숫자 공통: 부드러운 그림자 아웃라인 */
 .temp-shadow {
-  text-shadow: 0 0 2px rgba(0, 0, 0, 0.4), 1px 1px 2px rgba(0, 0, 0, 0.4), -1px 1px 2px rgba(0, 0, 0, 0.645),
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.4), 1px 1px 2px rgba(0, 0, 0, 0.4), -1px 1px 2px rgba(0, 0, 0, 0.4),
     1px -1px 2px rgba(0, 0, 0, 0.4), -1px -1px 2px rgba(0, 0, 0, 0.4);
 }
 
@@ -645,4 +645,37 @@ h1 {
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4)) drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.4))
     drop-shadow(-1px 1px 2px rgba(0, 0, 0, 0.4)) drop-shadow(1px -1px 2px rgba(0, 0, 0, 0.4))
     drop-shadow(-1px -1px 2px rgba(0, 0, 0, 0.4));
+}
+/* ===== 메인/커뮤니티: 버튼(BTN) & 앵커(A) 호버 시 살짝 확대 ===== */
+
+/* 오늘의 추천 코디 카드 상단 컨트롤 버튼들 */
+#toggle-gender-btn,
+#ai-btn,
+#refresh-images-btn{
+  transition: transform 140ms ease, box-shadow 140ms ease;
+  transform-origin: center;
+  will-change: transform;
+}
+#toggle-gender-btn:hover,
+#ai-btn:hover,
+#refresh-images-btn:hover{
+  transform: scale(1.06);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+#toggle-gender-btn:active,
+#ai-btn:active,
+#refresh-images-btn:active{
+  transform: scale(0.98);
+}
+
+/* 오늘의 추천 코디 – 타일(150×150 카드) 자체가 확대되도록 */
+#clothing-guide .guide-box{
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  transform-origin: center;
+  will-change: transform;
+}
+#clothing-guide .guide-card:hover .guide-box,
+#clothing-guide .guide-box:hover{
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.14);
 }

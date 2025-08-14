@@ -148,8 +148,8 @@ function renderSlot(part, item, container) {
   const labelMap = { top: "상의", outer: "아우터", bottom: "하의", shoes: "신발" };
 
   container.innerHTML += `
-    <div style="display:inline-block;width:150px;text-align:center;margin:0 6px;">
-      <div style="
+    <div class="guide-card" style="display:inline-block;width:150px;text-align:center;margin:0 6px;">
+      <div class="guide-box" style="
            width:150px;height:150px;
            border:none;border-radius:0;
            background:#fff;display:flex;
@@ -169,8 +169,8 @@ function renderSlot(part, item, container) {
 
 function emptySlotMarkup(label) {
   return `
-    <div style="text-align:center;width:150px;margin:0 6px;">
-      <div style="
+    <div class="guide-card" style="text-align:center;width:150px;margin:0 6px;">
+      <div class="guide-box" style="
            width:150px;height:150px;
            border:none;border-radius:0;
            background:#fff;color:#888;
@@ -311,18 +311,18 @@ async function renderAiByGender(gender) {
       return;
     }
 
-    container.innerHTML += `
-  <div style="display:inline-block;width:150px;text-align:center;margin:0 6px;">
-    <div style="
+container.innerHTML += `
+  <div class="guide-card" style="display:inline-block;width:150px;text-align:center;margin:0 6px;">
+    <div class="guide-box" style="
          width:150px;height:150px;
          border:none;border-radius:0;
          background:#fff;display:flex;
          align-items:center;justify-content:center;
          overflow:hidden;margin-bottom:6px;
          box-shadow:0 3px 16px rgba(60,70,86,0.07);">
-      <a href="${item.link || "#"}" target="_blank" rel="noreferrer"
+      <a href="${item.link || '#'}" target="_blank" rel="noreferrer"
          style="display:block;width:100%;height:100%;color:inherit;">
-        <img src="${item.image || ""}" alt="${escapeHtml(productNameFallback)}"
+        <img src="${item.image || ''}" alt="${escapeHtml(productNameFallback)}"
              style="width:100%;height:100%;object-fit:cover;border-radius:0;" />
       </a>
     </div>
