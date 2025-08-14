@@ -650,11 +650,6 @@ function renderBestLooks(data) {
               ? `<i class="bi bi-stickies-fill multi-indicator"></i>`
               : ""
           }
-          ${
-            hasExtra
-              ? `<i class="bi bi-stickies-fill multi-indicator"></i>`
-              : ""
-          }
         </div>
 
         <div class="card-body-ig">
@@ -667,9 +662,6 @@ function renderBestLooks(data) {
                 <span class="count like-count" data-count="${likeCount}">${k(
       likeCount
     )}</span>
-                <span class="count like-count" data-count="${likeCount}">${k(
-      likeCount
-    )}</span>
               </div>
               <div class="action-group">
                 <button type="button" class="btn-action btn-comment" data-id="${id}" title="댓글">
@@ -678,16 +670,10 @@ function renderBestLooks(data) {
                 <span class="count" data-count="${commentCount}">${k(
       commentCount
     )}</span>
-                <span class="count" data-count="${commentCount}">${k(
-      commentCount
-    )}</span>
               </div>
             </div>
             <div class="right-actions">
               <button type="button" class="btn-action btn-bookmark" data-id="${id}" title="북마크">
-                <i class="bi ${
-                  bookmarked ? "bi-bookmark-fill" : "bi-bookmark"
-                }"></i>
                 <i class="bi ${
                   bookmarked ? "bi-bookmark-fill" : "bi-bookmark"
                 }"></i>
