@@ -14,6 +14,63 @@ const dbCache = { male: null, female: null };
 // AI 결과 캐시: 성별별로 따로 보관
 const aiCache = { male: null, female: null };
 
+// ─── 로그인/오버레이 유틸 ───
+// (참고: 클라이언트 추정은 신뢰하지 않고, 최종 판단은 서버 응답으로 함)
+function isLoggedIn() {
+  if (window.isLoggedIn === true) return true;
+  const bodyFlag = document.body && document.body.getAttribute("data-authenticated");
+  if (bodyFlag === "true") return true;
+  const htmlFlag = document.documentElement.getAttribute("data-authenticated");
+  if (htmlFlag === "true") return true;
+  const meta = document.querySelector('meta[name="logged-in"]');
+  if (meta && meta.content === "true") return true;
+  return false;
+}
+function showCardNotice(cardEl, message) {
+  if (!cardEl) return;
+  const cs = window.getComputedStyle(cardEl);
+  if (!["relative", "absolute", "fixed", "sticky"].includes(cs.position)) {
+    cardEl.style.position = "relative";
+  }
+  const note = document.createElement("div");
+  note.className = "card-notice";
+  note.textContent = message;
+  note.style.position = "absolute";
+  note.style.left = "50%";
+  note.style.bottom = "14px";
+  note.style.transform = "translateX(-50%)";
+  note.style.background = "rgba(20,20,20,0.96)";
+  note.style.color = "#fff";
+  note.style.padding = "8px 12px";
+  note.style.fontSize = "13px";
+  note.style.whiteSpace = "nowrap"; // ✅ 한 줄 고정
+  note.style.borderRadius = "0";
+  note.style.boxShadow = "0 2px 10px rgba(0,0,0,0.25)";
+  note.style.pointerEvents = "none";
+  note.style.zIndex = "50";
+  cardEl.appendChild(note);
+  setTimeout(() => {
+    note.style.transition = "opacity 220ms ease";
+    note.style.opacity = "0";
+    setTimeout(() => note.remove(), 240);
+  }, 1400);
+}
+// 서버 응답이 “로그인 필요” 상황인지 판별
+function needsLogin(res) {
+  const url = (res && res.url) || "";
+  if (res.status === 401 || res.status === 403) return true;
+  if (res.redirected && (url.includes("/member/login") || url.includes("/login"))) return true;
+  return false;
+}
+
+// ─── ID 유효성 유틸 ───
+function isValidId(v) {
+  if (v == null) return false;
+  if (v === "" || v === "null" || v === "undefined") return false;
+  const n = Number(v);
+  return Number.isInteger(n) && n > 0;
+}
+
 // ─── 텍스트 유틸 ───
 function stripTags(s) {
   return s ? s.replace(/<[^>]*>/g, "") : "";
@@ -44,17 +101,6 @@ function hideGuideLoading() {
   document.getElementById("guide-loading-spinner").style.display = "none";
   document.getElementById("guide-loading-text").style.display = "none";
 }
-
-// function showBestLoading() {
-//   document.getElementById("best-loading-overlay").style.display = "block";
-//   document.getElementById("best-loading-spinner").style.display = "block";
-//   document.getElementById("best-loading-text").style.display = "block";
-// }
-// function hideBestLoading() {
-//   document.getElementById("best-loading-overlay").style.display = "none";
-//   document.getElementById("best-loading-spinner").style.display = "none";
-//   document.getElementById("best-loading-text").style.display = "none";
-// }
 
 // ─── 공통 슬롯 렌더 헬퍼 ───
 function renderSlots(data, gender) {
@@ -176,7 +222,7 @@ async function fetchDbGuideForGender(tempNum, gender, { silent = false } = {}) {
   }
 }
 
-// ─── AI 가이드: temp만으로 male/female 동시 로드(초기 프리페치/온도변경 시) ───
+// ─── AI 가이드: temp만으로 male/female 동시 로드 ───
 async function fetchAiBoth(tempNum, { silent = false } = {}) {
   if (!silent) showGuideLoading();
   try {
@@ -198,7 +244,7 @@ async function fetchAiBoth(tempNum, { silent = false } = {}) {
   }
 }
 
-// ─── AI 가이드 부분 갱신: 현재 성별만 재호출하여 해당 캐시만 대체 ───
+// ─── AI 가이드 부분 갱신 ───
 async function fetchAiForGender(gender, tempNum, { silent = false } = {}) {
   if (!silent) showGuideLoading();
   try {
@@ -287,17 +333,12 @@ async function renderAiByGender(gender) {
 
 // ─── BEST LOOKS 로드 ───
 function loadBestLooksData(tempNum) {
-  // showBestLoading(); // ← 스피너/오버레이 표시 (비활성화)
-
   fetch(`/api/community/best?temp=${tempNum}`, { credentials: "same-origin" })
     .then(res => res.json())
     .then(renderBestLooks)
     .catch(() => {
       const area = document.getElementById("best-looks-area");
       if (area) area.innerHTML = "<div class='text-danger'>※BEST LOOKS 정보를 가져올 수 없습니다!※</div>";
-    })
-    .finally(() => {
-      // hideBestLoading(); // ← 스피너/오버레이 숨김 (비활성화)
     });
 }
 
@@ -399,7 +440,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // 리프레시 버튼: 현재 보이는 "가상페이지"만 갱신
+  // 리프레시 버튼
   const refreshBtn = document.getElementById("refresh-images-btn");
   if (refreshBtn) {
     refreshBtn.addEventListener("click", async () => {
@@ -445,51 +486,14 @@ function renderByGender(gender) {
   }
 }
 
-// ─── 모달 유틸 (detail.html fragment 로드) ───
-function ensureDetailModal() {
-  let modal = document.getElementById("detailModal");
-  if (modal) return modal;
-  const wrap = document.createElement("div");
-  wrap.innerHTML = `
-  <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content"></div>
-    </div>
-  </div>`;
-  document.body.appendChild(wrap.firstElementChild);
-  return document.getElementById("detailModal");
-}
-async function openDetailModal(postId) {
-  const modalEl = ensureDetailModal();
-  const content = modalEl.querySelector(".modal-content");
-  content.innerHTML = ""; // 초기화
-  try {
-    // ✅ 경로 수정: /fragment 제거 + 쿠키 포함
-    const res = await fetch(`/community/detail/${postId}`, { credentials: "same-origin" });
-    content.innerHTML = await res.text();
-    // detail.js 초기화
-    if (window.initDetailModal) window.initDetailModal(content);
-  } catch (e) {
-    content.innerHTML = `<div class="p-4">상세 정보를 불러오지 못했습니다.</div>`;
-  }
-  const bsModal = new bootstrap.Modal(modalEl);
-  bsModal.show();
-}
-
-// ─── BEST LOOKS 렌더(Top 4, 스타일 구분 없음) ───
+// ─── BEST LOOKS 렌더(Top 4) ───
 function renderBestLooks(data) {
   const area = document.getElementById("best-looks-area");
   if (!area) return;
 
-  // 응답이 배열(신규) or 맵(구버전 호환) 모두 처리
-  const list = Array.isArray(data)
-    ? data
-    : Object.values(data || {}).filter(Boolean);
-
-  // Top 4만 사용
+  const list = Array.isArray(data) ? data : Object.values(data || {}).filter(Boolean);
   const posts = list.slice(0, 4);
 
-  // 헬퍼들
   const timeAgo = (iso) => {
     if (!iso) return "";
     const t = new Date(iso).getTime();
@@ -501,18 +505,12 @@ function renderBestLooks(data) {
   };
   const skyIcon = (sky) => {
     switch (sky) {
-      case "맑음":
-        return "bi-sun";
-      case "흐림":
-        return "bi-cloud-sun";
-      case "구름 많음":
-        return "bi-clouds";
-      case "비":
-        return "bi-cloud-rain";
-      case "눈":
-        return "bi-cloud-snow";
-      default:
-        return "";
+      case "맑음": return "bi-sun";
+      case "흐림": return "bi-cloud-sun";
+      case "구름 많음": return "bi-clouds";
+      case "비": return "bi-cloud-rain";
+      case "눈": return "bi-cloud-snow";
+      default: return "";
     }
   };
   const k = (n) => {
@@ -524,15 +522,12 @@ function renderBestLooks(data) {
     return String(num);
   };
 
-  // 렌더 시작
   area.innerHTML = "";
 
-  // 카드 생성 함수 (리스트와 동일 스타일)
   const makeCardHtml = (post) => {
     const id = post.id;
     const nickname = post.authorNickname || post.author?.nickname || "익명";
-    const profile =
-      post.profileImageUrl || post.author?.profileImageUrl || "/assets/default-profile.png";
+    const profile = post.profileImageUrl || post.author?.profileImageUrl || "/assets/default-profile.png";
     const created = timeAgo(post.createdDate);
     const icon = skyIcon(post.sky);
     const maxT = Number.isFinite(post.maxTemp) ? `${post.maxTemp}°` : "";
@@ -609,15 +604,14 @@ function renderBestLooks(data) {
     area.appendChild(col);
   });
 
-  // 부족하면 빈 카드 채우기(레이아웃 유지)
+  // 부족하면 빈 카드 채우기(레이아웃 유지) - 클릭 완전 차단
   for (let i = posts.length; i < 4; i++) {
     const col = document.createElement("div");
     col.className = "col-12 col-sm-6 col-lg-3 d-flex";
     col.innerHTML = `
-      <div class="post-card h-100" style="display:flex;flex-direction:column;">
+      <div class="post-card h-100 is-empty" style="display:flex;flex-direction:column;pointer-events:none;cursor:default;opacity:.7;">
         <div class="card-top">
           <div class="left">
-            <img class="profileImg" src="/assets/default-profile.png" alt="프로필"/>
             <div class="name-time">
               <p class="nickname">게시글 없음</p>
               <p class="time">&nbsp;</p>
@@ -625,76 +619,101 @@ function renderBestLooks(data) {
           </div>
         </div>
         <div class="image-wrap" style="display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;background:#fafafa;">
-          <span class="text-muted">없음</span>
+          <span class="text-muted">게시글 없음</span>
         </div>
         <div class="card-body-ig">
-          <div class="caption"><span class="name">-</span><span class="content">해당 온도의 게시글이 아직 없어요.</span></div>
+          <div class="caption"><span class="name">-</span><span class="content">해당 온도의 게시글이 아직 없어요...</span></div>
         </div>
       </div>
     `;
     area.appendChild(col);
   }
 
-// ── 상호작용(모달/좋아요/북마크) 바인딩: 동적 렌더이므로 여기서 직접 연결 ──
-area.querySelectorAll(".post-card").forEach((card) => {
-  card.addEventListener("click", (e) => {
-    if (e.target.closest(".btn-action")) return; // 액션 버튼 클릭은 무시
-    e.preventDefault();
-    const postId = card.getAttribute("data-id");
-    openDetailModal(postId); // ✅ 공용 유틸 사용
+  // ── 상호작용 바인딩 ──
+
+  // 모달: 유효한 카드만
+  area.querySelectorAll(".post-card[data-id]").forEach((card) => {
+    card.addEventListener("click", (e) => {
+      if (e.target.closest(".btn-action")) return;
+      e.preventDefault();
+      const postId = card.getAttribute("data-id");
+      if (!isValidId(postId)) return;
+      // ✅ 공용 로더 호출
+      if (window.ModalLoader && typeof window.ModalLoader.openDetailModal === "function") {
+        window.ModalLoader.openDetailModal(postId);
+      }
+    });
   });
-});
 
-area.querySelectorAll(".btn-like").forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    const id = btn.getAttribute("data-id");
-    const icon = btn.querySelector(".bi");
-    const countEl = btn.parentElement.querySelector(".like-count");
-    let current = Number(countEl.getAttribute("data-count") || 0);
-    const liked = icon.classList.contains("bi-heart-fill");
+  // 좋아요: 서버 응답으로 로그인 판별
+  area.querySelectorAll(".btn-like").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
 
-    fetch(`/community/recommend/${id}`, { method: "POST" })
-      .catch(() => {})
-      .finally(() => {
-        if (liked) {
-          icon.classList.remove("bi-heart-fill");
-          icon.classList.add("bi-heart");
-          current = Math.max(0, current - 1);
-        } else {
-          icon.classList.remove("bi-heart");
-          icon.classList.add("bi-heart-fill");
-          current = current + 1;
-        }
-        countEl.setAttribute("data-count", current);
-        countEl.textContent = k(current);
-      });
+      const card = btn.closest(".post-card");
+      const id = btn.getAttribute("data-id");
+      const icon = btn.querySelector(".bi");
+      const countEl = btn.parentElement.querySelector(".like-count");
+      let current = Number(countEl.getAttribute("data-count") || 0);
+      const liked = icon.classList.contains("bi-heart-fill");
+
+      fetch(`/community/recommend/${id}`, { method: "POST", credentials: "same-origin" })
+        .then((res) => {
+          if (needsLogin(res)) {
+            showCardNotice(card, "로그인이 필요합니다.");
+            return;
+          }
+          if (!res.ok) throw new Error(String(res.status));
+          // 성공 시에만 UI 토글
+          if (liked) {
+            icon.classList.remove("bi-heart-fill");
+            icon.classList.add("bi-heart");
+            current = Math.max(0, current - 1);
+          } else {
+            icon.classList.remove("bi-heart");
+            icon.classList.add("bi-heart-fill");
+            current = current + 1;
+          }
+          countEl.setAttribute("data-count", current);
+          countEl.textContent = k(current);
+        })
+        .catch(() => {});
+    });
   });
-});
 
-area.querySelectorAll(".btn-bookmark").forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    const id = btn.getAttribute("data-id");
-    const icon = btn.querySelector(".bi");
-    const checked = icon.classList.contains("bi-bookmark-fill");
+  // 북마크: 서버 응답으로 로그인 판별
+  area.querySelectorAll(".btn-bookmark").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
 
-    fetch(`/community/bookmark/${id}`, { method: "POST" })
-      .catch(() => {})
-      .finally(() => {
-        icon.classList.toggle("bi-bookmark-fill", !checked);
-        icon.classList.toggle("bi-bookmark", checked);
-      });
+      const card = btn.closest(".post-card");
+      const id = btn.getAttribute("data-id");
+      const icon = btn.querySelector(".bi");
+      const checked = icon.classList.contains("bi-bookmark-fill");
+
+      fetch(`/community/bookmark/${id}`, { method: "POST", credentials: "same-origin" })
+        .then((res) => {
+          if (needsLogin(res)) {
+            showCardNotice(card, "로그인이 필요합니다.");
+            return;
+          }
+          if (!res.ok) throw new Error(String(res.status));
+          // 성공 시에만 UI 토글
+          icon.classList.toggle("bi-bookmark-fill", !checked);
+          icon.classList.toggle("bi-bookmark", checked);
+        })
+        .catch(() => {});
+    });
   });
-});
 
-area.querySelectorAll(".btn-comment").forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    btn.closest(".post-card")?.click();
+  // 댓글 버튼 = 카드 클릭
+  area.querySelectorAll(".btn-comment").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      btn.closest(".post-card[data-id]")?.click();
+    });
   });
-});
 }

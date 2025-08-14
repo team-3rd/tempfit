@@ -117,7 +117,7 @@ public class CommunityController {
             @RequestParam String content) {
 
         Member member = memberRepository.findByEmailAndFromSocial(
-                authMemberDTO.getUsername(), authMemberDTO.isFromSocial());
+                authMemberDTO.getEmail(), authMemberDTO.isFromSocial()); // ✅ getEmail로 수정
 
         commentService.addComment(id, member, content);
         return "redirect:/community/detail/" + id;
@@ -190,11 +190,11 @@ public class CommunityController {
     }
 
     @GetMapping("/detail/{id}/fragment")
-public String detailFragment(
-        @PathVariable Long id,
-        @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
-        Model model) {
-    // 기존 detail() 로직 재사용(중복 없음)
-    return detail(id, authMemberDTO, model);
-}
+    public String detailFragment(
+            @PathVariable Long id,
+            @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
+            Model model) {
+        // 기존 detail() 로직 재사용(중복 없음)
+        return detail(id, authMemberDTO, model);
+    }
 }

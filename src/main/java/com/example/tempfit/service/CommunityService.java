@@ -376,8 +376,9 @@ public class CommunityService {
             // 로그인 O일 때만 좋아요/북마크 표시
             if (me != null) {
                 Community ref = communityRepository.getReferenceById(dto.getId());
-                boolean liked = recommendRepository.findByMemberAndCommunity(me, ref).isPresent();
-                boolean bookmarked = bookmarkRepository.findByMemberAndCommunity(me, ref).isPresent();
+                // ✅ 단건 조회 대신 존재 여부로 변경 (중복 데이터가 있어도 안전)
+                boolean liked = recommendRepository.existsByMemberAndCommunity(me, ref);
+                boolean bookmarked = bookmarkRepository.existsByMemberAndCommunity(me, ref);
                 dto.setLikedByMe(liked);
                 dto.setBookmarkedByMe(bookmarked);
             } else {

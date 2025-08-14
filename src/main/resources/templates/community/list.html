@@ -26,7 +26,7 @@
           method="get"
           style="gap: 8px; max-width: 600px; width: 100%"
         >
-          <div class="d-flex" style="gap: 8px">
+          <!-- <div class="d-flex" style="gap: 8px">
             <select name="type" class="form-select form-select-sm">
               <option value="">전체</option>
               <option value="t" th:selected="${type=='t'}">제목</option>
@@ -41,14 +41,14 @@
             />
             <button type="submit" class="btn btn-outline-secondary btn-sm">검색</button>
             <a th:href="@{/community/list}" class="btn btn-outline-secondary btn-sm reset-btn">초기화</a>
-          </div>
+          </div> -->
         </form>
-        <a
+        <!-- <a
           th:href="@{/community/create}"
           class="btn btn-primary btn-sm ms-3 create-btn"
           sec:authorize="isAuthenticated()"
-          >글쓰기</a
-        >
+          ><i class="bi bi-pencil-square fs-5"></i></a
+        > -->
       </div>
 
       <div class="post-grid">
@@ -144,6 +144,7 @@
     <div th:replace="fragments/footer :: footer"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/modalLoader.js"></script>
     <script src="/js/detail.js"></script>
     <script src="/js/list.js"></script>
   </body>
