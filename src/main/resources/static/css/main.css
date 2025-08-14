@@ -1,69 +1,112 @@
-.html {
-  scroll-behavior: smooth;
+/* =======================================================================================
+   main.css  (전역: 각지게 + 테두리 제거 + 그림자)  ── 단, '날씨 카드'만 예외 처리
+   - 모든 UI 표면을 각지게(border-radius:0)
+   - 테두리 제거 후 box-shadow로 경계 표현
+   - 날씨 카드(.card 안에 .weather-content가 있는 카드)는 둥글게/기존 스타일 유지
+   ======================================================================================= */
+
+/* ── 0) 전역 Bootstrap 반지름 변수 오버라이드 ── */
+:root {
+  --bs-border-radius: 0 !important;
+  --bs-border-radius-sm: 0 !important;
+  --bs-border-radius-lg: 0 !important;
+  --bs-border-radius-xl: 0 !important;
+  --bs-border-radius-xxl: 0 !important;
+  --bs-border-radius-pill: 0 !important;
 }
-.li {
-  display: inline-block;
-  position: static;
-  width: 45px;
-  height: 134px;
-  text-align: center;
-  -webkit-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
-  list-style: none;
-  margin-left: 2.5px;
-  margin-right: 2.5px;
+
+/* ── 1) 공통 표면: 카드/모달/드롭다운/토스트/아코디언/입력/탭/페이지네이션 등 ── */
+.card,
+.modal-content,
+.dropdown-menu,
+.offcanvas,
+.toast,
+.list-group-item,
+.accordion-item,
+.accordion-button,
+.form-control,
+.input-group-text,
+.img-thumbnail,
+.badge,
+.alert,
+.pagination .page-link,
+.nav-tabs .nav-link,
+.carousel,
+.carousel-item,
+.tooltip .tooltip-inner,
+.popover {
+  border-radius: 0 !important;
 }
-.wx-time {
-  position: absolute;
-  left: 8px;
-  right: 3px;
-  bottom: 25px;
-  display: block;
-  height: 13px;
-  line-height: 13px;
-  font-size: 1rem;
-  font-weight: normal;
-  letter-spacing: -0.18px;
-  color: #77777a;
-  color: rgba(var(--gray40), 1);
+
+.card,
+.modal-content,
+.dropdown-menu,
+.offcanvas,
+.toast,
+.list-group-item,
+.accordion-item,
+.accordion-button,
+.form-control,
+.input-group-text,
+.img-thumbnail,
+.badge,
+.alert,
+.pagination .page-link,
+.nav-tabs .nav-link,
+.carousel {
+  border: none !important;
 }
-.icon-box {
-  position: absolute;
-  right: 2px;
-  bottom: 50px;
-  z-index: 5;
+
+.card,
+.modal-content,
+.dropdown-menu,
+.offcanvas,
+.toast,
+.alert,
+.list-group-item,
+.accordion,
+.popover,
+.tooltip .tooltip-inner {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
-.weather-content {
-  position: relative;
-  height: 100%;
-  padding: 5px;
+
+/* 버튼 기본(각짐 + 테두리 제거 + 약한 그림자) */
+.btn {
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
-.mh {
-  position: relative;
-  max-height: 190px;
+
+/* 추천 코디 카드 조작버튼 */
+.control-btn,
+#toggle-gender-btn,
+#ai-btn,
+#refresh-images-btn {
+  border: none !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+  color: #6c757d;
 }
-.btn-prev {
-  display: block;
-  position: absolute;
-  top: 50%;
-  left: 0px;
-  margin-top: -18px;
-  overflow: hidden;
-  width: 36px;
-  height: 36px;
-  line-height: 0;
-  color: transparent;
-  z-index: 5;
-  border: 1px solid #a6a6a6;
-  border-radius: 50%;
-  background-color: #fff;
+
+/* ─────────────────────────────────────────────────────────────────────────────── */
+/* 2) ‘날씨 카드’ 예외 처리
+      - .card 내부에 .weather-content(.mh 등)이 존재하면 그 카드는 둥근 모서리/테두리 유지  */
+/*   최신 브라우저(:has) 지원. 크롬/엣지/사파리16.4+ OK                                    */
+/* ─────────────────────────────────────────────────────────────────────────────── */
+.card:has(.weather-content),
+.card:has(.mh) {
+  border-radius: 0.75rem !important; /* 둥글게 */
+  border: 1px solid rgba(0, 0, 0, 0.12) !important; /* 얇은 테두리 */
+  box-shadow: 0 3px 16px 0 rgba(60, 70, 86, 0.07) !important; /* 부드러운 그림자 */
 }
+
+/* 날씨 카드 내부 전용 요소들은 원형/기존 룩 유지 */
+.btn-prev,
 .btn-next {
   display: block;
   position: absolute;
   top: 50%;
-  right: 5px;
   margin-top: -18px;
   overflow: hidden;
   width: 36px;
@@ -71,9 +114,16 @@
   line-height: 0;
   color: transparent;
   z-index: 5;
-  border: 1px solid #a6a6a6;
-  border-radius: 50%;
+  border: 1px solid #a6a6a6; /* 원래 테두리 */
+  border-radius: 50%; /* 동그랗게 */
   background-color: #fff;
+  box-shadow: none; /* 전역 그림자 제거 */
+}
+.btn-prev {
+  left: 0px;
+}
+.btn-next {
+  right: 5px;
 }
 .btn-next::after {
   content: "";
@@ -105,6 +155,101 @@
   color: transparent;
   z-index: 1;
 }
+
+/* 위치 선택 버튼은 원형 유지 */
+.loc-btn {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background-image: url(../images/crosshair-24.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 100%;
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
+  box-shadow: none; /* 전역 그림자 제외 */
+}
+
+/* 지역 선택 레이어: 테두리 및 약간 둥근 모서리 유지 */
+.layer-do,
+.layer-si {
+  position: absolute;
+  z-index: 10;
+  top: 80px;
+  left: 0;
+  border: 1px solid #eee; /* 기존 테두리 */
+  border-top: 0;
+  background-color: #fff;
+  border-radius: 0.5rem; /* 살짝 둥글게 */
+  box-shadow: none; /* 전역 그림자 제외 */
+}
+
+/* 내일/모레 배지: 테두리형 유지(둥근 pill) */
+.tom-border,
+.aft-tom-border {
+  border: 1px solid currentColor;
+  border-radius: 12px;
+  box-shadow: none;
+  box-sizing: border-box;
+  height: 24px;
+  letter-spacing: 0.2px;
+  line-height: 22px;
+  bottom: 20px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────── */
+/* 3) 기존 main.css 나머지 스타일(필요 최소만 그대로 유지)                               */
+/* ─────────────────────────────────────────────────────────────────────────────── */
+
+.html {
+  scroll-behavior: smooth;
+}
+
+.li {
+  display: inline-block;
+  position: static;
+  width: 45px;
+  height: 134px;
+  text-align: center;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  list-style: none;
+  margin-left: 2.5px;
+  margin-right: 2.5px;
+}
+
+.wx-time {
+  position: absolute;
+  left: 8px;
+  right: 3px;
+  bottom: 25px;
+  display: block;
+  height: 13px;
+  line-height: 13px;
+  font-size: 1rem;
+  font-weight: normal;
+  letter-spacing: -0.18px;
+  color: #77777a;
+  color: rgba(var(--gray40), 1);
+}
+
+.icon-box {
+  position: absolute;
+  right: 2px;
+  bottom: 50px;
+  z-index: 5;
+}
+
+.weather-content {
+  position: relative;
+  height: 100%;
+  padding: 5px;
+}
+.mh {
+  position: relative;
+  max-height: 190px;
+}
+
 .inner {
   position: relative;
   height: 135px;
@@ -116,7 +261,7 @@
   top: 10px;
   left: 28px;
   width: 87.75%;
-  padding-left: 0px;
+  padding-left: 0;
   line-height: 0;
   overflow-x: hidden;
   -ms-overflow-style: none;
@@ -143,6 +288,7 @@
 ul + li {
   background-color: rgb(197, 197, 197);
 }
+
 .empty-post {
   display: flex;
   flex-direction: column;
@@ -162,6 +308,7 @@ ul + li {
   font-size: 1.09rem;
   font-weight: 500;
 }
+
 .left-space {
   padding-left: 5px;
 }
@@ -176,15 +323,19 @@ ul + li {
   top: -5px;
   left: 30px;
 }
+
 .loc {
   border-bottom: 1px solid #eee;
 }
 .pad-bt {
   padding-bottom: 5px;
 }
+
 body {
   min-height: 100vh;
+  font-family: "Pretendard Variable", sans-serif;
 }
+
 footer.py-5.bg-dark {
   height: 56px !important;
   padding-top: 0 !important;
@@ -194,6 +345,7 @@ footer.py-5.bg-dark {
   justify-content: center;
   width: 100%;
 }
+
 .section-gap {
   margin-top: 48px;
   margin-bottom: 48px;
@@ -201,28 +353,38 @@ footer.py-5.bg-dark {
 .section-gap-bottom {
   margin-bottom: 48px;
 }
-.best-looks-title-box{
-  display:flex;
-  flex-direction:column;
-  flex-wrap:wrap;
-  align-items:center;
-  justify-content:center;
-  background:#fff;
-  border:none !important;        /* 테두리 제거 */
-  border-radius:0 !important;    /* 각지게 */
-  box-shadow:0 2px 8px rgba(0,0,0,0.06);
-  padding:16px 32px;
-  margin:0 auto 24px;
-  font-size:1.18rem;
-  font-weight:600;
-  max-width:590px;
-  gap:6px;
+
+.best-looks-title-box {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  /* ▼ navbar의 glass-nav와 동일한 유리효과 적용 ▼ */
+  background: rgba(156, 182, 211, 0.3);
+  -webkit-backdrop-filter: blur(5px) saturate(50%);
+  backdrop-filter: blur(5px) saturate(50%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
+  /* ▲ ------------------------------------------- ▲ */
+  border-radius: 0 !important; /* 각지게 */
+  padding: 16px 32px;
+  margin: 0 auto 24px;
+  font-size: 1.18rem;
+  font-weight: 600;
+  /* max-width:590px; */
+  max-width: 1250px;
+  gap: 6px;
 }
 .current-temp-tag {
   font-weight: 500;
   font-size: 1.05em;
   white-space: nowrap;
-  /* color: #2076ff; ← 여기 추가 */
+}
+/* Hall of Fame 헤더 글자색만 흰색으로 */
+.best-looks-title-box .current-temp-text1,
+.best-looks-title-box .style-best {
+  color: #fff !important;
 }
 .style-best {
   font-size: 1.1em;
@@ -234,14 +396,8 @@ footer.py-5.bg-dark {
   gap: 5px;
 }
 .best-looks {
-  /* color: RGB(255, 215, 0); */
-  /* font-weight: 700; */
-  /* letter-spacing: 1px; */
-  /* margin-left: 3px; */
-  /* text-shadow: 1px 1px 2px RGB(166,124,0); */
-  /* text-shadow: 1px 1px 2px RGB(0, 0, 0); */
 }
-/* 카드 상단 스타일명 헤더 (optional 추가) */
+
 .card-style-header {
   background-color: #f0f4f8;
   border-bottom: 2px solid #ddd;
@@ -249,184 +405,21 @@ footer.py-5.bg-dark {
   font-size: 1.1rem;
   font-weight: 600;
   text-align: center;
-  border-top-left-radius: 0.25rem;
-  border-top-right-radius: 0.25rem;
-}
-#toggle-gender-btn {
-  border: 1px solid rgb(210, 210, 210);
-  color: #6c757d;
-  background-color: transparent !important;
-}
-/* #toggle-gender-btn i {
-  color: blue;
-} */
-#color-btn {
-  border: 1px solid rgb(210, 210, 210);
-  color: #6c757d;
-}
-#ai-btn {
-  border: 1px solid rgb(210, 210, 210);
-  color: #6c757d;
-  background-color: transparent !important;
-}
-#refresh-images-btn {
-  border: 1px solid rgb(210, 210, 210);
-  color: #6c757d;
-  background-color: transparent !important;
-}
-/* 전역 기본 폰트로 Pretendard Variable 사용 */
-body {
-  font-family: "Pretendard Variable", sans-serif;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
-/* 선택적으로 굵기/스타일별 사용 예시 */
 h1 {
-  font-weight: 700; /* Bold */
+  font-weight: 700;
   font-family: "Pretendard Variable", sans-serif;
 }
 .light-text {
-  font-weight: 300; /* Light */
+  font-weight: 300;
 }
-#weather-location {
-  position: relative;
-  z-index: 2;
-  background-image: url(../images/white-cutted.png);
-  background-position-x: 100%;
-  background-position-y: -200px;
-  background-repeat: repeat-x;
-}
-.address-list {
-  overflow: hidden;
-}
-.list-li-left {
-  float: left;
-  background-position: 0, 0;
-  text-align: center;
-  height: 38px;
-  line-height: 25px;
-  list-style: none;
-}
-.list-li-center {
-  float: left;
-  background-position: 0, -100px;
-  text-align: center;
-  height: 38px;
-  line-height: 25px;
-  list-style: none;
-}
-.list-li-right {
-  float: right;
-  background-position: 0, -200px;
-  text-align: center;
-  height: 38px;
-  list-style: none;
-}
-.loc-btn {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  background-image: url(../images/crosshair-24.png);
-  background-repeat: no-repeat;
-  background-position: center;
-  border-radius: 100%;
-  border: 0.5px solid rgba(0, 0, 0, 0.15);
-}
-.do-btn {
-  display: inline-block;
-  height: 16px;
-  padding: 9px 13px 12px 12px;
-  font-size: 1.4rem;
-  color: #333;
-  text-decoration: none;
-}
-.si-btn {
-  display: inline-block;
-  height: 16px;
-  padding: 9px 13px 12px 12px;
-  font-size: 1.4rem;
-  color: #333;
-  text-decoration: none;
-}
-.layer-do {
-  position: absolute;
-  z-index: 10;
-  top: 80px;
-  left: 0;
-  border: 1px solid #eee;
-  border-top: 0;
-  background-color: #fff;
-}
-.layer-si {
-  position: absolute;
-  z-index: 10;
-  top: 80px;
-  left: 0;
-  border: 1px solid #eee;
-  border-top: 0;
-  background-color: #fff;
-}
-.list-do {
-  overflow: hidden;
-  width: 95%;
-  padding-top: 10px;
-}
-.list-si {
-  overflow: hidden;
-  width: 100%;
-  padding-top: 10px;
-}
-.list-li-do {
-  float: left;
-  width: 125px;
-  line-height: 1.4375;
-  list-style: none;
-  text-align: left;
-  padding-right: 15px;
-}
-.list-li-si {
-  float: left;
-  width: 125px;
-  line-height: 1.4375;
-  list-style: none;
-  text-align: left;
-  padding-right: 15px;
-}
-.li-do-btn {
-  font-size: 1.1rem;
-  color: #333;
-  text-decoration: none;
-  width: 100%;
-}
-.li-si-btn {
-  font-size: 1rem;
-  color: #333;
-  text-decoration: none;
-  width: 100%;
-}
-.list-close {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  right: 30px;
-}
-.disabled {
-  pointer-events: none;
-  color: #333;
-  cursor: default;
-  text-decoration: none;
-}
-.mList {
-  margin-top: 8px;
-  line-height: 1.8rem;
-}
-#weather-sky {
-  display: inline-block;
-  vertical-align: top;
-}
-#weather-humid {
-  display: inline-block;
-  vertical-align: top;
-}
+
+/* 날씨 텍스트/값 */
+#weather-sky,
+#weather-humid,
 #weather-wind {
   display: inline-block;
   vertical-align: top;
@@ -471,25 +464,8 @@ h1 {
 .after-tommorow {
   color: #198754;
 }
-.tom-border {
-  border: 1px solid #0d6efd;
-  border-radius: 12px;
-  box-sizing: border-box;
-  height: 24px;
-  letter-spacing: 0.2px;
-  line-height: 22px;
-  bottom: 20px;
-}
-.aft-tom-border {
-  border: 1px solid #198754;
-  border-radius: 12px;
-  box-sizing: border-box;
-  height: 24px;
-  letter-spacing: 0.2px;
-  line-height: 22px;
-  bottom: 20px;
-}
-/* 로딩 오버레이 */
+
+/* 로딩 오버레이/스피너/텍스트 */
 .loading-wrap {
   position: absolute;
   top: 0;
@@ -499,14 +475,13 @@ h1 {
   background: rgba(255, 255, 255, 0.8);
   z-index: 10;
 }
-/* 로딩 스피너 */
 .loading-spinner {
   position: absolute;
   top: 50%;
   left: 50%;
   width: 3rem;
   height: 3rem;
-  margin: -1.5rem 0 0 -1.5rem; /* 스피너 절반 크기만큼 오프셋 */
+  margin: -1.5rem 0 0 -1.5rem;
   border: 5px solid #3498db;
   border-top: 5px solid transparent;
   border-radius: 50%;
@@ -521,10 +496,8 @@ h1 {
     transform: rotate(360deg);
   }
 }
-/* 로딩 텍스트 */
 .loading-text {
   position: absolute;
-  /* spinner 높이(3rem) + margin 절반(1.5rem) + 텍스트 위아래 여유(0.5rem) = 5rem 아래에 배치 */
   top: calc(50% + 2.5rem);
   left: 50%;
   transform: translateX(-50%);
@@ -532,20 +505,144 @@ h1 {
   color: #555;
   z-index: 11;
 }
+
 .product-name {
-  display: block; /* 블록으로 만들어야 width가 먹습니다 */
-  width: 150px; /* 슬롯 너비와 동일하게 설정 */
-  white-space: nowrap; /* 한 줄만 */
-  overflow: hidden; /* 넘치는 내용 숨김 */
-  text-overflow: ellipsis; /* … 처리 */
+  display: block;
+  width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
 .control-btn {
   width: 2.5rem !important;
   height: 2.5rem !important;
   padding: 0 !important;
-  /* border-radius: 0 !important; */
   display: flex !important;
   align-items: center;
   justify-content: center;
   font-size: 1.5rem !important;
+}
+
+/* 위치 섹션 배경 이미지 유지 */
+#weather-location {
+  position: relative;
+  z-index: 2;
+  background-image: url(../images/white-cutted.png);
+  background-position-x: 100%;
+  background-position-y: -200px;
+  background-repeat: repeat-x;
+}
+
+.address-list {
+  overflow: hidden;
+}
+.list-li-left {
+  float: left;
+  background-position: 0, 0;
+  text-align: center;
+  height: 38px;
+  line-height: 25px;
+  list-style: none;
+}
+.list-li-center {
+  float: left;
+  background-position: 0, -100px;
+  text-align: center;
+  height: 38px;
+  line-height: 25px;
+  list-style: none;
+}
+.list-li-right {
+  float: right;
+  background-position: 0, -200px;
+  text-align: center;
+  height: 38px;
+  line-height: 25px;
+  list-style: none;
+}
+
+.do-btn,
+.si-btn {
+  display: inline-block;
+  height: 16px;
+  padding: 9px 13px 12px 12px;
+  font-size: 1.4rem;
+  color: #333;
+  text-decoration: none;
+}
+.li-do-btn {
+  font-size: 1.1rem;
+  color: #333;
+  text-decoration: none;
+  width: 100%;
+}
+.li-si-btn {
+  font-size: 1rem;
+  color: #333;
+  text-decoration: none;
+  width: 100%;
+}
+.list-do {
+  overflow: hidden;
+  width: 95%;
+  padding-top: 10px;
+}
+.list-si {
+  overflow: hidden;
+  width: 100%;
+  padding-top: 10px;
+}
+.list-li-do {
+  float: left;
+  width: 125px;
+  line-height: 1.4375;
+  list-style: none;
+  text-align: left;
+  padding-right: 15px;
+}
+.list-li-si {
+  float: left;
+  width: 125px;
+  line-height: 1.4375;
+  list-style: none;
+  text-align: left;
+  padding-right: 15px;
+}
+.list-close {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  right: 30px;
+}
+.disabled {
+  pointer-events: none;
+  color: #333;
+  cursor: default;
+  text-decoration: none;
+}
+.mList {
+  margin-top: 8px;
+  line-height: 1.8rem;
+}
+/* 온도 아이콘/숫자 공통: 부드러운 그림자 아웃라인 */
+.temp-shadow {
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.4), 1px 1px 2px rgba(0, 0, 0, 0.4), -1px 1px 2px rgba(0, 0, 0, 0.645),
+    1px -1px 2px rgba(0, 0, 0, 0.4), -1px -1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* 숫자/아이콘/텍스트 모두 동일하게 보이도록 라인 단위로 적용 */
+.best-looks-title-box .current-temp-text1,
+.best-looks-title-box .current-temp-text1 *,
+.best-looks-title-box .style-best,
+.best-looks-title-box .style-best * {
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.4), 1px 1px 2px rgba(0, 0, 0, 0.4), -1px 1px 2px rgba(0, 0, 0, 0.4),
+    1px -1px 2px rgba(0, 0, 0, 0.4), -1px -1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* (이미지용) 드롭쉐도우 아웃라인 유틸 — 로고 등에 사용 */
+.img-shadow-outline {
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4)) drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.4))
+    drop-shadow(-1px 1px 2px rgba(0, 0, 0, 0.4)) drop-shadow(1px -1px 2px rgba(0, 0, 0, 0.4))
+    drop-shadow(-1px -1px 2px rgba(0, 0, 0, 0.4));
 }

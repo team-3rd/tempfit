@@ -31,21 +31,53 @@
           line-height: 1;
           vertical-align: middle;
         }
-                /* 검색 패널 (아이콘 클릭 시 노출) */
-        .nav-search { position: relative; }
-        .nav-search-panel{
-          position:absolute; right:0; top:100%;
-          background:rgba(17,24,39,0.96);
-          border:1px solid rgba(255,255,255,0.12);
-          padding:10px; width:260px; z-index:1050;
-          display:none; border-radius:0; /* 각지게 */
-          box-shadow:0 6px 20px rgba(0,0,0,0.25);
+        /* 검색 패널 (아이콘 클릭 시 노출) */
+        .nav-search {
+          position: relative;
         }
-        .nav-search-panel input{
-          width:100%; border-radius:0; border:1px solid rgba(255,255,255,0.15);
-          background:rgba(255,255,255,0.08); color:#fff; padding:6px 10px;
+        .nav-search-panel {
+          position: absolute;
+          right: 0;
+          top: 100%;
+          background: rgba(17, 24, 39, 0.96);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          padding: 10px;
+          width: 260px;
+          z-index: 1050;
+          display: none;
+          border-radius: 0; /* 각지게 */
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
         }
-        .nav-search-panel input::placeholder{ color:rgba(255,255,255,0.65); }
+        .nav-search-panel input {
+          width: 100%;
+          border-radius: 0;
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          background: rgba(255, 255, 255, 0.08);
+          color: #fff;
+          padding: 6px 10px;
+        }
+        .nav-search-panel input::placeholder {
+          color: rgba(255, 255, 255, 0.65);
+        }
+        /* ====== 로고/아이콘 그림자 테두리 ====== */
+        /* 아이콘(<i>)은 텍스트 섀도우 */
+        .glass-nav .nav-link > i.bi {
+          text-shadow: 0 0 2px rgba(0, 0, 0, 0.4), 1px 1px 2px rgba(0, 0, 0, 0.4), -1px 1px 2px rgba(0, 0, 0, 0.4),
+            1px -1px 2px rgba(0, 0, 0, 0.4), -1px -1px 2px rgba(0, 0, 0, 0.4);
+        }
+
+        /* 로고 이미지(<img>)와 토글 아이콘은 드롭섀도우 */
+        .glass-nav .navbar-brand img {
+          filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.2)) drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.2))
+            drop-shadow(-1px 1px 2px rgba(0, 0, 0, 0.2)) drop-shadow(1px -1px 2px rgba(0, 0, 0, 0.2))
+            drop-shadow(-1px -1px 2px rgba(0, 0, 0, 0.2));
+        }
+
+        .glass-nav .navbar-toggler-icon {
+          filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4)) drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.4))
+            drop-shadow(-1px 1px 2px rgba(0, 0, 0, 0.4)) drop-shadow(1px -1px 2px rgba(0, 0, 0, 0.4))
+            drop-shadow(-1px -1px 2px rgba(0, 0, 0, 0.4));
+        }
       </style>
 
       <div class="container px-5">
@@ -67,19 +99,19 @@
                 <i class="bi bi-collection fs-4"></i>
               </a>
             </li>
-          <!-- 검색 아이콘 (로그인시에만 노출) -->
-          <li class="nav-item nav-search" id="nav-search-item" sec:authorize="isAuthenticated()">
-            <a href="#" class="nav-link" id="nav-search-toggle" title="작성자 검색">
-              <i class="bi bi-search fs-4"></i>
-            </a>
-            <div class="nav-search-panel" id="nav-search-panel">
-              <form id="nav-search-form" action="/community/list" method="get" autocomplete="off">
-                <!-- 작성자 검색 고정 -->
-                <input type="hidden" name="type" value="a">
-                <input type="text" name="keyword" id="nav-search-input" placeholder="작성자 닉네임으로 검색" />
-              </form>
-            </div>
-          </li>
+            <!-- 검색 아이콘 (로그인시에만 노출) -->
+            <li class="nav-item nav-search" id="nav-search-item" sec:authorize="isAuthenticated()">
+              <a href="#" class="nav-link" id="nav-search-toggle" title="작성자 검색">
+                <i class="bi bi-search fs-4"></i>
+              </a>
+              <div class="nav-search-panel" id="nav-search-panel">
+                <form id="nav-search-form" action="/community/list" method="get" autocomplete="off">
+                  <!-- 작성자 검색 고정 -->
+                  <input type="hidden" name="type" value="a" />
+                  <input type="text" name="keyword" id="nav-search-input" placeholder="작성자 닉네임으로 검색" />
+                </form>
+              </div>
+            </li>
 
             <li class="nav-item" sec:authorize="!isAuthenticated()">
               <a class="nav-link" href="/member/register" title="회원가입">
@@ -102,62 +134,74 @@
               </a>
             </li>
           </ul>
-                  <!-- 경로에 따른 게시글/글쓰기 아이콘 토글 + 검색 패널 제어 -->
-        <script>
-          (function () {
-            try {
-              // ---- list/create 토글 ----
-              var isListPage = location && location.pathname && location.pathname.indexOf('/community/list') === 0;
-              var listItem = document.getElementById('nav-community-list-item');
-              var createItem = document.getElementById('nav-community-create-item');
-              if (listItem) {
-                if (isListPage) {
-                  if (createItem) { listItem.style.display = 'none'; createItem.style.display = ''; }
-                  else            { listItem.style.display = ''; }
-                } else {
-                  listItem.style.display = '';
-                  if (createItem) createItem.style.display = 'none';
-                }
-              }
-
-              // ---- 검색 패널 ----
-              var toggle = document.getElementById('nav-search-toggle');
-              var panel  = document.getElementById('nav-search-panel');
-              var input  = document.getElementById('nav-search-input');
-              var form   = document.getElementById('nav-search-form');
-
-              if (toggle && panel && input && form) {
-                toggle.addEventListener('click', function (e) {
-                  e.preventDefault();
-                  var showing = panel.style.display !== 'none' && panel.style.display !== '';
-                  panel.style.display = showing ? 'none' : 'block';
-                  if (!showing) setTimeout(function(){ input.focus(); }, 0);
-                });
-
-                // 패널 밖 클릭 시 닫기
-                document.addEventListener('click', function (e) {
-                  if (!panel.contains(e.target) && !toggle.contains(e.target)) {
-                    panel.style.display = 'none';
+          <!-- 경로에 따른 게시글/글쓰기 아이콘 토글 + 검색 패널 제어 -->
+          <script>
+            (function () {
+              try {
+                // ---- list/create 토글 ----
+                var isListPage = location && location.pathname && location.pathname.indexOf("/community/list") === 0;
+                var listItem = document.getElementById("nav-community-list-item");
+                var createItem = document.getElementById("nav-community-create-item");
+                if (listItem) {
+                  if (isListPage) {
+                    if (createItem) {
+                      listItem.style.display = "none";
+                      createItem.style.display = "";
+                    } else {
+                      listItem.style.display = "";
+                    }
+                  } else {
+                    listItem.style.display = "";
+                    if (createItem) createItem.style.display = "none";
                   }
-                });
+                }
 
-                // Enter로 제출 (keyword만 사용)
-                form.addEventListener('submit', function (e) {
-                  e.preventDefault();
-                  var q = (input.value || '').trim();
-                  var url = '/community/list';
-                  if (q.length > 0) url += '?type=a&keyword=' + encodeURIComponent(q);
-                  location.href = url;
-                });
+                // ---- 검색 패널 ----
+                var toggle = document.getElementById("nav-search-toggle");
+                var panel = document.getElementById("nav-search-panel");
+                var input = document.getElementById("nav-search-input");
+                var form = document.getElementById("nav-search-form");
 
-                // 입력창에서 Enter 시 submit
-                input.addEventListener('keydown', function (e) {
-                  if (e.key === 'Enter') { e.preventDefault(); form.requestSubmit(); }
-                });
+                if (toggle && panel && input && form) {
+                  toggle.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    var showing = panel.style.display !== "none" && panel.style.display !== "";
+                    panel.style.display = showing ? "none" : "block";
+                    if (!showing)
+                      setTimeout(function () {
+                        input.focus();
+                      }, 0);
+                  });
+
+                  // 패널 밖 클릭 시 닫기
+                  document.addEventListener("click", function (e) {
+                    if (!panel.contains(e.target) && !toggle.contains(e.target)) {
+                      panel.style.display = "none";
+                    }
+                  });
+
+                  // Enter로 제출 (keyword만 사용)
+                  form.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    var q = (input.value || "").trim();
+                    var url = "/community/list";
+                    if (q.length > 0) url += "?type=a&keyword=" + encodeURIComponent(q);
+                    location.href = url;
+                  });
+
+                  // 입력창에서 Enter 시 submit
+                  input.addEventListener("keydown", function (e) {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      form.requestSubmit();
+                    }
+                  });
+                }
+              } catch (e) {
+                /* no-op */
               }
-            } catch (e) { /* no-op */ }
-          })();
-        </script>
+            })();
+          </script>
         </div>
       </div>
     </nav>

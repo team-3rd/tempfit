@@ -151,14 +151,15 @@ function renderSlot(part, item, container) {
     <div style="display:inline-block;width:150px;text-align:center;margin:0 6px;">
       <div style="
            width:150px;height:150px;
-           border-radius:10px;border:1px solid #ddd;
-           background:#fafafa;display:flex;
+           border:none;border-radius:0;
+           background:#fff;display:flex;
            align-items:center;justify-content:center;
-           overflow:hidden;margin-bottom:6px;">
+           overflow:hidden;margin-bottom:6px;
+           box-shadow:0 3px 16px rgba(60,70,86,0.07);">
         <a href="/products/${currentGender}?item=${encoded}"
            style="display:block;width:100%;height:100%;color:inherit;">
           <img src="${imageUrl}" alt="${name}"
-               style="width:100%;height:100%;object-fit:cover;"/>
+               style="width:100%;height:100%;object-fit:cover;border-radius:0;"/>
         </a>
       </div>
       <b style="display:block;margin-bottom:2px;">${labelMap[part]}</b>
@@ -171,11 +172,12 @@ function emptySlotMarkup(label) {
     <div style="text-align:center;width:150px;margin:0 6px;">
       <div style="
            width:150px;height:150px;
-           border:1px solid #ddd;border-radius:10px;
-           background:#fafafa;color:#888;
+           border:none;border-radius:0;
+           background:#fff;color:#888;
            display:flex;justify-content:center;
            align-items:center;margin-bottom:6px;
-           font-weight:600;">
+           font-weight:600;
+           box-shadow:0 3px 16px rgba(60,70,86,0.07);">
         ${label} 없음
       </div>
       <b style="display:block;margin-bottom:2px;">${label}</b>
@@ -266,8 +268,7 @@ async function fetchAiForGender(gender, tempNum, { silent = false } = {}) {
 
 // ─── DB 렌더 ───
 function renderDbByGender(gender) {
-  document.getElementById("gender-label").textContent =
-    gender === "male" ? "- 남성 -" : "- 여성 -";
+  document.getElementById("gender-label").textContent = gender === "male" ? "- 남성 -" : "- 여성 -";
 
   const data = dbCache[gender];
   if (!data) {
@@ -280,8 +281,7 @@ function renderDbByGender(gender) {
 
 // ─── AI 렌더 ───
 async function renderAiByGender(gender) {
-  document.getElementById("gender-label").textContent =
-    gender === "male" ? "- 남성 (AI) -" : "- 여성 (AI) -";
+  document.getElementById("gender-label").textContent = gender === "male" ? "- 남성 (AI) -" : "- 여성 (AI) -";
 
   const results = aiCache[gender] || [];
   const row1 = document.getElementById("clothing-guide-row1");
@@ -295,11 +295,11 @@ async function renderAiByGender(gender) {
     return;
   }
 
-  results.forEach(block => {
+  results.forEach((block) => {
     const cat = block.product.category; // "상의/아우터/하의/신발"
     const items = block.items || [];
     const item = items.length ? items[0] : null;
-    const container = (cat === "상의" || cat === "아우터") ? row1 : row2;
+    const container = cat === "상의" || cat === "아우터" ? row1 : row2;
 
     const brand = block.product.brandName || "";
     const productNameFallback = stripTags(item?.title || "");
@@ -312,29 +312,30 @@ async function renderAiByGender(gender) {
     }
 
     container.innerHTML += `
-      <div style="display:inline-block;width:150px;text-align:center;margin:0 6px;">
-        <div style="
-             width:150px;height:150px;
-             border-radius:10px;border:1px solid #ddd;
-             background:#fafafa;display:flex;
-             align-items:center;justify-content:center;
-             overflow:hidden;margin-bottom:6px;">
-          <a href="${item.link || '#'}" target="_blank" rel="noreferrer"
-             style="display:block;width:100%;height:100%;color:inherit;">
-            <img src="${item.image || ''}" alt="${escapeHtml(productNameFallback)}"
-                 style="width:100%;height:100%;object-fit:cover;" />
-          </a>
-        </div>
-        <b style="display:block;margin-bottom:2px;">${cat}</b>
-        <span class="product-name" style="font-size:14px;line-height:1.2;">${displayTitle}</span>
-      </div>`;
+  <div style="display:inline-block;width:150px;text-align:center;margin:0 6px;">
+    <div style="
+         width:150px;height:150px;
+         border:none;border-radius:0;
+         background:#fff;display:flex;
+         align-items:center;justify-content:center;
+         overflow:hidden;margin-bottom:6px;
+         box-shadow:0 3px 16px rgba(60,70,86,0.07);">
+      <a href="${item.link || "#"}" target="_blank" rel="noreferrer"
+         style="display:block;width:100%;height:100%;color:inherit;">
+        <img src="${item.image || ""}" alt="${escapeHtml(productNameFallback)}"
+             style="width:100%;height:100%;object-fit:cover;border-radius:0;" />
+      </a>
+    </div>
+    <b style="display:block;margin-bottom:2px;">${cat}</b>
+    <span class="product-name" style="font-size:14px;line-height:1.2;">${displayTitle}</span>
+  </div>`;
   });
 }
 
 // ─── BEST LOOKS 로드 ───
 function loadBestLooksData(tempNum) {
   fetch(`/api/community/best?temp=${tempNum}`, { credentials: "same-origin" })
-    .then(res => res.json())
+    .then((res) => res.json())
     .then(renderBestLooks)
     .catch(() => {
       const area = document.getElementById("best-looks-area");
@@ -369,21 +370,32 @@ async function loadTemperatureRanges() {
   }
 }
 
-// ─── 온도 태그 업데이트 ───
+// ─── 온도 태그 업데이트 (8단계) ───
 function getTempRangeCode(temp) {
-  const r = tempRanges.find(r => temp >= r.minTemp && temp <= r.maxTemp);
-  return r ? r.code : null;
+  const r = tempRanges.find((r) => temp >= r.minTemp && temp <= r.maxTemp);
+  return r ? r.code : null; // 1~8 (FREEZING ~ VERY_HOT)
 }
+
 function updateCurrentTempTag(tempNum) {
   const code = getTempRangeCode(tempNum);
-  const isCold = code !== null && code <= 4;
-  const iconHtml = isCold
-    ? '<i class="bi bi-thermometer-snow me-1 text-primary"></i>'
-    : '<i class="bi bi-thermometer-sun me-1 text-danger"></i>';
-  const colorClass = isCold ? "text-primary" : "text-danger";
+
+  // 색상/아이콘 매핑 (FREEZING→VERY_HOT)
+  const map = {
+    1: { cls: "text-primary", icon: "bi-thermometer-snow" },  // FREEZING
+    2: { cls: "text-primary",    icon: "bi-thermometer-snow"  },  // VERY_COLD
+    3: { cls: "text-primary",    icon: "bi-thermometer-low"  },  // COLD
+    4: { cls: "text-info", icon: "bi-thermometer-low"  },  // COOL
+    5: { cls: "text-info", icon: "bi-thermometer-half" },  // MILD
+    6: { cls: "text-warning", icon: "bi-thermometer-half" },  // WARM
+    7: { cls: "text-warning", icon: "bi-thermometer-high" },  // HOT
+    8: { cls: "text-danger",  icon: "bi-thermometer-sun"  },  // VERY_HOT
+  };
+
+  const { cls, icon } = map[code] || { cls: "text-body", icon: "bi-thermometer" };
+  const iconHtml = `<i class="bi ${icon} me-1 ${cls} temp-shadow"></i>`;
 
   document.getElementById("current-temp-tag").innerHTML =
-    `${iconHtml}<b class="${colorClass}">${tempNum}℃</b>`;
+    `${iconHtml}<b class="${cls} temp-shadow">${tempNum}℃</b>`;
 }
 
 // ─── 초기 바인딩 ───
@@ -505,12 +517,18 @@ function renderBestLooks(data) {
   };
   const skyIcon = (sky) => {
     switch (sky) {
-      case "맑음": return "bi-sun";
-      case "흐림": return "bi-cloud-sun";
-      case "구름 많음": return "bi-clouds";
-      case "비": return "bi-cloud-rain";
-      case "눈": return "bi-cloud-snow";
-      default: return "";
+      case "맑음":
+        return "bi-sun";
+      case "흐림":
+        return "bi-cloud-sun";
+      case "구름 많음":
+        return "bi-clouds";
+      case "비":
+        return "bi-cloud-rain";
+      case "눈":
+        return "bi-cloud-snow";
+      default:
+        return "";
     }
   };
   const k = (n) => {
