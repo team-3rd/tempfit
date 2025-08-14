@@ -67,19 +67,20 @@
                 <i class="bi bi-collection fs-4"></i>
               </a>
             </li>
-            <!-- 검색 아이콘 (아이콘 클릭 시 작성자 검색창 표시) -->
-          <li class="nav-item nav-search" id="nav-search-item">
+          <!-- 검색 아이콘 (로그인시에만 노출) -->
+          <li class="nav-item nav-search" id="nav-search-item" sec:authorize="isAuthenticated()">
             <a href="#" class="nav-link" id="nav-search-toggle" title="작성자 검색">
               <i class="bi bi-search fs-4"></i>
             </a>
             <div class="nav-search-panel" id="nav-search-panel">
               <form id="nav-search-form" action="/community/list" method="get" autocomplete="off">
-                <!-- 백엔드 호환을 위해 type=a 고정(작성자 검색) -->
+                <!-- 작성자 검색 고정 -->
                 <input type="hidden" name="type" value="a">
-                <input type="text" name="keyword" id="nav-search-input" placeholder="닉네임 검색" />
+                <input type="text" name="keyword" id="nav-search-input" placeholder="작성자 닉네임으로 검색" />
               </form>
             </div>
           </li>
+
             <li class="nav-item" sec:authorize="!isAuthenticated()">
               <a class="nav-link" href="/member/register" title="회원가입">
                 <i class="bi bi-person-add fs-4"></i>
