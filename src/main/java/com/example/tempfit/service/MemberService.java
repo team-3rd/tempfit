@@ -24,6 +24,7 @@ import org.springframework.security.core.Authentication;
 
 import com.example.tempfit.entity.Comment;
 import com.example.tempfit.entity.Community;
+import com.example.tempfit.entity.CommunityImage;
 import com.example.tempfit.entity.Member;
 import com.example.tempfit.entity.Products;
 import com.example.tempfit.entity.Recommend;
@@ -130,7 +131,7 @@ public class MemberService {
                 .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
         List<Products> dibList = new ArrayList<>(member.getDibsList());
          List<ProductsDTO> dtoList = dibList.stream()
-            .map(p -> new ProductsDTO(p.getBrandName(), p.getProductName(), p.getImageUrl(), p.getLinkUrl()))
+            .map(p -> new ProductsDTO(p.getProductId(), p.getBrandName(), p.getProductName(), p.getImageUrl(), p.getLinkUrl()))
                     .collect(Collectors.toList());
         return dtoList;
     }

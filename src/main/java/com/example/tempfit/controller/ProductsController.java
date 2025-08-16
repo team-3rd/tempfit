@@ -1,10 +1,22 @@
 package com.example.tempfit.controller;
 
 import com.example.tempfit.dto.ProductsDTO;
+import com.example.tempfit.entity.Member;
+import com.example.tempfit.entity.Products;
+import com.example.tempfit.repository.MemberRepository;
+import com.example.tempfit.repository.ProductsRepository;
+import com.example.tempfit.security.AuthMemberDTO;
+import com.example.tempfit.service.MemberService;
 import com.example.tempfit.service.ProductsService;
 import com.example.tempfit.service.ProductsService.FetchResult;
 import com.example.tempfit.service.ProductsService.Gender;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,13 +26,17 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ProductsController {
 
+    private final ProductsRepository productsRepository;
     private final ProductsService productsService;
+    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     @GetMapping("/{gender}")
     public String listByGenderAndItemName(
             @PathVariable String gender,
             @RequestParam(name = "item") String itemName,
             @RequestParam(name = "page", defaultValue = "0") int page,
+            @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
             Model model) {
 
         if (itemName == null || itemName.isBlank()) {
@@ -53,6 +69,38 @@ public class ProductsController {
 
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", totalPages);
+
+        if (authMemberDTO != null) {
+        Member member = memberRepository.findByEmail(authMemberDTO.getEmail())
+                                        .orElse(null);
+        if (member != null) {
+            List<Long> dibIds = member.getDibsList()
+                                      .stream()
+                                      .map(Products::getProductId)
+                                      .collect(Collectors.toList());
+            model.addAttribute("dibIds", dibIds);
+        }
+    }
+
         return "products/products";
+    }
+
+    @PostMapping("/dibs/{id}")
+    @ResponseBody
+    public Map<String, Object> addDiblist(
+            @PathVariable Long id,
+            @AuthenticationPrincipal AuthMemberDTO authMemberDTO) throws Exception {
+
+        if (authMemberDTO == null) return Map.of("ok", false, "reason", "UNAUTHORIZED");
+        Products product = productsRepository.findByProductId(id);
+        Member member = memberRepository.findByEmail(authMemberDTO.getEmail()).get();
+        boolean nowActive;
+        
+            if (member.getDibsList().contains(product)) {
+                nowActive = false;
+            }
+            else{nowActive = true;}
+            memberService.addDibs(id, member);
+        return Map.of("ok", true, "active", nowActive);
     }
 }

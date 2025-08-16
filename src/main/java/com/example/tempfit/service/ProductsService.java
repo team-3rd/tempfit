@@ -84,7 +84,7 @@ public class ProductsService {
             List<Products> rows = productsRepository.findByGenderAndCategoryIdIgnoreCase(0, categoryId);
 
             List<ProductsDTO> dtos = rows.stream()
-                    .map(p -> new ProductsDTO(p.getBrandName(), p.getProductName(), p.getImageUrl(), p.getLinkUrl()))
+                    .map(p -> new ProductsDTO(p.getProductId(), p.getBrandName(), p.getProductName(), p.getImageUrl(), p.getLinkUrl()))
                     .collect(Collectors.toList());
 
             return new FetchResult(Gender.MALE, cloth.getClothName(), guideImg, dtos);
@@ -103,7 +103,7 @@ public class ProductsService {
             List<Products> rows = productsRepository.findByGenderAndCategoryIdIgnoreCase(1, categoryId);
 
             List<ProductsDTO> dtos = rows.stream()
-                    .map(p -> new ProductsDTO(p.getBrandName(), p.getProductName(), p.getImageUrl(), p.getLinkUrl()))
+                    .map(p -> new ProductsDTO(p.getProductId(), p.getBrandName(), p.getProductName(), p.getImageUrl(), p.getLinkUrl()))
                     .collect(Collectors.toList());
 
             return new FetchResult(Gender.FEMALE, cloth.getClothName(), guideImg, dtos);

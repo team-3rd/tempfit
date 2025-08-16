@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductsDTO {
+    private Long id;
     private String brandName;
     private String productName;
     private String imageUrl;
