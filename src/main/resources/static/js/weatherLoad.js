@@ -39,13 +39,13 @@ export function weatherLoads(weatherData) {
   document.querySelector("#weather-sky").innerHTML = sky;
 
   let hum = "";
-  hum += `<img width="16" height="16" src="https://img.icons8.com/ios/16/water.png" alt="water"/>`;
+  hum += `<i class="bi bi-droplet"></i>`;
   hum += `<dt class="name">습도</dt>`;
   hum += `<dd class="vals val nameSpace">${weather.reh}</dd>`;
   document.querySelector("#weather-humid").innerHTML = hum;
 
   let wind = "";
-  wind += `<img width="16" height="16" src="https://img.icons8.com/ios/16/wind--v1.png" alt="wind--v1"/>`;
+  wind += `<i class="bi bi-wind"></i>`;
   wind += `<dt class="name name">풍속</dt>`;
   wind += `<dd class="vals val">${weather.wsd}</dd>`;
   document.querySelector("#weather-wind").innerHTML = wind;
@@ -71,16 +71,16 @@ export function weatherLoads(weatherData) {
     result += `<dl class="weather-content">`;
     if (diffday == 1) {
       if (time == "00") {
-        result += `<dt class="time tommorow tom-border">`;
-        result += `<p>내일</p></dt>`;
+        result += `<dt class="time tommorow">`;
+        result += `<p class="tom-border">내일</p></dt>`;
       } else {
         result += `<dt class="time tommorow">`;
         result += `<p>${time}시</p></dt>`;
       }
     } else if (diffday == 2) {
       if (time == "00") {
-        result += `<dt class="time after-tommorow aft-tom-border">`;
-        result += `<p>모레</p></dt>`;
+        result += `<dt class="time after-tommorow">`;
+        result += `<p class="aft-tom-border">모레</p></dt>`;
       } else {
         result += `<dt class="time after-tommorow">`;
         result += `<p>${time}시</p></dt>`;

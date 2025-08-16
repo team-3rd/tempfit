@@ -58,7 +58,7 @@ public class WeatherService {
         String base_date = date.format(dateFormatter);
         String base_time = "";
 
-        if (date == LocalDate.now().minusDays(1)) {
+        if (date.equals(LocalDate.now().minusDays(1))) {
             base_time = LocalTime.of(23, 0, 0).format(timeFormatter);
         } else {
             for (LocalTime localTime : timeList) {

@@ -25,30 +25,32 @@ window.addEventListener("scroll", () => {
 // 채팅 버튼 채팅창 열면 위로, 채팅창 열림 / 닫힘 시 아이콘 변경
 const chatToggle = document.querySelector(".chatToggle");
 
-offcanvas.addEventListener("show.bs.offcanvas", function () {
-  toggleBtn.style.bottom = `432px`;
+if (offcanvas) {
+  offcanvas.addEventListener("show.bs.offcanvas", function () {
+    toggleBtn.style.bottom = `432px`;
 
-  chatToggle.classList.add("bi-chevron-double-down");
-  chatToggle.classList.remove("bi-chevron-double-up");
+    chatToggle.classList.add("bi-chevron-double-down");
+    chatToggle.classList.remove("bi-chevron-double-up");
 
-  if (document.querySelector(".backBtn")) {
-    document.querySelector(".backBtn").removeAttribute("hidden");
-  }
-});
-offcanvas.addEventListener("hide.bs.offcanvas", function () {
-  toggleBtn.style.bottom = `0`;
+    if (document.querySelector(".backBtn")) {
+      document.querySelector(".backBtn").removeAttribute("hidden");
+    }
+  });
+  offcanvas.addEventListener("hide.bs.offcanvas", function () {
+    toggleBtn.style.bottom = `0`;
 
-  chatToggle.classList.add("bi-chevron-double-up");
-  chatToggle.classList.remove("bi-chevron-double-down");
+    chatToggle.classList.add("bi-chevron-double-up");
+    chatToggle.classList.remove("bi-chevron-double-down");
 
-  if (document.querySelector(".backBtn")) {
-    document.querySelector(".backBtn").setAttribute("hidden", "");
-  }
-});
+    if (document.querySelector(".backBtn")) {
+      document.querySelector(".backBtn").setAttribute("hidden", "");
+    }
+  });
 
-document.addEventListener("DOMContentLoaded", function () {
-  chatFunc();
-});
+  document.addEventListener("DOMContentLoaded", function () {
+    chatFunc();
+  });
+}
 
 function chatFunc() {
   const chatContainer = document.querySelector(".offcanvas-body");

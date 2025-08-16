@@ -94,12 +94,12 @@
       - .card 내부에 .weather-content(.mh 등)이 존재하면 그 카드는 둥근 모서리/테두리 유지  */
 /*   최신 브라우저(:has) 지원. 크롬/엣지/사파리16.4+ OK                                    */
 /* ─────────────────────────────────────────────────────────────────────────────── */
-.card:has(.weather-content),
+/* .card:has(.weather-content),
 .card:has(.mh) {
-  border-radius: 0.75rem !important; /* 둥글게 */
-  border: 1px solid rgba(0, 0, 0, 0.12) !important; /* 얇은 테두리 */
-  box-shadow: 0 3px 16px 0 rgba(60, 70, 86, 0.07) !important; /* 부드러운 그림자 */
-}
+  border-radius: 0.75rem !important; 
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 3px 16px 0 rgba(60, 70, 86, 0.07) !important;
+} */
 
 /* 날씨 카드 내부 전용 요소들은 원형/기존 룩 유지 */
 .btn-prev,
@@ -112,12 +112,16 @@
   width: 36px;
   height: 36px;
   line-height: 0;
-  color: transparent;
+  color: #444447;
   z-index: 5;
   border: 1px solid #a6a6a6; /* 원래 테두리 */
   border-radius: 50%; /* 동그랗게 */
   background-color: #fff;
   box-shadow: none; /* 전역 그림자 제거 */
+  font-size: 17px;
+  text-align: center;
+  line-height: 30px;
+  box-sizing: border-box;
 }
 .btn-prev {
   left: 0px;
@@ -125,49 +129,39 @@
 .btn-next {
   right: 5px;
 }
-.btn-next::after {
-  content: "";
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  left: 45%;
-  margin: -5px 0 0 -2px;
-  display: inline-block;
-  overflow: hidden;
-  background: url(https://img.icons8.com/ios-filled/12/forward--v1.png)
-    no-repeat;
-  background-size: 12px 12px;
-  vertical-align: top;
-  color: transparent;
-  z-index: 1;
+.weather-scroll {
+  position: relative;
+  z-index: 10;
 }
-.btn-prev::after {
-  content: "";
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  left: 37%;
-  margin: -5px 0 0 -2px;
-  display: inline-block;
-  overflow: hidden;
-  background: url(https://img.icons8.com/ios-filled/12/back.png) no-repeat;
-  background-size: 12px 12px;
-  vertical-align: top;
-  color: transparent;
-  z-index: 1;
+.btn-next > .weather-scroll {
+  margin-left: 3px;
 }
 
 /* 위치 선택 버튼은 원형 유지 */
 .loc-btn {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  background-image: url(../images/crosshair-24.png);
-  background-repeat: no-repeat;
-  background-position: center;
-  border-radius: 100%;
-  border: 0.5px solid rgba(0, 0, 0, 0.15);
-  box-shadow: none; /* 전역 그림자 제외 */
+  position: absolute;
+  display: flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 28px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  border: none !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+  color: #6c757d;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+  transform-origin: center;
+  will-change: transform;
+}
+.loc-btn:hover {
+  color: #6c757d;
+  transform: scale(1.06);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
 
 /* 지역 선택 레이어: 테두리 및 약간 둥근 모서리 유지 */
@@ -190,11 +184,6 @@
   border: 1px solid currentColor;
   border-radius: 12px;
   box-shadow: none;
-  box-sizing: border-box;
-  height: 24px;
-  letter-spacing: 0.2px;
-  line-height: 22px;
-  bottom: 20px;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────── */
@@ -234,10 +223,16 @@
   color: rgba(var(--gray40), 1);
 }
 
+.time > p {
+  box-sizing: border-box;
+  letter-spacing: 0.2px;
+  line-height: 22px;
+}
+
 .icon-box {
   position: absolute;
-  right: 2px;
-  bottom: 50px;
+  right: 5px;
+  bottom: 10px;
   z-index: 5;
 }
 
@@ -254,14 +249,14 @@
 .inner {
   position: relative;
   height: 135px;
-  margin-top: 15px;
+  margin-top: 10px;
 }
 .ul {
   white-space: nowrap;
   position: absolute;
   top: 10px;
-  left: 28px;
-  width: 87.75%;
+  left: 35px;
+  width: 85%;
   padding-left: 0;
   line-height: 0;
   overflow-x: hidden;
@@ -284,7 +279,7 @@
 }
 .temp {
   position: relative;
-  left: 5px;
+  bottom: 3px;
 }
 ul + li {
   background-color: rgb(197, 197, 197);
@@ -527,18 +522,21 @@ h1 {
 
 /* 위치 섹션 배경 이미지 유지 */
 #weather-location {
-  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  height: 64px;
   z-index: 2;
-  background-image: url(../images/white-cutted.png);
-  background-position-x: 100%;
-  background-position-y: -200px;
-  background-repeat: repeat-x;
+  background-color: transparent;
+  margin-top: 0;
+  justify-content: space-between;
 }
 
 .address-list {
   overflow: hidden;
 }
-.list-li-left {
+/* .list-li-left {
   float: left;
   background-position: 0, 0;
   text-align: center;
@@ -561,16 +559,61 @@ h1 {
   height: 38px;
   line-height: 25px;
   list-style: none;
-}
+} */
 
-.do-btn,
-.si-btn {
-  display: inline-block;
-  height: 16px;
-  padding: 9px 13px 12px 12px;
+.locations {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 50%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+.currentPos {
+  position: relative;
+  height: 100%;
+}
+.do-btn {
+  display: inline;
+  height: 32px;
   font-size: 1.4rem;
   color: #333;
+  font-weight: 500;
   text-decoration: none;
+  top: 16px;
+  left: 55px;
+  gap: 10px;
+  flex: 0 0 auto;
+  margin-right: 15px;
+}
+.si-btn {
+  display: inline;
+  height: 32px;
+  font-size: 1.4rem;
+  color: #333;
+  font-weight: 500;
+  text-decoration: none;
+  top: 16px;
+  left: 160px;
+  flex: 0 0 auto;
+}
+.do-toggle-icon,
+.si-toggle-icon {
+  display: inline-block;
+  font-size: 16px;
+  text-align: center;
+  margin-left: 5px;
+}
+.dosi,
+.sigungu {
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  font-weight: 500;
+  justify-content: center;
+  vertical-align: middle;
+  align-items: center;
 }
 .li-do-btn {
   font-size: 1.1rem;
@@ -615,6 +658,7 @@ h1 {
   width: 20px;
   height: 20px;
   right: 30px;
+  font-size: 20px;
 }
 .disabled {
   pointer-events: none;

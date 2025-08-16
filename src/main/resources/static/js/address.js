@@ -5,9 +5,16 @@ let clickedText = "";
 let clickedSiText = "";
 let dosis = "";
 
+// 현위치 버튼
+function currentPos() {
+  location.reload();
+}
+
 // 주소 데이터 로드
 window.addEventListener("DOMContentLoaded", async () => {
-  await fetch(`https://raw.githubusercontent.com/Dogyeong-Kim/adData/refs/heads/main/ad_data.json`)
+  await fetch(
+    `https://raw.githubusercontent.com/Dogyeong-Kim/adData/refs/heads/main/ad_data.json`
+  )
     .then((res) => res.json())
     .then((data) => {
       data.forEach((ads) => {
@@ -17,7 +24,10 @@ window.addEventListener("DOMContentLoaded", async () => {
         }
 
         // 전체 주소 리스트
-        if (ads.ad_name != ads.lowest_ad_name || ads.lowest_ad_name == "세종특별자치시") {
+        if (
+          ads.ad_name != ads.lowest_ad_name ||
+          ads.lowest_ad_name == "세종특별자치시"
+        ) {
           allAdList.push(ads.ad_name);
         }
       });
@@ -37,31 +47,35 @@ window.addEventListener("DOMContentLoaded", async () => {
 
         document.querySelector(".dosi").textContent = "";
 
-        document.querySelector(".dosi").appendChild(document.createTextNode(addressArray[1] + " "));
+        document
+          .querySelector(".dosi")
+          .appendChild(document.createTextNode(addressArray[1] + " "));
 
-        const icon = document.createElement("img");
-        icon.classList.add("img");
-        icon.width = `10`;
-        icon.height = `10`;
-        icon.src = `https://img.icons8.com/ios-filled/10/sort-down.png`;
-        icon.alt = `sort-down`;
-        document.querySelector(".dosi").appendChild(icon);
+        const span = document.createElement("span");
+        span.className = "do-toggle-icon";
+        const icon = document.createElement("i");
+        icon.classList.add("bi");
+        icon.classList.add("bi-caret-down-fill");
+        document.querySelector(".dosi").appendChild(span);
+        document.querySelector(".do-toggle-icon").appendChild(icon);
         document.querySelector(".layer-do").classList.add("hide");
-        document.querySelector(".list-li-left").classList.remove("unfold");
+        document.querySelector(".do-btn").classList.remove("unfold");
 
         document.querySelector(".sigungu").textContent = "";
 
-        document.querySelector(".sigungu").appendChild(document.createTextNode(addressArray[2] + " "));
+        document
+          .querySelector(".sigungu")
+          .appendChild(document.createTextNode(addressArray[2] + " "));
 
-        const icons = document.createElement("img");
-        icons.classList.add("img");
-        icons.width = `10`;
-        icons.height = `10`;
-        icons.src = `https://img.icons8.com/ios-filled/10/sort-down.png`;
-        icons.alt = `sort-down`;
-        document.querySelector(".sigungu").appendChild(icons);
+        const spans = document.createElement("span");
+        spans.className = "si-toggle-icon";
+        const icons = document.createElement("i");
+        icons.classList.add("bi");
+        icons.classList.add("bi-caret-down-fill");
+        document.querySelector(".sigungu").appendChild(spans);
+        document.querySelector(".si-toggle-icon").appendChild(icons);
         document.querySelector(".layer-si").classList.add("hide");
-        document.querySelector(".list-li-center").classList.remove("unfold");
+        document.querySelector(".si-btn").classList.remove("unfold");
 
         document.querySelector(".si-btn").classList.remove("disabled");
 
@@ -73,30 +87,18 @@ window.addEventListener("DOMContentLoaded", async () => {
 // 도·시 리스트 토글
 function doListToggle() {
   document.querySelector(".layer-do").classList.toggle("hide");
-  document.querySelector(".list-li-left").classList.toggle("unfold");
+  document.querySelector(".do-btn").classList.toggle("unfold");
 
   // 리스트 탭 접힘 확인표시 변경
   const dosi = document.querySelector(".dosi");
-  if (document.querySelector(".list-li-left").classList.length == 2) {
-    dosi.removeChild(dosi.querySelector(".img"));
-
-    const icon = document.createElement("img");
-    icon.classList.add("img");
-    icon.width = `10`;
-    icon.height = `10`;
-    icon.src = `https://img.icons8.com/ios-filled/10/sort-up.png`;
-    icon.alt = `sort-up`;
-    dosi.appendChild(icon);
+  if (document.querySelector(".do-btn").classList.length == 2) {
+    const icons = dosi.querySelector("i");
+    icons.classList.remove("bi-caret-down-fill");
+    icons.classList.add("bi-caret-up-fill");
   } else {
-    dosi.removeChild(dosi.querySelector(".img"));
-
-    const icon = document.createElement("img");
-    icon.classList.add("img");
-    icon.width = `10`;
-    icon.height = `10`;
-    icon.src = `https://img.icons8.com/ios-filled/10/sort-down.png`;
-    icon.alt = `sort-down`;
-    dosi.appendChild(icon);
+    const icons = dosi.querySelector("i");
+    icons.classList.remove("bi-caret-up-fill");
+    icons.classList.add("bi-caret-down-fill");
   }
 }
 
@@ -104,30 +106,21 @@ function doListToggle() {
 function siListToggle() {
   // 시·군·구 리스트 토글
   document.querySelector(".layer-si").classList.toggle("hide");
-  document.querySelector(".list-li-center").classList.toggle("unfold");
+  document.querySelector(".si-btn").classList.toggle("unfold");
 
   // 리스트 탭 접힘 확인표시 변경
   const sigungu = document.querySelector(".sigungu");
-  if (document.querySelector(".list-li-center").classList.length == 2) {
-    sigungu.removeChild(sigungu.querySelector(".img"));
-
-    const icon = document.createElement("img");
-    icon.classList.add("img");
-    icon.width = `10`;
-    icon.height = `10`;
-    icon.src = `https://img.icons8.com/ios-filled/10/sort-up.png`;
-    icon.alt = `sort-up`;
-    sigungu.appendChild(icon);
-  } else {
-    sigungu.removeChild(sigungu.querySelector(".img"));
-
-    const icon = document.createElement("img");
-    icon.classList.add("img");
-    icon.width = `10`;
-    icon.height = `10`;
-    icon.src = `https://img.icons8.com/ios-filled/10/sort-down.png`;
-    icon.alt = `sort-down`;
-    sigungu.appendChild(icon);
+  if (
+    document.querySelector(".si-btn").classList.length == 2 &&
+    !document.querySelector(".si-btn").classList.contains("disabled")
+  ) {
+    const icons = sigungu.querySelector("i");
+    icons.classList.remove("bi-caret-down-fill");
+    icons.classList.add("bi-caret-up-fill");
+  } else if (document.querySelector(".si-btn").classList.length == 1) {
+    const icons = sigungu.querySelector("i");
+    icons.classList.remove("bi-caret-up-fill");
+    icons.classList.add("bi-caret-down-fill");
   }
 }
 
@@ -142,9 +135,7 @@ function doList() {
     result += `</li>`;
   });
   result += `<a href="javascript:hideDoList()" class="list-close">`;
-  result += `<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 40 40">
-            <path d="M 7.71875 6.28125 L 6.28125 7.71875 L 23.5625 25 L 6.28125 42.28125 L 7.71875 43.71875 L 25 26.4375 L 42.28125 43.71875 L 43.71875 42.28125 L 26.4375 25 L 43.71875 7.71875 L 42.28125 6.28125 L 25 23.5625 Z"></path>
-            </svg>`;
+  result += `<i class="bi bi-x-lg"></i>`;
   result += `</a>`;
 
   document.querySelector(".list-do").innerHTML = result;
@@ -168,40 +159,47 @@ function showDo() {
         clickedText = event.target.textContent;
         document.querySelector(".dosi").textContent = "";
 
-        document.querySelector(".dosi").appendChild(document.createTextNode(clickedText + " "));
+        document
+          .querySelector(".dosi")
+          .appendChild(document.createTextNode(clickedText + " "));
 
-        const icon = document.createElement("img");
-        icon.classList.add("img");
-        icon.width = `10`;
-        icon.height = `10`;
-        icon.src = `https://img.icons8.com/ios-filled/10/sort-down.png`;
-        icon.alt = `sort-down`;
-        document.querySelector(".dosi").appendChild(icon);
+        const span = document.createElement("span");
+        span.className = "do-toggle-icon";
+        const icons = document.createElement("i");
+        icons.classList.add("bi");
+        icons.classList.add("bi-caret-down-fill");
+        document.querySelector(".dosi").appendChild(span);
+        document.querySelector(".do-toggle-icon").appendChild(icons);
         document.querySelector(".layer-do").classList.add("hide");
-        document.querySelector(".list-li-left").classList.remove("unfold");
+        document.querySelector(".do-btn").classList.remove("unfold");
 
         if (document.querySelector(".sigungu").textContent != "시·군·구") {
           document.querySelector(".sigungu").textContent = "";
 
-          document.querySelector(".sigungu").appendChild(document.createTextNode("시·군·구 "));
+          document
+            .querySelector(".sigungu")
+            .appendChild(document.createTextNode("시·군·구 "));
 
-          const icon = document.createElement("img");
-          icon.classList.add("img");
-          icon.width = `10`;
-          icon.height = `10`;
-          icon.src = `https://img.icons8.com/ios-filled/10/sort-down.png`;
-          icon.alt = `sort-down`;
-          document.querySelector(".sigungu").appendChild(icon);
+          const span = document.createElement("span");
+          span.className = "si-toggle-icon";
+          const icons = document.createElement("i");
+          icons.classList.add("bi");
+          icons.classList.add("bi-caret-down-fill");
+          document.querySelector(".sigungu").appendChild(span);
+          document.querySelector(".si-toggle-icon").appendChild(icons);
 
           if (document.querySelector(".layer-si").classList.length == 1) {
             document.querySelector(".layer-si").classList.add("hide");
-            document.querySelector(".list-li-center").classList.remove("unfold");
+            document.querySelector(".si-btn").classList.remove("unfold");
           }
         }
 
         dosis = clickedText;
 
-        if (adList.indexOf(clickedText) != -1 && clickedText != "세종특별자치시") {
+        if (
+          adList.indexOf(clickedText) != -1 &&
+          clickedText != "세종특별자치시"
+        ) {
           if (document.querySelector(".si-btn").classList.length == 2) {
             document.querySelector(".si-btn").classList.remove("disabled");
           }
@@ -216,18 +214,13 @@ function showDo() {
 // 도·시 리스트 닫기
 function hideDoList() {
   document.querySelector(".layer-do").classList.add("hide");
-  document.querySelector(".list-li-left").classList.remove("unfold");
+  document.querySelector(".do-btn").classList.remove("unfold");
 
   const dosi = document.querySelector(".dosi");
-  dosi.removeChild(dosi.querySelector(".img"));
-
-  const icon = document.createElement("img");
-  icon.classList.add("img");
-  icon.width = `10`;
-  icon.height = `10`;
-  icon.src = `https://img.icons8.com/ios-filled/10/sort-down.png`;
-  icon.alt = `sort-down`;
-  dosi.appendChild(icon);
+  const icons = dosi.querySelector("i");
+  icons.classList.remove("bi-caret-up-fill");
+  icons.classList.add("bi-caret-down-fill");
+  dosi.appendChild(icons);
 }
 
 // 시·군·구 리스트
@@ -252,9 +245,7 @@ function siList() {
     }
   });
   result += `<a href="javascript:hideSiList()" class="list-close">`;
-  result += `<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 40 40">
-            <path d="M 7.71875 6.28125 L 6.28125 7.71875 L 23.5625 25 L 6.28125 42.28125 L 7.71875 43.71875 L 25 26.4375 L 42.28125 43.71875 L 43.71875 42.28125 L 26.4375 25 L 43.71875 7.71875 L 42.28125 6.28125 L 25 23.5625 Z"></path>
-            </svg>`;
+  result += `<i class="bi bi-x-lg"></i>`;
   result += `</a>`;
 
   document.querySelector(".list-si").innerHTML = result;
@@ -271,18 +262,13 @@ function siList() {
 // 시·군·구 리스트 닫기
 function hideSiList() {
   document.querySelector(".layer-si").classList.add("hide");
-  document.querySelector(".list-li-center").classList.toggle("unfold");
+  document.querySelector(".si-btn").classList.toggle("unfold");
 
   const sigungu = document.querySelector(".sigungu");
-  sigungu.removeChild(sigungu.querySelector(".img"));
-
-  const icon = document.createElement("img");
-  icon.classList.add("img");
-  icon.width = `10`;
-  icon.height = `10`;
-  icon.src = `https://img.icons8.com/ios-filled/10/sort-down.png`;
-  icon.alt = `sort-down`;
-  sigungu.appendChild(icon);
+  const icons = sigungu.querySelector("i");
+  icons.classList.remove("bi-caret-up-fill");
+  icons.classList.add("bi-caret-down-fill");
+  sigungu.appendChild(icons);
 }
 
 // 선택한 시·군·구 이름 출력 + 주소 추출
@@ -295,17 +281,19 @@ function showSi() {
         clickedSiText = event.target.textContent;
         document.querySelector(".sigungu").textContent = "";
 
-        document.querySelector(".sigungu").appendChild(document.createTextNode(clickedSiText + " "));
+        document
+          .querySelector(".sigungu")
+          .appendChild(document.createTextNode(clickedSiText + " "));
 
-        const icon = document.createElement("img");
-        icon.classList.add("img");
-        icon.width = `10`;
-        icon.height = `10`;
-        icon.src = `https://img.icons8.com/ios-filled/10/sort-down.png`;
-        icon.alt = `sort-down`;
-        document.querySelector(".sigungu").appendChild(icon);
+        const span = document.createElement("span");
+        span.className = "si-toggle-icon";
+        const icons = document.createElement("i");
+        icons.classList.add("bi");
+        icons.classList.add("bi-caret-down-fill");
+        document.querySelector(".sigungu").appendChild(span);
+        document.querySelector(".si-toggle-icon").appendChild(icons);
         document.querySelector(".layer-si").classList.add("hide");
-        document.querySelector(".list-li-center").classList.remove("unfold");
+        document.querySelector(".si-btn").classList.remove("unfold");
       }
       weatherLoad();
     });
@@ -353,6 +341,7 @@ async function weatherLoad() {
       hideWeatherLoading();
     })
     .catch(() => {
-      document.getElementById("weather-temp").textContent = "날씨 정보를 불러오지 못했습니다.";
+      document.getElementById("weather-temp").textContent =
+        "날씨 정보를 불러오지 못했습니다.";
     });
 }
