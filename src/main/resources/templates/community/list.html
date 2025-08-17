@@ -24,12 +24,39 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css"
       rel="stylesheet"
     />
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <link rel="stylesheet" href="/css/list.css" />
     <link rel="stylesheet" href="/css/detail.css" />
+    <link rel="stylesheet" href="/css/chatfrag.css" />
   </head>
   <body class="d-flex flex-column min-vh-100">
     <div th:replace="fragments/navbar :: navbar"></div>
     <th:block th:replace="fragments/toggle :: toggle"></th:block>
+
+    <button
+      class="chat-btn shadow-sm"
+      id="chat-btn"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#offcanvasBottom"
+      aria-controls="offcanvasBottom"
+      sec:authorize="isAuthenticated()"
+    >
+      <span class="chatTitle">
+        <i class="bi bi-chat-dots"></i>
+      </span>
+      <i class="chatToggle bi bi-chevron-double-up"></i>
+    </button>
+    <div
+      class="offcanvas offcanvas-bottom shadow-sm"
+      tabindex="-1"
+      id="offcanvasBottom"
+      data-bs-backdrop="false"
+      data-bs-scroll="true"
+      sec:authorize="isAuthenticated()"
+    >
+      <div class="offcanvas-body" id="offcanvas-body"></div>
+    </div>
 
     <div class="container px-4 px-lg-5 mt-5 flex-grow-1">
       <div class="d-flex justify-content-between align-items-start mb-3 w-100">
@@ -229,5 +256,6 @@
     <script src="/js/modalLoader.js"></script>
     <script src="/js/detail.js"></script>
     <script src="/js/list.js"></script>
+    <script src="/js/chatfrag.js"></script>
   </body>
 </html>

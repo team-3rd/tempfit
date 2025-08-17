@@ -24,11 +24,38 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css"
       rel="stylesheet"
     />
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <link th:href="@{/css/profile.css}" rel="stylesheet" />
     <link th:href="@{/css/detail.css}" rel="stylesheet" />
+    <link th:href="@{/css/chatfrag.css}" rel="stylesheet" />
   </head>
   <body>
     <th:block th:replace="fragments/navbar :: navbar"></th:block>
+
+    <button
+      class="chat-btn shadow-sm"
+      id="chat-btn"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#offcanvasBottom"
+      aria-controls="offcanvasBottom"
+      sec:authorize="isAuthenticated()"
+    >
+      <span class="chatTitle">
+        <i class="bi bi-chat-dots"></i>
+      </span>
+      <i class="chatToggle bi bi-chevron-double-up"></i>
+    </button>
+    <div
+      class="offcanvas offcanvas-bottom shadow-sm"
+      tabindex="-1"
+      id="offcanvasBottom"
+      data-bs-backdrop="false"
+      data-bs-scroll="true"
+      sec:authorize="isAuthenticated()"
+    >
+      <div class="offcanvas-body" id="offcanvas-body"></div>
+    </div>
 
     <main class="profile-page container">
       <div class="profile-top">
@@ -228,6 +255,7 @@
     <script src="/js/modalLoader.js"></script>
     <script src="/js/profile.js"></script>
     <script src="/js/detail.js"></script>
+    <script src="/js/chatfrag.js"></script>
 
     <div
       class="modal fade"
