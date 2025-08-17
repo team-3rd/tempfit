@@ -112,16 +112,25 @@
   width: 36px;
   height: 36px;
   line-height: 0;
-  color: #444447;
   z-index: 5;
-  border: 1px solid #a6a6a6; /* 원래 테두리 */
   border-radius: 50%; /* 동그랗게 */
   background-color: #fff;
-  box-shadow: none; /* 전역 그림자 제거 */
   font-size: 17px;
   text-align: center;
   line-height: 30px;
   box-sizing: border-box;
+  border: none !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+  color: #6c757d;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+  transform-origin: center;
+  will-change: transform;
+}
+.btn-next:hover,
+.btn-prev:hover {
+  color: #6c757d;
+  transform: scale(1.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
 .btn-prev {
   left: 0px;

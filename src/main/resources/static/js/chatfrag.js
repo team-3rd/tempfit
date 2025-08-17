@@ -10,15 +10,17 @@ window.addEventListener("scroll", () => {
   const footerTop = footer.getBoundingClientRect().top + window.scrollY;
   const windowBottom = window.scrollY + window.innerHeight;
 
-  if (toggleBtn.style.bottom != "432px") {
-    if (windowBottom > footerTop) {
-      const overlap = windowBottom - footerTop;
-      toggleBtn.style.bottom = `${overlap}px`;
+  if (offcanvas) {
+    if (toggleBtn.style.bottom != "432px") {
+      if (windowBottom > footerTop) {
+        const overlap = windowBottom - footerTop;
+        toggleBtn.style.bottom = `${overlap}px`;
+      } else {
+        toggleBtn.style.bottom = "0";
+      }
     } else {
-      toggleBtn.style.bottom = "0";
+      return;
     }
-  } else {
-    return;
   }
 });
 

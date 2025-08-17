@@ -14,16 +14,18 @@
 
 [data-bs-theme="light"] .form-floating > .form-control:not(:placeholder-shown),
 [data-bs-theme="light"] .form-floating > .form-control:focus {
-   background-color: transparent !important;
+  background-color: transparent !important;
   color: #212529 !important;
 }
 
-[data-bs-theme="light"] .form-floating > .form-control:not(:placeholder-shown) ~ label,
+[data-bs-theme="light"]
+  .form-floating
+  > .form-control:not(:placeholder-shown)
+  ~ label,
 [data-bs-theme="light"] .form-floating > .form-control:focus ~ label {
-   background-color: transparent !important;
+  background-color: transparent !important;
   color: #6c757d !important;
 }
-
 
 /* Dark Theme */
 [data-bs-theme="dark"] {
@@ -67,13 +69,16 @@
 
 [data-bs-theme="dark"] .form-floating > .form-control:not(:placeholder-shown),
 [data-bs-theme="dark"] .form-floating > .form-control:focus {
-   background-color: transparent !important;
+  background-color: transparent !important;
   color: #ffffff !important;
 }
 
-[data-bs-theme="dark"] .form-floating > .form-control:not(:placeholder-shown) ~ label,
+[data-bs-theme="dark"]
+  .form-floating
+  > .form-control:not(:placeholder-shown)
+  ~ label,
 [data-bs-theme="dark"] .form-floating > .form-control:focus ~ label {
-   background-color: transparent !important;
+  background-color: transparent !important;
   color: #ccc !important;
 }
 
@@ -91,6 +96,18 @@
   background-color: #f87171;
   color: #fff;
 }
+/* [data-bs-theme="dark"] #weather-location {
+  background-image: url(../images/dark-cutted.png);
+  background-position-x: 100%;
+  background-position-y: -200px;
+  background-repeat: repeat-x;
+}
+[data-bs-theme="dark"] .do-btn {
+  color: #eee;
+}
+[data-bs-theme="dark"] .si-btn {
+  color: #eee;
+} */
 
 input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0px 1000px white inset !important;
@@ -113,4 +130,3 @@ input:-webkit-autofill {
   caret-color: #ffffff;
   transition: background-color 5000s ease-in-out 0s;
 }
-
