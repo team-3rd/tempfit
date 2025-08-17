@@ -627,7 +627,7 @@ function renderBestLooks(data) {
     const bookmarked = !!post.bookmarkedByMe;
 
     return `
-      <a href="/community/detail/${id}" class="post-card text-decoration-none text-reset h-100" data-id="${id}">
+      <div class="post-card text-decoration-none text-reset h-100" data-id="${id}">
         <div class="card-top">
           <div class="left">
             <img class="profileImg" src="${profile}" alt="프로필"/>
@@ -686,7 +686,7 @@ function renderBestLooks(data) {
             <span class="content">${content}</span>
           </div>
         </div>
-      </a>
+      </div>
     `;
   };
 
@@ -729,16 +729,19 @@ function renderBestLooks(data) {
   area.querySelectorAll(".post-card[data-id]").forEach((card) => {
     card.addEventListener("click", (e) => {
       if (e.target.closest(".btn-action")) return;
-      e.preventDefault();
+
       const postId = card.getAttribute("data-id");
       if (!isValidId(postId)) return;
       // ✅ 공용 로더 호출
       if (
         window.ModalLoader &&
-        typeof window.ModalLoader.openDetailModal === "function"
+        typeof window.ModalLoader.setDetailModal === "function"
       ) {
-        window.ModalLoader.openDetailModal(postId);
+        window.ModalLoader.setDetailModal(postId);
       }
+
+      const modal = new bootstrap.Modal("#detailModal");
+      modal.show();
     });
   });
 

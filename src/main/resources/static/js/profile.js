@@ -1,4 +1,5 @@
-// /js/list.js
+// /js/profile
+// .js
 
 // 공통 유틸: 1k 포맷
 function formatCount(n) {
@@ -63,11 +64,8 @@ function isValidId(v) {
 
 document.addEventListener("DOMContentLoaded", () => {
   // 상세 모달 로드
-  document.querySelectorAll(".post-card").forEach((card) => {
+  document.querySelectorAll(".posts").forEach((card) => {
     card.addEventListener("click", async (e) => {
-      // 액션 버튼 클릭은 무시
-      if (e.target.closest(".btn-action")) return;
-
       const postId = card.getAttribute("data-id");
       if (!isValidId(postId)) return; // placeholder 가드
 
@@ -84,19 +82,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 숫자 포맷팅
-  document.querySelectorAll(".count").forEach((el) => {
-    const n = el.getAttribute("data-count");
-    el.textContent = formatCount(n);
-  });
-
   // 좋아요 토글: 서버 응답으로 로그인 판별
   document.querySelectorAll(".btn-like").forEach((btn) => {
     btn.addEventListener("click", function (e) {
       e.stopPropagation();
       e.preventDefault();
 
-      const card = btn.closest(".post-card");
+      const card = btn.closest(".posts");
       const id = btn.getAttribute("data-id");
       const icon = btn.querySelector(".bi");
       const countEl = btn.parentElement.querySelector(".like-count");
@@ -138,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
       e.stopPropagation();
       e.preventDefault();
 
-      const card = btn.closest(".post-card");
+      const card = btn.closest(".posts");
       const id = btn.getAttribute("data-id");
       const icon = btn.querySelector(".bi");
       const checked = icon.classList.contains("bi-bookmark-fill");
@@ -168,7 +160,110 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
       e.preventDefault();
-      btn.closest(".post-card")?.click();
+      btn.closest(".posts")?.click();
+    });
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  // 북마크 게시글 상세 모달 로드
+  document.querySelectorAll(".bookmarkedPosts").forEach((card) => {
+    card.addEventListener("click", async (e) => {
+      const postId = card.getAttribute("data-id");
+      if (!isValidId(postId)) return; // placeholder 가드
+
+      // ✅ 공용 로더 호출
+      if (
+        window.ModalLoader &&
+        typeof window.ModalLoader.setDetailModal === "function"
+      ) {
+        window.ModalLoader.setDetailModal(postId);
+      }
+
+      const modal = new bootstrap.Modal("#detailModal");
+      modal.show();
+    });
+  });
+
+  // 좋아요 토글: 서버 응답으로 로그인 판별
+  document.querySelectorAll(".btn-like").forEach((btn) => {
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      const card = btn.closest(".bookmarkedPosts");
+      const id = btn.getAttribute("data-id");
+      const icon = btn.querySelector(".bi");
+      const countEl = btn.parentElement.querySelector(".like-count");
+      let current = Number(countEl.getAttribute("data-count") || 0);
+      const liked = icon.classList.contains("bi-heart-fill");
+
+      fetch(`/community/recommend/${id}`, {
+        method: "POST",
+        credentials: "same-origin",
+      })
+        .then((res) => {
+          if (needsLogin(res)) {
+            showCardNotice(card, "로그인이 필요합니다.");
+            return;
+          }
+          if (!res.ok) throw new Error(String(res.status));
+          // 성공 시에만 UI 토글
+          if (liked) {
+            icon.classList.remove("bi-heart-fill");
+            icon.classList.add("bi-heart");
+            current = Math.max(0, current - 1);
+          } else {
+            icon.classList.remove("bi-heart");
+            icon.classList.add("bi-heart-fill");
+            current = current + 1;
+          }
+          countEl.setAttribute("data-count", current);
+          countEl.textContent = formatCount(current);
+        })
+        .catch(() => {
+          showCardNotice(card, "로그인이 필요합니다.");
+        });
+    });
+  });
+
+  // 북마크 토글: 서버 응답으로 로그인 판별
+  document.querySelectorAll(".btn-bookmark").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      const card = btn.closest(".bookmarkedPosts");
+      const id = btn.getAttribute("data-id");
+      const icon = btn.querySelector(".bi");
+      const checked = icon.classList.contains("bi-bookmark-fill");
+
+      fetch(`/community/bookmark/${id}`, {
+        method: "POST",
+        credentials: "same-origin",
+      })
+        .then((res) => {
+          if (needsLogin(res)) {
+            showCardNotice(card, "로그인이 필요합니다.");
+            return;
+          }
+          if (!res.ok) throw new Error(String(res.status));
+          // 성공 시에만 UI 토글
+          icon.classList.toggle("bi-bookmark-fill", !checked);
+          icon.classList.toggle("bi-bookmark", checked);
+        })
+        .catch(() => {
+          showCardNotice(card, "로그인이 필요합니다.");
+        });
+    });
+  });
+
+  // 댓글 버튼 = 카드 클릭
+  document.querySelectorAll(".btn-comment").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      btn.closest(".posts")?.click();
     });
   });
 });

@@ -1,7 +1,8 @@
 /* 전체 배경 */
 body {
   background: #f5f6fa;
-  font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", sans-serif;
+  font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto,
+    "Noto Sans KR", sans-serif;
 }
 
 /* 검색 폼 */
@@ -193,27 +194,28 @@ body {
 
 /* ───── 모달 중앙 정렬 ───── */
 /* 숨겨진 상태에선 절대 보이지 않게(클릭 차단 방지) */
-#detailModal.modal:not(.show) {
+/* #detailModal.modal:not(.show) {
   display: none !important;
-}
+} */
 
 /* 가로 중앙 */
-#detailModal .modal-dialog {
+/* #detailModal .modal-dialog {
   max-width: none;
   width: auto;
   margin: 0.5rem auto;
-}
+} */
 
 /* 세로 중앙 */
-#detailModal .modal-dialog-centered {
+/* #detailModal .modal-dialog-centered {
   display: flex;
   align-items: center;
   min-height: calc(100% - 1rem);
-}
+} */
 
-#detailModal .modal-content {
+.modal-content {
   border: 0;
   border-radius: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 /* BEST LOOKS – 카드 상단의 '몇 시간 전' 위치 고정 (전역 .time 충돌 해결) */
@@ -268,5 +270,10 @@ body {
 }
 
 /* 캡션 줄높이 통일 + 닉네임 베이스라인 맞춤 */
-.caption { line-height: 1.2; }             /* ← 캡션 전체 줄높이 고정 */
-.caption .name { line-height: 1.2; vertical-align: baseline; }  /* ← 닉네임 정렬 */
+.caption {
+  line-height: 1.2;
+} /* ← 캡션 전체 줄높이 고정 */
+.caption .name {
+  line-height: 1.2;
+  vertical-align: baseline;
+} /* ← 닉네임 정렬 */

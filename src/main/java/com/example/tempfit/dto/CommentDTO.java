@@ -20,6 +20,7 @@ public class CommentDTO {
     private String content;
     private Long postId;
     private LocalDateTime createdDate;
+    private String AuthorId;
 
     public String getDisplayDate() {
         Duration diff = Duration.between(createdDate, LocalDateTime.now());

@@ -1,5 +1,6 @@
 package com.example.tempfit.service;
 
+import com.example.tempfit.dto.CommentDTO;
 import com.example.tempfit.entity.Comment;
 import com.example.tempfit.entity.Community;
 import com.example.tempfit.entity.Member;
@@ -21,7 +22,7 @@ public class CommentService {
     private final CommunityRepository postRepo;
 
     @Transactional
-    public Comment addComment(Long postId, Member author, String content) {
+    public CommentDTO addComment(Long postId, Member author, String content) {
         Community post = postRepo.findById(postId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
         Comment comment = Comment.builder()
@@ -29,7 +30,9 @@ public class CommentService {
             .author(author)
             .content(content)
             .build();
-        return commentRepo.save(comment);
+        commentRepo.save(comment);
+
+        return entityToDTO(comment);
     }
 
     @Transactional(readOnly = true)
@@ -51,5 +54,18 @@ public class CommentService {
             map.put(id, getCommentCount(id));
         }
         return map;
+    }
+
+    public CommentDTO entityToDTO(Comment comment) {
+        Community community = comment.getPost();
+        Member member = comment.getAuthor();
+
+        return CommentDTO.builder()
+        .id(comment.getId())
+        .content(comment.getContent())
+        .postId(community.getId())
+        .AuthorId(member.getEmail())
+        .createdDate(comment.getCreatedDate())
+        .build();
     }
 }

@@ -1,14 +1,21 @@
 /* static/css/detail.css */
 
 /* 전역 아바타 크기 */
-:root{ --ig-avatar-size: 36px; }
+:root {
+  --ig-avatar-size: 36px;
+}
 
 /* 모달 컨테이너 */
-.ig-modal{ border-radius:0 !important; background:#fff; border:none; }
+.ig-modal {
+  width: fit-content;
+  border-radius: 0 !important;
+  background: #fff;
+  border: none;
+}
 
 /* 2열 래퍼: 반응형 비율(62:38) */
-.ig-wrap{
-  display:grid;
+.ig-wrap {
+  display: grid;
   grid-template-columns: minmax(360px, 62vw) minmax(300px, 38vw);
   width: min(1100px, calc(100vw - 32px));
   height: min(80vh, calc(100vh - 32px));
@@ -16,85 +23,300 @@
 }
 
 /* 왼쪽: 이미지 영역 */
-.ig-media{
-  position:relative; background:#000;
-  display:flex; align-items:center; justify-content:center;
-  overflow:hidden; border-right:1px solid #eee;
+.ig-media {
+  position: relative;
+  max-height: 816px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-right: 1px solid #eee;
 }
-.ig-photo{ max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain; display:block; }
+.ig-photo {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+#carousel-prev,
+#carousel-next {
+  width: 3rem !important;
+  height: 3rem !important;
+  background-size: 2rem 2rem;
+  background-position: center;
+  border: none !important;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+  transform-origin: center;
+  will-change: transform;
+}
+#carousel-prev:hover,
+#carousel-next:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
 
 /* (작성자 전용) 삭제 버튼 — 사진 우측 하단 */
-.ig-del-form{ position:absolute; right:10px; bottom:10px; z-index:4; }
-.ig-del-btn{ border:0; background:rgba(0,0,0,.55); color:#fff; padding:6px 8px; border-radius:0; cursor:pointer; line-height:1; }
-.ig-del-btn i{ font-size:1.1rem; vertical-align:middle; }
-.ig-del-btn:hover{ background:rgba(0,0,0,.7); }
+.ig-del-form {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 4;
+}
+.ig-del-btn {
+  border: 0;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  padding: 6px 8px;
+  border-radius: 0;
+  cursor: pointer;
+  line-height: 1;
+}
+.ig-del-btn i {
+  font-size: 1.1rem;
+  vertical-align: middle;
+}
+.ig-del-btn:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
 
 /* 오른쪽: 사이드 */
-.ig-side{ display:flex; flex-direction:column; background:#fff; }
+.ig-side {
+  display: flex;
+  flex-direction: column;
+  max-height: 816px;
+  background: #fff;
+}
 
 /* 헤더 */
-.ig-header{ display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid #eee; }
+.ig-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #eee;
+}
 
 /* 아바타 공통 */
-.ig-avatar, .ig-c-avatar{
-  width:var(--ig-avatar-size); height:var(--ig-avatar-size);
-  aspect-ratio:1/1; border-radius:50%; object-fit:cover; display:block; flex:0 0 var(--ig-avatar-size); border:none;
+.ig-avatar,
+.ig-c-avatar {
+  width: var(--ig-avatar-size);
+  height: var(--ig-avatar-size);
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  flex: 0 0 var(--ig-avatar-size);
+  border: none;
 }
 
 /* 사용자 이름/시간 묶음 */
-.ig-user{ display:flex; flex-direction:column; }
-.ig-name{ font-weight:700; text-decoration:none; color:#111; }
-.ig-name:hover{ text-decoration:underline; }
-.ig-time{ font-size:.8rem; color:#8e8e8e; }
+.ig-user {
+  display: flex;
+  flex-direction: column;
+}
+.ig-name {
+  font-weight: 700;
+  text-decoration: none;
+  color: #111;
+}
+.ig-name:hover {
+  text-decoration: underline;
+}
+.ig-time {
+  font-size: 0.8rem;
+  color: #8e8e8e;
+}
 
 /* 우측 상단 날씨 */
-.ig-weather{ margin-left:auto; display:flex; align-items:center; gap:8px; color:#6b7280; }
-.ig-weather .bi{ font-size:1rem; }
-.ig-weather .temp{ font-size:.9rem; }
+.ig-weather {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+}
+.ig-weather .bi {
+  font-size: 1rem;
+}
+.ig-weather .temp {
+  font-size: 0.9rem;
+}
 
 /* 본문/댓글 스크롤 */
-.ig-body{ padding:12px 14px; overflow:auto; flex:1 1 auto; }
+.ig-body {
+  max-width: 630px;
+  padding: 12px 14px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
 
 /* 본문 캡션 */
-.ig-caption{ display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; }
-.ig-caption > div{ min-width:0; }
-.ig-caption .ig-name{ display:inline; font-weight:700; margin-right:6px; line-height:1.2; vertical-align:baseline; }
-.ig-caption .ig-text{ display:inline; white-space:pre-wrap; word-break:keep-all; overflow-wrap:break-word; vertical-align:baseline; margin:0; }
-.ig-caption .ig-time{ display:block; font-size:.8rem; color:#8e8e8e; line-height:1.2; margin-top:2px; }
+.ig-caption {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.ig-caption > div {
+  min-width: 0;
+}
+.ig-caption .ig-name {
+  display: inline;
+  font-weight: 700;
+  margin-right: 6px;
+  line-height: 1.2;
+  vertical-align: baseline;
+}
+.ig-caption .ig-text {
+  display: inline;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  vertical-align: baseline;
+  margin: 0;
+}
+.ig-caption .ig-time {
+  display: block;
+  font-size: 0.8rem;
+  color: #8e8e8e;
+  line-height: 1.2;
+  margin-top: 2px;
+}
+.times {
+  margin-left: 12px;
+}
 
 /* 댓글 리스트 */
-.ig-comments{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px; }
-.ig-comment{ display:flex; align-items:flex-start; gap:10px; }
-.ig-c-wrap{ display:block; min-width:0; }
-.ig-c-name{ display:inline; font-weight:700; margin-right:6px; vertical-align:baseline; }
-.ig-c-text{ display:inline; white-space:pre-wrap; word-break:keep-all; overflow-wrap:break-word; vertical-align:baseline; }
-.ig-c-time{ display:block; font-size:12px; line-height:1.2; color:#9aa0a6; margin-top:2px; }
+.ig-comments {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ig-comment {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.ig-c-wrap {
+  display: block;
+  min-width: 0;
+}
+.ig-c-name {
+  display: inline;
+  font-weight: 700;
+  margin-right: 6px;
+  vertical-align: baseline;
+}
+.ig-c-text {
+  display: inline;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  vertical-align: baseline;
+}
+.ig-c-time {
+  display: block;
+  font-size: 12px;
+  line-height: 1.2;
+  color: #9aa0a6;
+  margin-top: 2px;
+}
 
 /* 액션바 */
-.ig-actions{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-top:1px solid #eee; }
-.icon-btn{ border:0; background:transparent; padding:0; cursor:pointer; line-height:1; }
-.icon-btn i{ font-size:1.4rem; vertical-align:middle; color:#111; }
-.ig-count{ margin:0 12px 0 6px; font-size:.95rem; color:#111; }
+.ig-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-top: 1px solid #eee;
+}
+.icon-btn {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  line-height: 1;
+}
+.icon-btn i {
+  font-size: 1.4rem;
+  vertical-align: middle;
+  color: #111;
+}
+.ig-count {
+  margin: 0 12px 0 6px;
+  font-size: 0.95rem;
+  color: #111;
+}
 
 /* ✅ 채움 아이콘(좋아요/북마크) 색상 */
-.btn-like .bi-heart-fill{ color:#e74c3c; }
-.btn-bookmark .bi-bookmark-fill{ color:#0d6efd; }
+.btn-like .bi-heart-fill {
+  color: #e74c3c;
+}
+.btn-bookmark .bi-bookmark-fill {
+  color: #0d6efd;
+}
 
 /* 입력 */
-.ig-input{ padding:8px 12px; border-top:1px solid #eee; }
-.ig-form{ display:flex; gap:8px; align-items:center; }
-.ig-textarea{ flex:1; border:none; resize:none; outline:none; font-size:.95rem; height:42px; padding:10px 0; }
-.ig-submit{ background:transparent; border:none; color:#0d6efd; font-weight:600; height:42px; padding:0 4px; cursor:pointer; }
+.ig-input {
+  padding: 8px 12px;
+  border-top: 1px solid #eee;
+}
+.ig-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.ig-textarea {
+  flex: 1;
+  border: none;
+  resize: none;
+  outline: none;
+  font-size: 0.95rem;
+  height: 42px;
+  padding: 10px 0;
+  overflow-y: hidden;
+}
+.ig-submit {
+  background: transparent;
+  border: none;
+  color: #0d6efd;
+  font-weight: 600;
+  height: 42px;
+  padding: 0 4px;
+  cursor: pointer;
+}
 
 /* 로그인 힌트 */
-.ig-login-hint{ padding:10px 0 14px; }
+.ig-login-hint {
+  padding: 10px 0 14px;
+}
 
 /* 반응형 */
-@media (max-width:1150px){
-  .ig-wrap{ grid-template-columns:minmax(360px, 60vw) minmax(300px, 40vw); width:min(100%, calc(100vw - 32px)); }
+@media (max-width: 1150px) {
+  .ig-wrap {
+    grid-template-columns: minmax(360px, 60vw) minmax(300px, 40vw);
+    width: min(100%, calc(100vw - 32px));
+  }
 }
-@media (max-width:900px){
-  .ig-wrap{ grid-template-columns:1fr; width:min(100%, calc(100vw - 32px)); }
-  .ig-media{ min-height:40vh; height:40vh; }
-  .ig-side{ min-height:40vh; }
+@media (max-width: 900px) {
+  .ig-wrap {
+    grid-template-columns: 1fr;
+    width: min(100%, calc(100vw - 32px));
+  }
+  .ig-media {
+    min-height: 40vh;
+    height: 40vh;
+  }
+  .ig-side {
+    min-height: 40vh;
+  }
 }

@@ -7,25 +7,52 @@
         <div class="carousel-inner">
           <!-- 대표 이미지 -->
           <div class="carousel-item active" th:if="${post.repImageUrl != null}">
-            <img class="ig-photo" th:src="@{'/uploads/' + ${post.repImageUrl}}" alt="image" />
+            <img
+              class="ig-photo"
+              th:src="@{'/uploads/' + ${post.repImageUrl}}"
+              alt="image"
+            />
           </div>
           <!-- 추가 이미지 -->
           <div th:if="${post.extraImageUrls != null}">
             <div class="carousel-item" th:each="url : ${post.extraImageUrls}">
-              <img class="ig-photo" th:src="@{'/uploads/' + ${url}}" alt="image" />
+              <img
+                class="ig-photo"
+                th:src="@{'/uploads/' + ${url}}"
+                alt="image"
+              />
             </div>
           </div>
         </div>
-
-        <button class="carousel-control-prev" type="button" data-bs-target="#igCarousel" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Prev</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#igCarousel" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
       </div>
+      <button
+        class="carousel-control-prev"
+        id="carousel-prev-btn"
+        type="button"
+        data-bs-target="#igCarousel"
+        data-bs-slide="prev"
+      >
+        <span
+          class="carousel-control-prev-icon"
+          id="carousel-prev"
+          aria-hidden="true"
+        ></span>
+        <!-- <span class="visually-hidden">Prev</span> -->
+      </button>
+      <button
+        class="carousel-control-next"
+        id="carousel-next-btn"
+        type="button"
+        data-bs-target="#igCarousel"
+        data-bs-slide="next"
+      >
+        <span
+          class="carousel-control-next-icon"
+          id="carousel-next"
+          aria-hidden="true"
+        ></span>
+        <!-- <span class="visually-hidden">Next</span> -->
+      </button>
 
       <!-- (작성자 전용) 삭제 버튼: 사진 우측 하단 -->
       <form
@@ -46,7 +73,11 @@
     <div class="ig-side">
       <!-- 헤더 -->
       <div class="ig-header">
-        <img class="ig-avatar" th:src="@{${post.profileImageUrl}}" alt="프로필" />
+        <img
+          class="ig-avatar"
+          th:src="@{${post.profileImageUrl}}"
+          alt="프로필"
+        />
         <div class="ig-user">
           <a
             class="ig-name"
@@ -77,8 +108,15 @@
       <!-- 본문 + 댓글 스크롤 영역 -->
       <div class="ig-body" id="igBody">
         <!-- 캡션(본문) -->
-        <div class="ig-caption" th:if="${post.content != null and post.content.trim().length() > 0}">
-          <img class="ig-avatar" th:src="@{${post.profileImageUrl}}" alt="프로필" />
+        <div
+          class="ig-caption"
+          th:if="${post.content != null and post.content.trim().length() > 0}"
+        >
+          <img
+            class="ig-avatar"
+            th:src="@{${post.profileImageUrl}}"
+            alt="프로필"
+          />
           <div>
             <a
               class="ig-name"
@@ -95,7 +133,11 @@
         <!-- 댓글 목록 -->
         <ul class="ig-comments" id="igComments">
           <li class="ig-comment" th:each="c : ${comments}">
-            <img class="ig-c-avatar" th:src="@{${c.author.profileImageUrl}}" alt="프로필" />
+            <img
+              class="ig-c-avatar"
+              th:src="@{${c.author.profileImageUrl}}"
+              alt="프로필"
+            />
             <div class="ig-c-wrap">
               <span
                 class="ig-c-name"
@@ -118,8 +160,16 @@
       <div class="ig-actions">
         <div class="left">
           <!-- 초기 상태: likedByMe → 빨간 하트 -->
-          <button type="button" class="icon-btn btn-like" th:attr="data-id=${post.id}" title="좋아요">
-            <i class="bi" th:classappend="${post.likedByMe} ? ' bi-heart-fill' : ' bi-heart'"></i>
+          <button
+            type="button"
+            class="icon-btn btn-like"
+            th:attr="data-id=${post.id}"
+            title="좋아요"
+          >
+            <i
+              class="bi"
+              th:classappend="${post.likedByMe} ? ' bi-heart-fill' : ' bi-heart'"
+            ></i>
           </button>
           <span
             class="ig-count"
@@ -143,23 +193,44 @@
 
         <div class="right">
           <!-- 초기 상태: bookmarkedByMe → 파란 책갈피 -->
-          <button type="button" class="icon-btn btn-bookmark" th:attr="data-id=${post.id}" title="북마크">
-            <i class="bi" th:classappend="${post.bookmarkedByMe} ? ' bi-bookmark-fill' : ' bi-bookmark'"></i>
+          <button
+            type="button"
+            class="icon-btn btn-bookmark"
+            th:attr="data-id=${post.id}"
+            title="북마크"
+          >
+            <i
+              class="bi"
+              th:classappend="${post.bookmarkedByMe} ? ' bi-bookmark-fill' : ' bi-bookmark'"
+            ></i>
           </button>
         </div>
       </div>
 
-      <div class="ig-time" th:text="${post.displayDate}">1시간 전</div>
+      <div class="ig-time times" th:text="${post.displayDate}">1시간 전</div>
 
       <!-- 댓글 입력 -->
       <div class="ig-input" sec:authorize="isAuthenticated()">
-        <form class="ig-form" th:action="@{/community/detail/{id}/comments(id=${post.id})}" method="post">
-          <textarea class="ig-textarea" name="content" placeholder="댓글 쓰기" required></textarea>
+        <form
+          class="ig-form"
+          th:action="@{/api/community/detail/{id}/comments(id=${post.id})}"
+          method="post"
+          th:attr="data-id=${post.id}"
+        >
+          <textarea
+            class="ig-textarea"
+            name="content"
+            placeholder="댓글 쓰기"
+            required
+          ></textarea>
           <button type="submit" class="ig-submit">게시</button>
         </form>
       </div>
 
-      <div class="ig-login-hint text-center text-muted" sec:authorize="!isAuthenticated()">
+      <div
+        class="ig-login-hint text-center text-muted"
+        sec:authorize="!isAuthenticated()"
+      >
         댓글을 작성하려면 <a th:href="@{/member/login}">로그인</a>이 필요합니다.
       </div>
     </div>

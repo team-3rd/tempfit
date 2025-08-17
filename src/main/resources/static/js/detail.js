@@ -36,8 +36,14 @@ function showCardNotice(cardEl, message) {
 // 서버 응답이 로그인 필요인지 판별
 function needsLogin(res) {
   const url = (res && res.url) || "";
+  console.log(res);
+  console.log(res.url);
   if (res.status === 401 || res.status === 403) return true;
-  if (res.redirected && (url.includes("/member/login") || url.includes("/login"))) return true;
+  if (
+    res.redirected &&
+    (url.includes("/member/login") || url.includes("/login"))
+  )
+    return true;
   return false;
 }
 
@@ -53,8 +59,9 @@ function k(n) {
 
 // ✅ 모달에서 변경된 상태를 바깥(메인/리스트)의 카드에도 반영
 function syncOuterCards(id, { liked, likeCount, bookmarked }) {
-  const nodes = Array.from(document.querySelectorAll(`.post-card[data-id="${id}"]`))
-    .filter((el) => !el.closest(".modal")); // 모달 내부 제외
+  const nodes = Array.from(
+    document.querySelectorAll(`.post-card[data-id="${id}"]`)
+  ).filter((el) => !el.closest(".modal")); // 모달 내부 제외
 
   nodes.forEach((card) => {
     // 좋아요 아이콘/카운트
@@ -79,10 +86,13 @@ function syncOuterCards(id, { liked, likeCount, bookmarked }) {
   });
 }
 
-// 상세 모달 초기화 훅 (list.js/main.js에서 fragment 주입 후 호출)
+// 상세 모달 초기화 후 (list.js/main.js에서 fragment 주입 후 호출)
 window.initDetailModal = function initDetailModal(host) {
   const root = host || document; // host가 없으면 document 기준
-  const card = root.querySelector(".post-card") || root.querySelector(".modal-content") || root;
+  const card =
+    root.querySelector(".post-card") ||
+    root.querySelector(".modal-content") ||
+    root;
 
   // 좋아요 버튼
   root.querySelectorAll(".btn-like").forEach((btn) => {
@@ -100,7 +110,10 @@ window.initDetailModal = function initDetailModal(host) {
       let current = Number(countEl?.getAttribute("data-count") || 0);
       const wasLiked = icon.classList.contains("bi-heart-fill");
 
-      fetch(`/community/recommend/${id}`, { method: "POST", credentials: "same-origin" })
+      fetch(`/community/recommend/${id}`, {
+        method: "POST",
+        credentials: "same-origin",
+      })
         .then((res) => {
           if (needsLogin(res)) {
             showCardNotice(card, "로그인이 필요합니다.");
@@ -127,7 +140,9 @@ window.initDetailModal = function initDetailModal(host) {
           // ✅ 바깥 카드들도 동기화
           syncOuterCards(id, { liked: nowLiked, likeCount: current });
         })
-        .catch(() => {});
+        .catch(() => {
+          showCardNotice(card, "로그인이 필요합니다.");
+        });
     });
   });
 
@@ -141,7 +156,10 @@ window.initDetailModal = function initDetailModal(host) {
       const icon = btn.querySelector(".bi");
       const wasBookmarked = icon.classList.contains("bi-bookmark-fill");
 
-      fetch(`/community/bookmark/${id}`, { method: "POST", credentials: "same-origin" })
+      fetch(`/community/bookmark/${id}`, {
+        method: "POST",
+        credentials: "same-origin",
+      })
         .then((res) => {
           if (needsLogin(res)) {
             showCardNotice(card, "로그인이 필요합니다.");
@@ -157,7 +175,35 @@ window.initDetailModal = function initDetailModal(host) {
           // ✅ 바깥 카드들도 동기화 (북마크만)
           syncOuterCards(id, { bookmarked: nowBookmarked });
         })
-        .catch(() => {});
+        .catch(() => {
+          showCardNotice(card, "로그인이 필요합니다.");
+        });
     });
+  });
+
+  // 댓글
+  const commentForm = document.querySelector(".ig-form");
+  const id = commentForm.getAttribute("data-id");
+
+  commentForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(commentForm);
+    await fetch(`/api/community/detail/${id}/comments`, {
+      method: "POST",
+      credentials: "same-origin",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+
+        fetch(`/community/detail/${id}/fragment`)
+          .then((res) => res.text())
+          .then((data) => {
+            const dialog = document.querySelector(".modal-dialog");
+            dialog.innerHTML = data;
+          });
+      });
   });
 };

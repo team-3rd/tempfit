@@ -52,13 +52,13 @@
     }
   }
 
-  async function openDetailModal(postId) {
+  async function setDetailModal(postId) {
     if (!isValidId(postId)) return;
 
-    const modalEl = ensureDetailModal();
-    const host = modalEl.querySelector("#modal-fragment");
+    // const modalEl = ensureDetailModal();
+    const host = document.querySelector(".modal-dialog");
     if (!host) {
-      console.error("#modal-fragment 컨테이너가 없습니다.");
+      console.error(".modal-dialog 컨테이너가 없습니다.");
       return;
     }
     host.innerHTML = "";
@@ -78,12 +78,10 @@
       console.error("Bootstrap JS가 로드되지 않았습니다.");
       return;
     }
-    const modal = new bootstrap.Modal(modalEl, { backdrop: true, focus: true });
-    modal.show();
   }
 
   win.ModalLoader = {
-    ensureDetailModal,
-    openDetailModal,
+    // ensureDetailModal,
+    setDetailModal,
   };
 })(window);

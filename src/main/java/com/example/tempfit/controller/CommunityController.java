@@ -110,19 +110,6 @@ public class CommunityController {
         return "community/detail :: detailCard";
     }
 
-    @PostMapping("/detail/{id}/comments")
-    public String addComment(
-            @PathVariable Long id,
-            @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
-            @RequestParam String content) {
-
-        Member member = memberRepository.findByEmailAndFromSocial(
-                authMemberDTO.getEmail(), authMemberDTO.isFromSocial()); // ✅ getEmail로 수정
-
-        commentService.addComment(id, member, content);
-        return "redirect:/community/detail/" + id;
-    }
-
     @GetMapping("/create")
     public String createForm(Model model) {
         model.addAttribute("communityDTO", new CommunityDTO());
