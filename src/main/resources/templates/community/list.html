@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>템핏 TempFit</title>
+    <title>게시글 - TempFit</title>
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
     <link
       href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/variable/pretendardvariable.css"
@@ -132,6 +132,40 @@
           </div>
         </a>
       </div>
+
+
+      <!-- 페이징 -->
+      <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" th:if="${startPage > 1}">
+            <a
+              class="page-link"
+              th:href="@{/community/list(page=${startPage-1},type=${type},keyword=${keyword},styleNames=${styleNames})}"
+              >이전</a
+            >
+          </li>
+          <li
+            class="page-item"
+            th:each="i : ${#numbers.sequence(startPage, endPage)}"
+            th:classappend="${i == currentPage} ? ' active'"
+          >
+            <a
+              class="page-link"
+              th:href="@{/community/list(page=${i},type=${type},keyword=${keyword},styleNames=${styleNames})}"
+              th:text="${i}"
+              >1</a
+            >
+          </li>
+          <li class="page-item" th:if="${endPage < totalPages}">
+            <a
+              class="page-link"
+              th:href="@{/community/list(page=${endPage+1},type=${type},keyword=${keyword},styleNames=${styleNames})}"
+              >다음</a
+            >
+          </li>
+        </ul>
+      </nav>
+
     </div>
 
     <!-- 모달은 body 바로 아래 -->
