@@ -102,6 +102,10 @@ body {
 #communityForm {
   margin-left: 70px;
 }
+#createCarousel {
+  width: fit-content;
+  height: fit-content;
+}
 
 /* 텍스트영역 */
 textarea.form-control{ 
@@ -112,6 +116,7 @@ textarea.form-control{
 /* 좌측 미디어 패널 */
 .imgCard {
   width: 50.9% !important;
+  margin-right: 20px;
 }
 
 /* 우측 미디어 패널 */
@@ -119,7 +124,10 @@ textarea.form-control{
   height: 756px !important;
 }
 
-.media-panel{ background:#fff; }
+.media-panel{ 
+  background:#fff; 
+  width: fit-content;
+}
 
 /* ================= 미디어 섹션 중앙 정렬 ================= */
 .media-stage{
@@ -166,7 +174,7 @@ textarea.form-control{
 /* 캐러셀 Prev/Next */
 .media-control{
   border: none !important;
-  border-radius: 0 !important;
+  border-radius: 100% !important;
   width: 44px;
   height: 44px;
   top: calc(50% - 22px);

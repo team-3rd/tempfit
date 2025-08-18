@@ -25,7 +25,6 @@
 /* 왼쪽: 이미지 영역 */
 .ig-media {
   position: relative;
-  max-height: 816px;
   background: #000;
   display: flex;
   align-items: center;
@@ -38,28 +37,85 @@
   max-height: 100%;
   width: auto;
   height: auto;
-  object-fit: contain;
+  object-fit: contain !important;
+  object-position: center center !important;
   display: block;
+  margin: 0 auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+#igCarousel {
+  width: fit-content;
+  height: fit-content;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+.carousel-indicators {
+  bottom: -70px;
+}
+.carousel-indicators > button {
+  width: 7px !important;
+  height: 7px !important;
+  border-radius: 100% !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+  transition: transform 160ms ease, box-shadow 160ms ease !important;
+}
+.carousel-indicators > button:hover{
+  transform: scale(1.2);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.14);
+}
+
+#carousel-prev-btn,
+#carousel-next-btn {
+  width: 45px !important;
+  height: 45px !important;
+  top: calc(50% - 28px);
+  border: none !important;
+  border-radius: 100%;
+  background-color: rgba(255, 255, 255, 0.0);
+  transition: background .12s ease, box-shadow .12s ease, transform .12s ease;
+  z-index: 100;
+}
+#carousel-prev-btn:hover,
+#carousel-next-btn:hover{
+  background: rgba(0,0,0,0.3);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  transform: scale(1.02);
 }
 #carousel-prev,
 #carousel-next {
-  width: 3rem !important;
-  height: 3rem !important;
-  background-size: 2rem 2rem;
-  background-position: center;
-  border: none !important;
-  border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.5);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
-  transition: transform 140ms ease, box-shadow 140ms ease;
-  transform-origin: center;
-  will-change: transform;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
 }
-#carousel-prev:hover,
-#carousel-next:hover {
-  transform: scale(1.08);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+#carousel-prev-btn.is-disabled,
+#carousel-next-btn.is-disabled
+{ opacity: .28; pointer-events: none; }
+
+.carousel-inner .carousel-item.active {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: 579px;
+  height: 579px;
 }
+.carousel-inner {
+  background: #000;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  width: 579px;
+  height: 579px;
+  align-items: center;
+  vertical-align: middle;
+}
+/* .active {
+  margin-top: calc(50% - 289.5px);
+} */
 
 /* (작성자 전용) 삭제 버튼 — 사진 우측 하단 */
 .ig-del-form {

@@ -13,7 +13,12 @@
 (function () {
   "use strict";
 
-  const THEMES = ["weather-clear", "weather-cloudy", "weather-rain", "weather-snow"];
+  const THEMES = [
+    "weather-clear",
+    "weather-cloudy",
+    "weather-rain",
+    "weather-snow",
+  ];
   const BODY = document.body;
   const DOC_EL = document.documentElement;
 
@@ -45,7 +50,7 @@
       splat: true,
       backRow: true,
       single: false,
-      density: 100
+      density: 100,
     },
     opts: null,
     footerEl: null,
@@ -84,11 +89,17 @@
     },
 
     setOptions(next) {
-      this.opts = Object.assign({}, this.opts || this.defaultOptions, next || {});
+      this.opts = Object.assign(
+        {},
+        this.opts || this.defaultOptions,
+        next || {}
+      );
       this._applyToggleClasses();
     },
 
-    _empty(el) { while (el.firstChild) el.removeChild(el.firstChild); },
+    _empty(el) {
+      while (el.firstChild) el.removeChild(el.firstChild);
+    },
 
     _makeDrops() {
       const wrap = this.ensureOverlay();
@@ -104,14 +115,14 @@
 
       while (increment < max) {
         const randoHundo = Math.floor(Math.random() * 98) + 1; // 1~98
-        const randoFiver = Math.floor(Math.random() * 4) + 2;  // 2~5
+        const randoFiver = Math.floor(Math.random() * 4) + 2; // 2~5
         increment += randoFiver;
 
         // front
         const dropF = document.createElement("div");
         dropF.className = "drop";
         dropF.style.left = increment + "%";
-        dropF.style.bottom = (randoFiver + randoFiver - 1 + 100) + "%";
+        dropF.style.bottom = randoFiver + randoFiver - 1 + 100 + "%";
         dropF.style.animationDelay = "0." + randoHundo + "s";
         dropF.style.animationDuration = "0.5" + randoHundo + "s";
 
@@ -133,7 +144,7 @@
         const dropB = document.createElement("div");
         dropB.className = "drop";
         dropB.style.right = increment + "%";
-        dropB.style.bottom = (randoFiver + randoFiver - 1 + 100) + "%";
+        dropB.style.bottom = randoFiver + randoFiver - 1 + 100 + "%";
         dropB.style.animationDelay = "0." + randoHundo + "s";
         dropB.style.animationDuration = "0.5" + randoHundo + "s";
 
@@ -154,11 +165,14 @@
 
       if (this.opts.single) {
         const drops = wrap.querySelectorAll(".drop");
-        drops.forEach((d, i) => { if (i !== 9) d.style.display = "none"; });
+        drops.forEach((d, i) => {
+          if (i !== 9) d.style.display = "none";
+        });
       }
 
       const backRowEl = wrap.querySelector(".rain.back-row");
-      if (backRowEl) backRowEl.style.display = this.opts.backRow ? "block" : "none";
+      if (backRowEl)
+        backRowEl.style.display = this.opts.backRow ? "block" : "none";
     },
 
     updateGround() {
@@ -170,19 +184,31 @@
     },
 
     _attachObservers() {
-      this.resizeHandler = () => { this.updateGround(); this.remake(); };
+      this.resizeHandler = () => {
+        this.updateGround();
+        this.remake();
+      };
       window.addEventListener("resize", this.resizeHandler);
 
       const f = this.footerEl;
       if (f && "ResizeObserver" in window) {
-        this.footerObserver = new ResizeObserver(() => { this.updateGround(); this.remake(); });
+        this.footerObserver = new ResizeObserver(() => {
+          this.updateGround();
+          this.remake();
+        });
         this.footerObserver.observe(f);
       }
     },
 
     _detachObservers() {
-      if (this.resizeHandler) { window.removeEventListener("resize", this.resizeHandler); this.resizeHandler = null; }
-      if (this.footerObserver) { this.footerObserver.disconnect(); this.footerObserver = null; }
+      if (this.resizeHandler) {
+        window.removeEventListener("resize", this.resizeHandler);
+        this.resizeHandler = null;
+      }
+      if (this.footerObserver) {
+        this.footerObserver.disconnect();
+        this.footerObserver = null;
+      }
     },
 
     mount() {
@@ -204,13 +230,13 @@
       const wrap = document.getElementById(this.overlayId);
       if (!wrap) return;
       this._makeDrops();
-    }
+    },
   };
 
   window.weatherRain = {
     setOptions: (o) => RAIN.setOptions(o),
     remake: () => RAIN.remake(),
-    updateGround: () => RAIN.updateGround()
+    updateGround: () => RAIN.updateGround(),
   };
 
   // ────────────────────────────────────────────────────────────────────────────
@@ -224,7 +250,7 @@
       single: false,
       density: 120,
       minSize: 6,
-      maxSize: 12
+      maxSize: 12,
     },
     opts: null,
     footerEl: null,
@@ -263,17 +289,29 @@
     },
 
     setOptions(next) {
-      this.opts = Object.assign({}, this.opts || this.defaultOptions, next || {});
+      this.opts = Object.assign(
+        {},
+        this.opts || this.defaultOptions,
+        next || {}
+      );
       this._applyToggleClasses();
     },
 
-    _empty(el) { while (el.firstChild) el.removeChild(el.firstChild); },
+    _empty(el) {
+      while (el.firstChild) el.removeChild(el.firstChild);
+    },
 
-    _rand(min, max) { return Math.random() * (max - min) + min; },
+    _rand(min, max) {
+      return Math.random() * (max - min) + min;
+    },
 
     _makeFlake(isBackRow, leftOrRightPercent) {
-      const size = Math.round(this._rand(this.opts.minSize, this.opts.maxSize) * (isBackRow ? 0.85 : 1));
-      const fallDur = (this._rand(8, 14) * (isBackRow ? 1.15 : 1)).toFixed(2) + "s";
+      const size = Math.round(
+        this._rand(this.opts.minSize, this.opts.maxSize) *
+          (isBackRow ? 0.85 : 1)
+      );
+      const fallDur =
+        (this._rand(8, 14) * (isBackRow ? 1.15 : 1)).toFixed(2) + "s";
       const delay = (Math.random() * 2).toFixed(2) + "s";
 
       const flake = document.createElement("div");
@@ -340,11 +378,14 @@
 
       if (this.opts.single) {
         const flakes = wrap.querySelectorAll(".flake");
-        flakes.forEach((d, i) => { if (i !== 9) d.style.display = "none"; });
+        flakes.forEach((d, i) => {
+          if (i !== 9) d.style.display = "none";
+        });
       }
 
       const backRowEl = wrap.querySelector(".snow.back-row");
-      if (backRowEl) backRowEl.style.display = this.opts.backRow ? "block" : "none";
+      if (backRowEl)
+        backRowEl.style.display = this.opts.backRow ? "block" : "none";
     },
 
     updateGround() {
@@ -356,19 +397,31 @@
     },
 
     _attachObservers() {
-      this.resizeHandler = () => { this.updateGround(); this.remake(); };
+      this.resizeHandler = () => {
+        this.updateGround();
+        this.remake();
+      };
       window.addEventListener("resize", this.resizeHandler);
 
       const f = this.footerEl;
       if (f && "ResizeObserver" in window) {
-        this.footerObserver = new ResizeObserver(() => { this.updateGround(); this.remake(); });
+        this.footerObserver = new ResizeObserver(() => {
+          this.updateGround();
+          this.remake();
+        });
         this.footerObserver.observe(f);
       }
     },
 
     _detachObservers() {
-      if (this.resizeHandler) { window.removeEventListener("resize", this.resizeHandler); this.resizeHandler = null; }
-      if (this.footerObserver) { this.footerObserver.disconnect(); this.footerObserver = null; }
+      if (this.resizeHandler) {
+        window.removeEventListener("resize", this.resizeHandler);
+        this.resizeHandler = null;
+      }
+      if (this.footerObserver) {
+        this.footerObserver.disconnect();
+        this.footerObserver = null;
+      }
     },
 
     mount() {
@@ -390,20 +443,20 @@
       const wrap = document.getElementById(this.overlayId);
       if (!wrap) return;
       this._makeFlakes();
-    }
+    },
   };
 
   window.weatherSnow = {
     setOptions: (o) => SNOW.setOptions(o),
     remake: () => SNOW.remake(),
-    updateGround: () => SNOW.updateGround()
+    updateGround: () => SNOW.updateGround(),
   };
 
   // ────────────────────────────────────────────────────────────────────────────
   // Theme applier
   // ────────────────────────────────────────────────────────────────────────────
   function applyTheme(theme) {
-    THEMES.forEach(c => BODY.classList.remove(c));
+    THEMES.forEach((c) => BODY.classList.remove(c));
     BODY.classList.add(theme);
 
     if (theme === "weather-rain") {
@@ -445,7 +498,9 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     if (!attachObserver()) {
-      const int = setInterval(() => { if (attachObserver()) clearInterval(int); }, 300);
+      const int = setInterval(() => {
+        if (attachObserver()) clearInterval(int);
+      }, 300);
       setTimeout(() => clearInterval(int), 20000);
     }
   });

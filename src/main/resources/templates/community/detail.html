@@ -4,6 +4,15 @@
     <!-- 왼쪽 미디어 영역 -->
     <div class="ig-media">
       <div id="igCarousel" class="carousel slide" data-bs-ride="false">
+        <div class="carousel-indicators">
+          <button
+            type="button"
+            data-bs-target="#igCarousel"
+            data-bs-slide-to="0"
+            class="active"
+            aria-current="true"
+          ></button>
+        </div>
         <div class="carousel-inner">
           <!-- 대표 이미지 -->
           <div class="carousel-item active" th:if="${post.repImageUrl != null}">

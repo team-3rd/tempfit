@@ -38,14 +38,12 @@ window.addEventListener("DOMContentLoaded", async () => {
     (pos) => {
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
-      console.log(pos);
 
       fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=AIzaSyAH3J5S71gGtsQUQ-ABAoLmHQZ2kaEA88g`
       )
         .then((res) => res.json())
         .then((loc) => {
-          console.log(loc);
           const addressArray = loc.results[2].formatted_address.split(" ");
 
           document.querySelector(".dosi").textContent = "";

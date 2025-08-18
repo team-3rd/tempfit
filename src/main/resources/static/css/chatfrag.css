@@ -14,7 +14,7 @@
   z-index: 1050;
   overflow: hidden;
   transition: bottom 0.3s ease-in-out; /* 부드럽게 위치 이동 */
-  font-size: 24px;
+  font-size: 20px;
   align-items: center;
   text-align: center;
   display: flex;
@@ -23,7 +23,6 @@
 .chatTitle {
   position: absolute;
   left: 7px;
-  padding-left: 10px;
 }
 .chatToggle {
   position: absolute;
@@ -91,14 +90,12 @@
   padding: 0 !important;
   margin-top: 7px;
   border-radius:0 !important;
-  box-shadow:0 0 0 1px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08);
-  transition:box-shadow .15s ease, transform .12s ease, background .15s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);;
+  transition: transform 160ms ease, box-shadow 160ms ease;
   text-decoration:none;
 }
 .chat-list:hover {
-  color:#000 !important;
-  background:#fff !important;
-  box-shadow:0 0 0 1.5px rgba(0,0,0,0.24), 0 4px 12px rgba(0,0,0,0.12);
+  box-shadow: 0 5px 13px rgba(0,0,0,0.14);
   transform:translateY(-1px);
 }
 .chat-list span {

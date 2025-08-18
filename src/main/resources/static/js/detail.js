@@ -223,16 +223,28 @@ window.initDetailModal = function initDetailModal(host) {
     });
   }
 
-  // 사진 1개면 스크롤 버튼 숨기기
+  // 사진 1개면 스크롤 버튼 숨기기 + 인디케이터 설정
   const imgCount = document.querySelectorAll(".carousel-item").length;
+  const indicators = document.querySelector(".carousel-indicators");
   const prevBtn = document.querySelector(".carousel-control-prev");
   const nextBtn = document.querySelector(".carousel-control-next");
 
   if (imgCount == 1) {
     prevBtn.style.display = "none";
     nextBtn.style.display = "none";
+
+    indicators.style.display = "none";
   } else {
     prevBtn.style.display = "flex";
     nextBtn.style.display = "flex";
+
+    for (let i = 1; i < imgCount; i++) {
+      const idx = document.createElement("button");
+      idx.type = "button";
+      idx.setAttribute("data-bs-target", "#igCarousel");
+      idx.setAttribute("data-bs-slide-to", `${i}`);
+
+      indicators.appendChild(idx);
+    }
   }
 };
