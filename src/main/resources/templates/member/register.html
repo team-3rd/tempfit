@@ -108,6 +108,59 @@
                   <label class="form-check-label" for="female">여성</label>
                 </div>
               </div>
+              <div class="mb-3">
+                <label class="form-label d-block">퍼스널 컬러</label>
+                <div class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    th:field="*{personalColorCode}"
+                    value=1
+                    id="springwarm"
+                  />
+                  <label class="form-check-label" for="springwarm">봄 웜톤</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    th:field="*{personalColorCode}"
+                    value=2
+                    id="summercool"
+                  />
+                  <label class="form-check-label" for="summercool">여름 쿨톤</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    th:field="*{personalColorCode}"
+                    value=3
+                    id="fallwarm"
+                  />
+                  <label class="form-check-label" for="fallwarm">가을 웜톤</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    th:field="*{personalColorCode}"
+                    value=4
+                    id="wintercool"
+                  />
+                  <label class="form-check-label" for="wintercool">겨울 쿨톤</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    th:field="*{personalColorCode}"
+                    value=0
+                    id="unknown"
+                  />
+                  <label class="form-check-label" for="unknown">알지 못함</label>
+                </div>
+              </div>
 
               <button type="submit" class="btn btn-primary w-100">
                 회원가입

@@ -31,9 +31,14 @@ public class MemberDTO {
     private List<CommunityDTO> myPosts;
     private List<CommentDTO> myComments;
     private String profileImageUrl;
+    private Integer personalColorCode;
 
     @Value("${default.profile-image-url}")
     private String defaultProfileImageUrl;
+
+    public int getPersonalColorCode() {
+        return personalColorCode != null ? personalColorCode : 0;
+    }
 
     public int getPostCount() {
         return myPosts != null ? myPosts.size() : 0;

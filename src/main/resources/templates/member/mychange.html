@@ -130,7 +130,7 @@
           class="delete-btn"
           onclick="event.stopPropagation(); deleteProfileImage()"
         >
-          ×
+          
         </button>
       </div>
       <input
@@ -230,8 +230,8 @@
               <label class="form-check-label" for="female">여성</label>
             </div>
           </div>
+          <a th:href="@{/personalcolor}">퍼스널 컬러 선택</a>
         </fieldset>
-
         <button type="submit" class="btn btn-primary btn-submit">
           개인정보 변경
         </button>
