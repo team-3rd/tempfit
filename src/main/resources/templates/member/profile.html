@@ -29,6 +29,10 @@
     <link th:href="@{/css/profile.css}" rel="stylesheet" />
     <link th:href="@{/css/detail.css}" rel="stylesheet" />
     <link th:href="@{/css/chatfrag.css}" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/variable/pretendardvariable.css"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <th:block th:replace="fragments/navbar :: navbar"></th:block>
@@ -77,7 +81,16 @@
 
         <!-- 프로필 정보 -->
         <div class="profile-info ms-3">
-          <h2 th:text="${profile.nickname}">닉네임</h2>
+          <div class="d-flex align-items-center gap-2 mt-3">
+            <h2 class="mb-0" th:text="${profile.nickname}">닉네임</h2>
+
+            <form class="mb-0" th:action="@{/messages/{id}(id=${profile.email})}" method="get">
+              <button id="chatBtn" type="submit"
+                      class="btn btn-outline-primary btn-sm d-inline-flex align-items-center">
+                <i class="bi bi-chat-dots"></i>
+              </button>
+            </form>
+          </div>
           <div class="text-muted" th:text="${profile.email}">이름</div>
 
           <div class="profile-stats">
@@ -126,20 +139,6 @@
                   th:if="${isFollowing}"
                 >
                   언팔로우
-                </button>
-              </form>
-            </div>
-            <div class="mt-3">
-              <form
-                th:action="@{/messages/{id}(id=${profile.email})}"
-                method="get"
-              >
-                <button
-                  id="chatBtn"
-                  type="submit"
-                  class="btn btn-outline-primary btn-sm"
-                >
-                  채팅
                 </button>
               </form>
             </div>
@@ -230,19 +229,19 @@
                   <button type="button" class="btn-action btn-like" th:attr="data-id=${post.id}" title="좋아요">
                     <i class="bi" th:classappend="${post.likedByMe} ? ' bi-heart-fill' : ' bi-heart'"></i>
                   </button>
-                  <span class="count like-count" th:attr="data-count=${post.recommendCount}">0</span>
+                  <!-- <span class="count like-count" th:attr="data-count=${post.recommendCount}">0</span> -->
                 </div>
                 <div class="action-group">
                   <button type="button" class="btn-action btn-comment" th:attr="data-id=${post.id}" title="댓글">
                     <i class="bi bi-chat"></i>
                   </button>
-                  <span
+                  <!-- <span
                     class="ig-count"
                     id="igCommentCount"
                     th:attr="data-count=${post.commentCount}"
                     th:text="${post.commentCount}"
                     >0</span
-                  >
+                  > -->
                 </div>
               </div>
               <div class="right-actions">
@@ -313,19 +312,19 @@
                   <button type="button" class="btn-action btn-like" th:attr="data-id=${post.id}" title="좋아요">
                     <i class="bi" th:classappend="${post.likedByMe} ? ' bi-heart-fill' : ' bi-heart'"></i>
                   </button>
-                  <span class="count like-count" th:attr="data-count=${post.recommendCount}">0</span>
+                  <!-- <span class="count like-count" th:attr="data-count=${post.recommendCount}">0</span> -->
                 </div>
                 <div class="action-group">
                   <button type="button" class="btn-action btn-comment" th:attr="data-id=${post.id}" title="댓글">
                     <i class="bi bi-chat"></i>
                   </button>
-                  <span
+                  <!-- <span
                     class="ig-count"
                     id="igCommentCount"
                     th:attr="data-count=${post.commentCount}"
                     th:text="${post.commentCount}"
                     >0</span
-                  >
+                  > -->
                 </div>
               </div>
               <div class="right-actions">
@@ -385,7 +384,7 @@
             title="찜"
             aria-pressed="false"
           >
-            <i class="bi bi-bag"></i>
+            <i class="bi bi-bag-check-fill"></i>
           </button>
         </div>
       </div>
@@ -411,6 +410,7 @@
     <script src="/js/detail.js"></script>
     <script src="/js/chatfrag.js"></script>
 
+    
     <div
       class="modal fade"
       id="detailModal"
@@ -420,10 +420,7 @@
       aria-hidden="true"
       role="dialog"
     >
-      <div
-        class="modal-dialog modal-dialog-centered modal-xl"
-        role="document"
-      ></div>
+      <div class="modal-dialog modal-dialog-centered modal-xl" role="document"></div>
     </div>
   </body>
 </html>
