@@ -82,7 +82,7 @@ public class SearchCommunityRepositoryImpl
             // if (type.contains("c"))
             // tb.or(community.content.containsIgnoreCase(keyword));
             if (type.contains("a"))
-                tb.or(community.author.nickname.contains(keyword));
+                tb.or(community.author.nickname.containsIgnoreCase(keyword));
             builder.and(tb);
         }
 

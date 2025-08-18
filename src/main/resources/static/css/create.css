@@ -99,13 +99,24 @@ body {
     0 0 0 1px rgba(0,0,0,0.12),
     inset 0 1px 0 rgba(0,0,0,0.02);
 }
+#communityForm {
+  margin-left: 70px;
+}
 
-/* 텍스트영역 높이 */
-textarea.form-control{ min-height: 220px; }
+/* 텍스트영역 */
+textarea.form-control{ 
+  height: 516px;
+  resize: none; 
+}
 
 /* 좌측 미디어 패널 */
 .imgCard {
   width: 50.9% !important;
+}
+
+/* 우측 미디어 패널 */
+.right-card {
+  height: 756px !important;
 }
 
 .media-panel{ background:#fff; }
