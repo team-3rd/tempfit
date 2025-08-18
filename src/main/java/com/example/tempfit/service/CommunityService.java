@@ -388,43 +388,68 @@ public class CommunityService {
         }
     }
 
+    // @Transactional(readOnly = true)
+    // public List<CommunityDTO> getTopPostsByTemp(int temp, int limit) {
+    // // 1) 온도 구간 매핑
+    // TemperatureRange range = TemperatureRange.fromTemperature(temp);
+
+    // // 2) 주간 로테이션을 위해 상위 풀(pool) 넉넉히 확보
+    // // (추천수 desc, 작성일 desc 기준 상위 N개 중에서 4개만 주마다 회전)
+    // final int poolSize = Math.max(limit * 5, 20);
+
+    // Specification<Community> spec = (root, query, cb) -> {
+    // Join<Community, CommunityTemp> t = root.join("communityTemp");
+    // // avgTemp가 현재 온도 구간에 들어오는 글만
+    // return cb.between(t.get("avgTemp"), range.getMinTemp(), range.getMaxTemp());
+    // };
+
+    // Pageable pageable = PageRequest.of(
+    // 0,
+    // poolSize,
+    // Sort.by(Sort.Direction.DESC, "recommendCount")
+    // .and(Sort.by(Sort.Direction.DESC, "createdDate")));
+
+    // List<CommunityDTO> pool = communityRepository.findAll(spec, pageable)
+    // .getContent()
+    // .stream()
+    // .map(this::entityToDTO)
+    // .collect(Collectors.toList());
+
+    // // 3) 풀 크기가 4 이하라면 그대로 반환
+    // if (pool.size() <= limit) {
+    // return pool;
+    // }
+
+    // // 4) 주차(weekOfWeekBasedYear) 기반 고정 로테이션
+    // // → 같은 주에는 동일 결과, 주가 바뀌면 다른 구간으로 이동
+    // int week = LocalDate.now().get(WeekFields.ISO.weekOfWeekBasedYear());
+    // int start = week % (pool.size() - limit + 1);
+
+    // return new ArrayList<>(pool.subList(start, start + limit));
+    // }
     @Transactional(readOnly = true)
     public List<CommunityDTO> getTopPostsByTemp(int temp, int limit) {
-        // 1) 온도 구간 매핑
+        // 1) 현재 온도를 구간으로 매핑
         TemperatureRange range = TemperatureRange.fromTemperature(temp);
 
-        // 2) 주간 로테이션을 위해 상위 풀(pool) 넉넉히 확보
-        // (추천수 desc, 작성일 desc 기준 상위 N개 중에서 4개만 주마다 회전)
-        final int poolSize = Math.max(limit * 5, 20);
-
+        // 2) 온도 구간 필터
         Specification<Community> spec = (root, query, cb) -> {
             Join<Community, CommunityTemp> t = root.join("communityTemp");
-            // avgTemp가 현재 온도 구간에 들어오는 글만
             return cb.between(t.get("avgTemp"), range.getMinTemp(), range.getMaxTemp());
         };
 
+        // 3) 추천수 DESC → 작성일 DESC 정렬을 페이지네이션에 명시
         Pageable pageable = PageRequest.of(
                 0,
-                poolSize,
+                Math.max(limit, 1),
                 Sort.by(Sort.Direction.DESC, "recommendCount")
                         .and(Sort.by(Sort.Direction.DESC, "createdDate")));
 
-        List<CommunityDTO> pool = communityRepository.findAll(spec, pageable)
+        // 4) 그대로 상위 N개 반환
+        return communityRepository.findAll(spec, pageable)
                 .getContent()
                 .stream()
                 .map(this::entityToDTO)
                 .collect(Collectors.toList());
-
-        // 3) 풀 크기가 4 이하라면 그대로 반환
-        if (pool.size() <= limit) {
-            return pool;
-        }
-
-        // 4) 주차(weekOfWeekBasedYear) 기반 고정 로테이션
-        // → 같은 주에는 동일 결과, 주가 바뀌면 다른 구간으로 이동
-        int week = LocalDate.now().get(WeekFields.ISO.weekOfWeekBasedYear());
-        int start = week % (pool.size() - limit + 1);
-
-        return new ArrayList<>(pool.subList(start, start + limit));
     }
 }

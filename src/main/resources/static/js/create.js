@@ -430,10 +430,17 @@ document.querySelectorAll(".style-check").forEach((chk) => {
 
 /* 위치 정보 설정 + 업로드 타일 초기 렌더 */
 window.addEventListener("DOMContentLoaded", () => {
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      document.getElementById("lat").value = pos.coords.latitude;
-      document.getElementById("lon").value = pos.coords.longitude;
+  if (previewContainer && !previewContainer.querySelector(".upload-tile-wrap")) {
+    previewContainer.appendChild(buildUploadTile());
+  }
+  updateFileCount();
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((pos) => {
+      const latEl = document.getElementById("lat");
+      const lonEl = document.getElementById("lon");
+      if (latEl) latEl.value = pos.coords.latitude;
+      if (lonEl) lonEl.value = pos.coords.longitude;
     },
     (error) => {
       console.log(error.message);
@@ -442,6 +449,7 @@ window.addEventListener("DOMContentLoaded", () => {
       enableHighAccuracy: true,
     }
   );
+  }
 });
 
 /* 폼 유효성 & 중복 제출 방지 */
