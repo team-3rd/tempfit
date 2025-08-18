@@ -35,16 +35,12 @@
 .ig-photo {
   max-width: 100%;
   max-height: 100%;
-  width: auto;
-  height: auto;
+  width: 579px;
+  height: 579px;
   object-fit: contain !important;
   object-position: center center !important;
   display: block;
   margin: 0 auto;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 #igCarousel {
   width: fit-content;
@@ -61,12 +57,12 @@
   height: 7px !important;
   border-radius: 100% !important;
   cursor: pointer !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
   transition: transform 160ms ease, box-shadow 160ms ease !important;
 }
-.carousel-indicators > button:hover{
+.carousel-indicators > button:hover {
   transform: scale(1.2);
-  box-shadow: 0 10px 26px rgba(0,0,0,0.14);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14);
 }
 
 #carousel-prev-btn,
@@ -76,14 +72,14 @@
   top: calc(50% - 28px);
   border: none !important;
   border-radius: 100%;
-  background-color: rgba(255, 255, 255, 0.0);
-  transition: background .12s ease, box-shadow .12s ease, transform .12s ease;
+  background-color: rgba(255, 255, 255, 0);
+  transition: background 0.12s ease, box-shadow 0.12s ease, transform 0.12s ease;
   z-index: 100;
 }
 #carousel-prev-btn:hover,
-#carousel-next-btn:hover{
-  background: rgba(0,0,0,0.3);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+#carousel-next-btn:hover {
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
   transform: scale(1.02);
 }
 #carousel-prev,
@@ -91,31 +87,27 @@
   width: 2.5rem !important;
   height: 2.5rem !important;
 }
-#carousel-prev-btn.is-disabled,
-#carousel-next-btn.is-disabled
-{ opacity: .28; pointer-events: none; }
+.is-disabled {
+  opacity: 0.28;
+  pointer-events: none;
+}
 
 .carousel-inner .carousel-item.active {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
   width: 579px;
   height: 579px;
 }
 .carousel-inner {
   background: #000;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   width: 579px;
   height: 579px;
   align-items: center;
   vertical-align: middle;
 }
-/* .active {
-  margin-top: calc(50% - 289.5px);
-} */
 
 /* (작성자 전용) 삭제 버튼 — 사진 우측 하단 */
 .ig-del-form {
@@ -344,7 +336,7 @@
 .ig-submit {
   background: transparent;
   border: none;
-  color:dodgerblue;
+  color: dodgerblue;
   font-weight: 600;
   height: 42px;
   padding: 0 4px;
