@@ -277,3 +277,70 @@ body {
   line-height: 1.2;
   vertical-align: baseline;
 } /* ← 닉네임 정렬 */
+
+/* ========================= */
+/* 페이징 (각짐 + 테두리 제거 + 그림자 테두리 + 폰트 검정) */
+/* ========================= */
+.pagination{
+  gap:8px; /* 버튼 간격 */
+}
+
+.pagination .page-link{
+  /* 각지고, 선 테두리 제거 */
+  border:none !important;
+  border-radius:0 !important;
+
+  /* 폰트 및 배경 */
+  color:#000 !important;
+  background:#fff !important;
+
+  /* 크기 및 정렬 */
+  min-width:40px;
+  height:40px;
+  padding:0 12px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  /* 그림자 테두리 */
+  box-shadow:0 0 0 1px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08);
+
+  /* 인터랙션 */
+  transition:box-shadow .15s ease, transform .12s ease, background .15s ease;
+  text-decoration:none;
+}
+
+.pagination .page-link:hover{
+  color:#000 !important;
+  background:#fff !important;
+  box-shadow:0 0 0 1.5px rgba(0,0,0,0.24), 0 4px 12px rgba(0,0,0,0.12);
+  transform:translateY(-1px);
+}
+
+.page-item.active .page-link{
+  background:#f2f3f5 !important;   /* 연한 채움 */
+  color:#000 !important;            /* 활성도 검정 글자 유지 */
+  box-shadow:0 0 0 1.5px rgba(0,0,0,0.28), 0 4px 12px rgba(0,0,0,0.16);
+}
+
+.page-item.disabled .page-link{
+  background:#f9f9f9 !important;
+  color:#aaa !important;
+  box-shadow:0 0 0 1px rgba(0,0,0,0.08);
+  pointer-events:none;
+}
+
+.pagination .page-link:focus{
+  outline:0;
+  box-shadow:0 0 0 2px rgba(0,0,0,0.28), 0 3px 10px rgba(0,0,0,0.14);
+}
+
+.pagination .page-link:active{
+  transform:translateY(0);
+}
+
+/* 부트스트랩의 첫/끝 버튼 둥글림 제거 보강 */
+.pagination .page-item:first-child .page-link,
+.pagination .page-item:last-child .page-link{
+  border-radius:0 !important;
+}

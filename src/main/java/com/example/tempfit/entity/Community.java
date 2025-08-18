@@ -5,6 +5,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "COMMUNITY")
@@ -66,10 +67,45 @@ public class Community extends Base {
         LocalDateTime now = LocalDateTime.now();
         this.createdDate = now;
         this.upDateTime = now;
+        // 제목 자동 보정 (INSERT 직전)
+        this.title = computeAutoTitle(this.title, this.content);
     }
 
     @PreUpdate
     public void preUpdate() {
         this.upDateTime = LocalDateTime.now();
+        // 제목 자동 보정 (UPDATE 직전)
+        this.title = computeAutoTitle(this.title, this.content);
+    }
+
+    // ─────────────────────────────
+    // 내부 유틸: 제목 자동 생성
+    // ─────────────────────────────
+    private static String computeAutoTitle(String rawTitle, String rawContent) {
+        String title = trimToNull(rawTitle);
+        if (title != null) {
+            return title; // 사용자가 유효한 제목을 준 경우
+        }
+
+        String content = Objects.toString(rawContent, "");
+        // 간단한 태그 제거 + 공백 정리
+        String plain = content
+                .replaceAll("<[^>]*>", " ") // 태그 제거
+                .replaceAll("&nbsp;", " ") // nbsp 치환
+                .replaceAll("\\s+", " ") // 공백 정규화
+                .trim();
+
+        if (plain.isEmpty()) {
+            // Oracle은 ""를 NULL로 취급하므로 절대 빈 문자열을 넣지 말 것
+            return "제목없음";
+        }
+        return plain.length() > 30 ? plain.substring(0, 30) : plain;
+    }
+
+    private static String trimToNull(String s) {
+        if (s == null)
+            return null;
+        String t = s.trim();
+        return t.isEmpty() ? null : t;
     }
 }

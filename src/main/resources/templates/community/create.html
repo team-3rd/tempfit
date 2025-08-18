@@ -8,6 +8,11 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <!-- 아이콘 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="/css/create.css" />
   </head>
   <body>
@@ -20,9 +25,7 @@
       role="alert"
     >
       한 게시글에 하나의 룩만 올려주세요!<br />
-      <span class="text-danger"
-        >※다른 룩을 같이 올리실 경우 제재될 수 있습니다.※</span
-      >
+      <span class="text-danger">※다른 룩을 같이 올리실 경우 제재될 수 있습니다.※</span>
       <button
         type="button"
         class="btn-close"
@@ -31,8 +34,8 @@
       ></button>
     </div>
 
-    <div class="container px-4 px-lg-5 mt-5">
-      <h1>글쓰기</h1>
+    <div class="container px-4 px-lg-5 mt-4">
+      <!-- 폼: 좌우 2열 전체를 감쌈 -->
       <form
         id="communityForm"
         th:action="@{/community/register}"
@@ -41,166 +44,105 @@
         class="needs-validation"
         novalidate
       >
-        <!-- 제목 -->
-        <div class="mb-3">
-          <label for="title" class="form-label">제목</label>
-          <input
-            type="text"
-            class="form-control"
-            id="title"
-            name="title"
-            maxlength="11"
-            placeholder="제목을 입력하세요 (최대 11자)"
-            required
-          />
-          <div id="titleHelp" class="form-text">0 / 11</div>
+        <div class="row g-4">
+          <!-- 왼쪽: 큰 미디어 + 썸네일 + 파일 선택 -->
+          <div class="col-12 col-lg-7">
+            <div class="card media-panel shadow-sm p-3">
+              <!-- 큰 미디어: 부트스트랩 캐러셀 -->
+              <div id="createCarousel" class="carousel slide" data-bs-ride="false">
+                <div class="carousel-inner media-stage" id="carouselInner">
+                  <div id="carouselEmpty" class="stage-empty">
+                    이미지를 업로드하면 여기에서 미리볼 수 있어요
+                  </div>
+                </div>
+                <button
+                  class="carousel-control-prev media-control"
+                  type="button"
+                  id="carouselPrev"
+                  data-bs-target="#createCarousel"
+                  data-bs-slide="prev"
+                >
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <button
+                  class="carousel-control-next media-control"
+                  type="button"
+                  id="carouselNext"
+                  data-bs-target="#createCarousel"
+                  data-bs-slide="next"
+                >
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </button>
+              </div>
+
+              <!-- 썸네일 스트립 (업로드 타일 + 대표/드래그 정렬/개별 삭제) -->
+              <div id="previewContainer" class="thumb-strip d-flex flex-wrap gap-2 mt-3"></div>
+
+              <!-- 파일 인풋: 화면에서는 숨김(타일 클릭으로 열림) -->
+              <div class="mt-3">
+                <input
+                  class="visually-hidden"
+                  type="file"
+                  id="imageFiles"
+                  name="imageFiles"
+                  accept="image/*"
+                  multiple
+                  required
+                />
+                <div class="form-text">대표 사진은 맨 앞에 배치해 주세요.</div>
+                <div class="invalid-feedback">최소 1장 이상의 사진을 올려주세요.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 오른쪽: 작성자+날짜 / 내용 / 버튼들 -->
+          <div class="col-12 col-lg-5">
+            <div class="card shadow-sm p-3">
+              <h2 class="page-title">글쓰기</h2>
+
+              <!-- 작성자 + 날짜 나란히 -->
+              <div class="row g-2 align-items-end mb-3">
+                <div class="col">
+                  <label for="author" class="form-label">작성자</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="author"
+                    name="author"
+                    th:value="${#authentication.principal.nickname}"
+                    readonly
+                  />
+                </div>
+                <div class="col-auto">
+                  <label for="dates" class="form-label">날짜</label>
+                  <input type="date" id="dates" name="dates" class="form-control" required />
+                </div>
+              </div>
+
+              <!-- 내용 -->
+              <div class="mb-3">
+                <label for="content" class="form-label">내용</label>
+                <textarea
+                  class="form-control"
+                  id="content"
+                  name="content"
+                  rows="10"
+                  placeholder="내용을 입력하세요"
+                ></textarea>
+              </div>
+
+              <!-- 숨김 필드들 -->
+              <input type="hidden" name="repImageIndex" id="repImageIndex" />
+              <input type="hidden" name="lat" id="lat" />
+              <input type="hidden" name="lon" id="lon" />
+
+              <!-- 버튼 -->
+              <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary" id="bsubmitBtn">등록</button>
+              </div>
+            </div>
+          </div>
         </div>
-
-        <!-- 작성자 -->
-        <div class="mb-3">
-          <label for="author" class="form-label">작성자</label>
-          <input
-            type="text"
-            class="form-control"
-            id="author"
-            name="author"
-            th:value="${#authentication.principal.nickname}"
-            readonly
-          />
-        </div>
-
-        <!-- 이미지 업로드 -->
-        <div class="mb-3">
-          <label for="imageFiles" class="form-label">
-            사진 업로드 <span class="text-danger">*</span> (대표 1장 선택)
-          </label>
-          <input
-            class="form-control"
-            type="file"
-            id="imageFiles"
-            name="imageFiles"
-            accept="image/*"
-            multiple
-            required
-          />
-          <div class="form-text">클릭해서 대표 이미지를 선택하세요 (1장)</div>
-          <div class="invalid-feedback">최소 1장 이상의 사진을 올려주세요.</div>
-        </div>
-
-        <!-- 미리보기 + 대표 선택 표시 -->
-        <div id="previewContainer" class="d-flex flex-wrap gap-3 mb-3"></div>
-
-        <!-- 대표 이미지 index 서버 전달용 -->
-        <input type="hidden" name="repImageIndex" id="repImageIndex" />
-
-        <!-- 내용 -->
-        <div class="mb-3">
-          <label for="content" class="form-label">내용</label>
-          <textarea
-            class="form-control"
-            id="content"
-            name="content"
-            rows="5"
-            placeholder="내용을 입력하세요"
-          ></textarea>
-        </div>
-
-        <!-- 성별 -->
-        <!-- <div id="sexGroup" class="mb-3">
-          <label class="form-label">성별 선택</label>
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              name="sexSet"
-              id="male"
-              value="MALE"
-              th:check="${#authentication.principal.sex.name() == 'MALE'}"
-            />
-            <label class="form-check-label" for="male">남성</label>
-          </div>
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              name="sexSet"
-              id="female"
-              value="FEMALE"
-              th:check="${#authentication.principal.sex.name() == 'FEMALE'}"
-            />
-            <label class="form-check-label" for="female">여성</label>
-          </div>
-          <div class="invalid-feedback" style="display: none">
-            성별을 선택해주세요.
-          </div>
-        </div> -->
-
-        <!-- 스타일 -->
-        <!-- <div id="styleGroup" class="mb-3">
-          <label class="form-label"
-            >스타일 선택 <span class="text-danger">*</span> (1~2개)</label
-          >
-          <div class="form-check">
-            <input
-              class="form-check-input style-check"
-              type="checkbox"
-              name="styleNames"
-              value="CASUAL"
-              id="styleCasual"
-            />
-            <label class="form-check-label" for="styleCasual">캐주얼</label>
-          </div>
-          <div class="form-check">
-            <input
-              class="form-check-input style-check"
-              type="checkbox"
-              name="styleNames"
-              value="STREET"
-              id="styleStreet"
-            />
-            <label class="form-check-label" for="styleStreet">스트리트</label>
-          </div>
-          <div class="form-check">
-            <input
-              class="form-check-input style-check"
-              type="checkbox"
-              name="styleNames"
-              value="FORMAL"
-              id="styleFormal"
-            />
-            <label class="form-check-label" for="styleFormal">포멀</label>
-          </div>
-          <div class="form-check">
-            <input
-              class="form-check-input style-check"
-              type="checkbox"
-              name="styleNames"
-              value="OUTDOOR"
-              id="styleOutdoor"
-            />
-            <label class="form-check-label" for="styleOutdoor">기타</label>
-          </div>
-          <div class="invalid-feedback">
-            1개 이상, 최대 2개까지 선택해주세요.
-          </div>
-        </div> -->
-
-        <!-- 시간대 -->
-        <div id="tempGroup" class="mb-3">
-          <label class="form-label"
-            >날짜 선택 <span class="text-danger">*</span></label
-          >
-          <div class="form-date">
-            <input type="date" name="dates" id="dates" />
-          </div>
-          <input type="hidden" name="lat" id="lat" />
-          <input type="hidden" name="lon" id="lon" />
-        </div>
-
-        <a href="/community/list" class="btn btn-secondary ms-2">목록</a>
-        <button type="submit" class="btn btn-primary" id="bsubmitBtn">
-          등록
-        </button>
       </form>
     </div>
 

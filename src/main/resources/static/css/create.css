@@ -1,7 +1,69 @@
+/* ================================
+   create.css (글쓰기 페이지)
+   ================================ */
+
+/* 전역 반지름 0 */
+:root{
+  --bs-border-radius: 0 !important;
+  --bs-border-radius-sm: 0 !important;
+  --bs-border-radius-lg: 0 !important;
+  --bs-border-radius-xl: 0 !important;
+  --bs-border-radius-xxl: 0 !important;
+  --bs-border-radius-pill: 0 !important;
+}
+
 body {
   background: #f5f6fa;
+  font-family: "Pretendard Variable", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
 }
-#warningPopup {
+
+/* 공통 표면 */
+.card,
+.alert,
+.modal-content,
+.dropdown-menu,
+.offcanvas,
+.toast,
+.list-group-item,
+.accordion-item,
+.accordion-button,
+.form-control,
+.input-group-text,
+.badge,
+.pagination .page-link,
+.nav-tabs .nav-link {
+  border: none !important;
+  border-radius: 0 !important;
+}
+.card,
+.alert,
+.modal-content,
+.dropdown-menu,
+.offcanvas,
+.toast,
+.list-group-item,
+.accordion,
+.popover,
+.tooltip .tooltip-inner {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* 버튼 */
+.btn {
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  transition: transform .14s ease, box-shadow .14s ease, filter .14s ease;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  filter: saturate(1.05);
+}
+.btn:active { transform: scale(0.98); }
+
+/* 경고 팝업 */
+#warningPopup{
   position: fixed;
   top: 20px;
   left: 50%;
@@ -10,71 +72,241 @@ body {
   width: 90%;
   max-width: 500px;
 }
-#styleGroup .invalid-feedback {
-  display: none;
-}
-#styleGroup.was-validated .invalid-feedback {
-  display: block;
+
+/* 페이지 타이틀 */
+.page-title{
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: .75rem;
 }
 
+/* 폼 요소 */
 .form-control,
-.file-row input[type="file"] {
-  height: 42px !important;
-  min-height: 42px;
-  box-sizing: border-box;
-}
-textarea.form-control {
-  min-height: 100px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-.file-row {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  gap: 0.5rem;
-  position: relative;
-}
-.file-row input[type="file"] {
-  flex: 1;
-}
-.x-square-btn {
-  width: 38px;
-  height: 38px;
+.form-select{
+  border: none !important;
+  border-radius: 0 !important;
   background: #fff;
-  color: #dc3545;
-  border: 1.5px solid #dc3545;
-  border-radius: 7px;
-  display: none;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.12),
+    inset 0 1px 0 rgba(0,0,0,0.02);
+}
+.form-control:focus,
+.form-select:focus{
+  outline: none;
+  box-shadow:
+    0 0 0 2px rgba(13,110,253,0.35),
+    0 0 0 1px rgba(0,0,0,0.12),
+    inset 0 1px 0 rgba(0,0,0,0.02);
+}
+
+/* 텍스트영역 높이 */
+textarea.form-control{ min-height: 220px; }
+
+/* 좌측 미디어 패널 */
+.media-panel{ background:#fff; }
+
+/* ================= 미디어 섹션 중앙 정렬 ================= */
+.media-stage{
+  --stage-h: 520px;
+  background: #000;
+  height: var(--stage-h);
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.media-stage .carousel-item.active,
+.media-stage .carousel-item-next,
+.media-stage .carousel-item-prev{
+  display: flex !important;
   align-items: center;
   justify-content: center;
-  font-size: 1.3rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.12s, color 0.12s;
-  z-index: 2;
-  margin-left: 0;
-  padding: 0;
+  height: var(--stage-h);
 }
-.x-square-btn.show {
+.media-stage .carousel-item > img.create-photo{
+  display: block;
+  margin: 0 auto;
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  background: transparent !important;
+}
+.stage-empty{
+  color: #ddd;
+  font-size: 1rem;
+  letter-spacing: -0.2px;
+  height: var(--stage-h);
   display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.x-square-btn:hover {
-  background: #dc3545;
+
+/* 캐러셀 Prev/Next */
+.media-control{
+  border: none !important;
+  border-radius: 0 !important;
+  width: 44px;
+  height: 44px;
+  top: calc(50% - 22px);
+  background: rgba(255,255,255,0.0);
+  transition: background .12s ease, box-shadow .12s ease, transform .12s ease;
+}
+.media-control:hover{
+  background: rgba(0,0,0,0.15);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  transform: scale(1.02);
+}
+.media-control.is-disabled{ opacity: .28; pointer-events: none; }
+
+/* 썸네일 */
+.thumb-strip .thumb{
+  width: 88px;
+  height: 88px;
+  object-fit: cover;
+  background:#fff;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  transform-origin: center;
+  will-change: transform;
+}
+.thumb-strip .thumb:hover{
+  transform: scale(1.05);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.14);
+}
+
+/* 대표 사진 배지 — X 버튼 기본색과 동일(회색 반투명) */
+.thumb-badge{
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  background: rgba(0,0,0,.55);
   color: #fff;
-  border-color: #dc3545;
+  font-size: 11px;
+  padding: 2px 6px;
+  line-height: 1;
+  border-radius: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+  pointer-events: none;
 }
 
-/* 전역 기본 폰트로 Pretendard Variable 사용 */
-body {
-  font-family: "Pretendard Variable", sans-serif;
+/* 썸네일 컨테이너 */
+#previewContainer{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
-/* 선택적으로 굵기/스타일별 사용 예시 */
-h1 {
-  font-weight: 700; /* Bold */
-  font-family: "Pretendard Variable", sans-serif;
+/* 썸네일 래퍼 */
+.thumb-wrap{
+  position: relative;
+  width: 88px;
+  height: 88px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  background: #fff;
+  cursor: grab;
+  user-select: none;
 }
-.light-text {
-  font-weight: 300; /* Light */
+.thumb-wrap:active{ cursor: grabbing; }
+.thumb-wrap.dragging{ opacity: .5; }
+
+/* 드래그 위치 가이드 */
+.thumb-wrap.over-before::before,
+.thumb-wrap.over-after::after{
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #0d6efd;
+}
+.thumb-wrap.over-before::before{ left: -4px; }
+.thumb-wrap.over-after::after{ right: -4px; }
+
+/* =======================
+   X 삭제 버튼 (원형 ㅇ)
+   ======================= */
+.thumb-remove{
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  border: none;
+
+  background: rgba(0,0,0,.55);
+  color: #fff;
+
+  cursor: pointer;
+  z-index: 2;
+  line-height: 1;
+  transition: background .14s ease, transform .14s ease;
+}
+.thumb-remove i{ font-size: 14px; line-height: 1; }
+.thumb-remove:hover{ background: #dc3545; transform: scale(1.06); }
+
+/* 썸네일 이미지 */
+.thumb{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border: none;
+  border-radius: 0;
+}
+
+/* ─────────────────────────────
+   업로드 타일 (88×88, 썸네일과 동일 크기)
+   ───────────────────────────── */
+.upload-tile-wrap{
+  width: 88px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.upload-tile{
+  width: 88px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: #666;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  cursor: pointer;
+  user-select: none;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.upload-tile:hover{
+  transform: scale(1.03);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.14);
+}
+.upload-tile .label{
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+.file-count{
+  margin-top: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+/* 닫기 버튼(알럿)도 각짐 */
+.btn-close{ border-radius: 0 !important; }
+
+/* 작성자(읽기 전용) 텍스트를 회색으로 */
+#author.form-control[readonly]{
+  color: #6c757d !important; /* Bootstrap secondary와 동일 톤 */
 }

@@ -185,7 +185,7 @@ public class CommunityService {
     }
 
     public Page<CommunityDTO> getPage(int page) {
-        Pageable pageable = PageRequest.of(page - 1, 10,
+        Pageable pageable = PageRequest.of(page - 1, 8,
                 Sort.by(Sort.Direction.DESC, "createdDate"));
         return communityRepository.list(null, null, null, null, pageable)
                 .map(this::arrayToDTO);
