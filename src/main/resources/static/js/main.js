@@ -412,14 +412,14 @@ function updateCurrentTempTag(tempNum) {
 
   // 색상/아이콘 매핑 (FREEZING→VERY_HOT)
   const map = {
-    1: { cls: "text-primary", icon: "bi-thermometer-snow" }, // FREEZING
-    2: { cls: "text-primary", icon: "bi-thermometer-snow" }, // VERY_COLD
+    1: { cls: "text-primary", icon: "bi-thermometer" }, // FREEZING
+    2: { cls: "text-primary", icon: "bi-thermometer-low" }, // VERY_COLD
     3: { cls: "text-primary", icon: "bi-thermometer-low" }, // COLD
-    4: { cls: "text-info", icon: "bi-thermometer-low" }, // COOL
+    4: { cls: "text-info", icon: "bi-thermometer-half" }, // COOL
     5: { cls: "text-info", icon: "bi-thermometer-half" }, // MILD
     6: { cls: "text-warning", icon: "bi-thermometer-half" }, // WARM
     7: { cls: "text-warning", icon: "bi-thermometer-high" }, // HOT
-    8: { cls: "text-danger", icon: "bi-thermometer-sun" }, // VERY_HOT
+    8: { cls: "text-danger", icon: "bi-thermometer-high" }, // VERY_HOT
   };
 
   const { cls, icon } = map[code] || {

@@ -507,7 +507,7 @@ form &&
       e.stopPropagation();
     } else if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.textContent = "등록중…";
+      submitBtn.textContent = "등록 중…";
     }
   });
 
