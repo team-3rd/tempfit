@@ -77,12 +77,12 @@ public class SearchCommunityRepositoryImpl
 
         if (type != null && keyword != null && !keyword.trim().isEmpty()) {
             BooleanBuilder tb = new BooleanBuilder();
-            if (type.contains("t"))
-                tb.or(community.title.containsIgnoreCase(keyword));
+            // if (type.contains("t"))
+            // tb.or(community.title.containsIgnoreCase(keyword));
+            // if (type.contains("c"))
+            // tb.or(community.content.containsIgnoreCase(keyword));
             if (type.contains("a"))
-                tb.or(community.author.name.containsIgnoreCase(keyword));
-            if (type.contains("c"))
-                tb.or(community.content.containsIgnoreCase(keyword));
+                tb.or(community.author.nickname.contains(keyword));
             builder.and(tb);
         }
 

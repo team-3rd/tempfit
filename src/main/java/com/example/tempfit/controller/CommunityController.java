@@ -40,10 +40,21 @@ public class CommunityController {
     @GetMapping("/list")
     public String list(
             @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "keyword", defaultValue = "") String keyword,
+            @RequestParam(value = "type", defaultValue = "") String type,
             @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
             Model model) {
 
-        Page<CommunityDTO> pageData = communityService.getPage(page);
+        Page<CommunityDTO> pageData = keyword == "" && type == "" ? communityService.getPage(page)
+                : communityService.searchPage(type, keyword, page);
+
+        // 검색된 유저명
+        String user = "";
+        try {
+            user = keyword != "" && type != "" ? pageData.getContent().get(0).getAuthor().getNickname() : "";
+        } catch (Exception e) {
+            user = "";
+        }
 
         // 사용자별(좋아요/북마크 등) 상태 적용
         Member me = null;
@@ -58,8 +69,7 @@ public class CommunityController {
                 .map(CommunityDTO::getId)
                 .collect(Collectors.toList());
         Map<Long, Integer> countMap = commentService.getCommentCounts(ids);
-        pageData.getContent().forEach(dto ->
-                dto.setCommentCount(countMap.getOrDefault(dto.getId(), 0)));
+        pageData.getContent().forEach(dto -> dto.setCommentCount(countMap.getOrDefault(dto.getId(), 0)));
 
         // 페이징 계산
         int currentPage;
@@ -78,11 +88,16 @@ public class CommunityController {
             endPage = Math.min(startPage + pageBlock - 1, totalPages);
         }
 
+        // 전송된 타입값
+        String searchType = type;
+
         model.addAttribute("list", pageData.getContent());
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
+        model.addAttribute("type", searchType);
+        model.addAttribute("username", user);
 
         return "community/list";
     }

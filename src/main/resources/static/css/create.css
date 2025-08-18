@@ -104,13 +104,18 @@ body {
 textarea.form-control{ min-height: 220px; }
 
 /* 좌측 미디어 패널 */
+.imgCard {
+  width: 50.9% !important;
+}
+
 .media-panel{ background:#fff; }
 
 /* ================= 미디어 섹션 중앙 정렬 ================= */
 .media-stage{
   --stage-h: 520px;
   background: #000;
-  height: var(--stage-h);
+  width: 579px !important;
+  height: 579px;
   overflow: hidden;
   position: relative;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
@@ -121,7 +126,10 @@ textarea.form-control{ min-height: 220px; }
   display: flex !important;
   align-items: center;
   justify-content: center;
-  height: var(--stage-h);
+  height: 579px;
+}
+.media-stage .carousel-item.active{
+  width: 579px;
 }
 .media-stage .carousel-item > img.create-photo{
   display: block;
@@ -138,7 +146,7 @@ textarea.form-control{ min-height: 220px; }
   color: #ddd;
   font-size: 1rem;
   letter-spacing: -0.2px;
-  height: var(--stage-h);
+  height: 579px;
   display: flex;
   align-items: center;
   justify-content: center;

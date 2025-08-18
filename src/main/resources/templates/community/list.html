@@ -1,16 +1,29 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html
+  lang="ko"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <title>게시글 - TempFit</title>
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
     <link
       href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/variable/pretendardvariable.css"
       rel="stylesheet"
     />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <link rel="stylesheet" href="/css/list.css" />
@@ -51,14 +64,23 @@
     </div>
 
     <div class="container px-4 px-lg-5 mt-5 flex-grow-1">
-      <div class="d-flex justify-content-between align-items-start mb-3 w-100">
-        <form
+      <div
+        class="d-flex justify-content-between align-items-start mb-3 w-100"
+        th:if="${type != ''}"
+      >
+        <h3 class="searchResultText" th:if="${username != ''}">
+          글 작성자 '[[${username}]]' 검색결과
+        </h3>
+        <h3 class="searchResultText" th:if="${username == ''}">
+          검색결과가 없습니다.
+        </h3>
+        <!-- <form
           class="search-form d-flex flex-column"
           th:action="@{/community/list}"
           method="get"
           style="gap: 8px; max-width: 600px; width: 100%"
-        >
-          <!-- <div class="d-flex" style="gap: 8px">
+        > -->
+        <!-- <div class="d-flex" style="gap: 8px">
             <select name="type" class="form-select form-select-sm">
               <option value="">전체</option>
               <option value="t" th:selected="${type=='t'}">제목</option>
@@ -74,7 +96,7 @@
             <button type="submit" class="btn btn-outline-secondary btn-sm">검색</button>
             <a th:href="@{/community/list}" class="btn btn-outline-secondary btn-sm reset-btn">초기화</a>
           </div> -->
-        </form>
+        <!-- </form> -->
         <!-- <a
           th:href="@{/community/create}"
           class="btn btn-primary btn-sm ms-3 create-btn"
@@ -84,10 +106,18 @@
       </div>
 
       <div class="post-grid">
-        <div th:each="post : ${list}" class="post-card text-decoration-none text-reset" th:attr="data-id=${post.id}">
+        <div
+          th:each="post : ${list}"
+          class="post-card text-decoration-none text-reset"
+          th:attr="data-id=${post.id}"
+        >
           <div class="card-top">
             <div class="left">
-              <img class="profileImg" th:src="@{${post.profileImageUrl}}" alt="프로필" />
+              <img
+                class="profileImg"
+                th:src="@{${post.profileImageUrl}}"
+                alt="프로필"
+              />
               <div class="name-time">
                 <p class="nickname" th:text="${post.author.nickname}">닉네임</p>
                 <p class="time" th:text="${post.displayDate}">1시간 전</p>
@@ -127,13 +157,30 @@
             <div class="actions">
               <div class="left-actions">
                 <div class="action-group">
-                  <button type="button" class="btn-action btn-like" th:attr="data-id=${post.id}" title="좋아요">
-                    <i class="bi" th:classappend="${post.likedByMe} ? ' bi-heart-fill' : ' bi-heart'"></i>
+                  <button
+                    type="button"
+                    class="btn-action btn-like"
+                    th:attr="data-id=${post.id}"
+                    title="좋아요"
+                  >
+                    <i
+                      class="bi"
+                      th:classappend="${post.likedByMe} ? ' bi-heart-fill' : ' bi-heart'"
+                    ></i>
                   </button>
-                  <span class="count like-count" th:attr="data-count=${post.recommendCount}">0</span>
+                  <span
+                    class="count like-count"
+                    th:attr="data-count=${post.recommendCount}"
+                    >0</span
+                  >
                 </div>
                 <div class="action-group">
-                  <button type="button" class="btn-action btn-comment" th:attr="data-id=${post.id}" title="댓글">
+                  <button
+                    type="button"
+                    class="btn-action btn-comment"
+                    th:attr="data-id=${post.id}"
+                    title="댓글"
+                  >
                     <i class="bi bi-chat"></i>
                   </button>
                   <span
@@ -146,8 +193,16 @@
                 </div>
               </div>
               <div class="right-actions">
-                <button type="button" class="btn-action btn-bookmark" th:attr="data-id=${post.id}" title="북마크">
-                  <i class="bi" th:classappend="${post.bookmarkedByMe} ? ' bi-bookmark-fill' : ' bi-bookmark'"></i>
+                <button
+                  type="button"
+                  class="btn-action btn-bookmark"
+                  th:attr="data-id=${post.id}"
+                  title="북마크"
+                >
+                  <i
+                    class="bi"
+                    th:classappend="${post.bookmarkedByMe} ? ' bi-bookmark-fill' : ' bi-bookmark'"
+                  ></i>
                 </button>
               </div>
             </div>
@@ -164,7 +219,10 @@
       <nav class="mt-4">
         <ul class="pagination justify-content-center">
           <!-- 첫 페이지 « -->
-          <li class="page-item" th:classappend="${currentPage <= 1} ? ' disabled'">
+          <li
+            class="page-item"
+            th:classappend="${currentPage <= 1} ? ' disabled'"
+          >
             <a
               class="page-link"
               th:href="@{/community/list(page=${1}, type=${type}, keyword=${keyword}, styleNames=${styleNames})}"
@@ -174,7 +232,10 @@
           </li>
 
           <!-- 이전 페이지 ‹ -->
-          <li class="page-item" th:classappend="${currentPage <= 1} ? ' disabled'">
+          <li
+            class="page-item"
+            th:classappend="${currentPage <= 1} ? ' disabled'"
+          >
             <a
               class="page-link"
               th:href="@{/community/list(page=${currentPage - 1}, type=${type}, keyword=${keyword}, styleNames=${styleNames})}"
@@ -198,7 +259,10 @@
           </li>
 
           <!-- 다음 페이지 › -->
-          <li class="page-item" th:classappend="${currentPage >= totalPages} ? ' disabled'">
+          <li
+            class="page-item"
+            th:classappend="${currentPage >= totalPages} ? ' disabled'"
+          >
             <a
               class="page-link"
               th:href="@{/community/list(page=${currentPage + 1}, type=${type}, keyword=${keyword}, styleNames=${styleNames})}"
@@ -208,7 +272,10 @@
           </li>
 
           <!-- 마지막 페이지 » -->
-          <li class="page-item" th:classappend="${currentPage >= totalPages} ? ' disabled'">
+          <li
+            class="page-item"
+            th:classappend="${currentPage >= totalPages} ? ' disabled'"
+          >
             <a
               class="page-link"
               th:href="@{/community/list(page=${totalPages}, type=${type}, keyword=${keyword}, styleNames=${styleNames})}"
@@ -218,7 +285,6 @@
           </li>
         </ul>
       </nav>
-      
     </div>
 
     <!-- 모달은 body 바로 아래 -->
@@ -231,7 +297,10 @@
       aria-hidden="true"
       role="dialog"
     >
-      <div class="modal-dialog modal-dialog-centered modal-xl" role="document"></div>
+      <div
+        class="modal-dialog modal-dialog-centered modal-xl"
+        role="document"
+      ></div>
     </div>
 
     <div th:replace="fragments/footer :: footer"></div>

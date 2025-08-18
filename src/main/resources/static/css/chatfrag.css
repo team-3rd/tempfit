@@ -89,9 +89,9 @@
 .chat-list {
   cursor: pointer;
   padding: 0 !important;
-  border-radius: 0 !important;
-  border: none !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+  margin-top: 7px;
+  border-radius:0 !important;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
 .chat-list span {
   display: inline-block;

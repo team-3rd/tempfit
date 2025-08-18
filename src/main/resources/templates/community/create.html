@@ -25,7 +25,9 @@
       role="alert"
     >
       한 게시글에 하나의 룩만 올려주세요!<br />
-      <span class="text-danger">※다른 룩을 같이 올리실 경우 제재될 수 있습니다.※</span>
+      <span class="text-danger"
+        >※다른 룩을 같이 올리실 경우 제재될 수 있습니다.※</span
+      >
       <button
         type="button"
         class="btn-close"
@@ -46,10 +48,14 @@
       >
         <div class="row g-4">
           <!-- 왼쪽: 큰 미디어 + 썸네일 + 파일 선택 -->
-          <div class="col-12 col-lg-7">
+          <div class="col-12 col-lg-7 imgCard">
             <div class="card media-panel shadow-sm p-3">
               <!-- 큰 미디어: 부트스트랩 캐러셀 -->
-              <div id="createCarousel" class="carousel slide" data-bs-ride="false">
+              <div
+                id="createCarousel"
+                class="carousel slide"
+                data-bs-ride="false"
+              >
                 <div class="carousel-inner media-stage" id="carouselInner">
                   <div id="carouselEmpty" class="stage-empty">
                     이미지를 업로드하면 여기에서 미리볼 수 있어요
@@ -62,7 +68,10 @@
                   data-bs-target="#createCarousel"
                   data-bs-slide="prev"
                 >
-                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span
+                    class="carousel-control-prev-icon"
+                    aria-hidden="true"
+                  ></span>
                 </button>
                 <button
                   class="carousel-control-next media-control"
@@ -71,17 +80,23 @@
                   data-bs-target="#createCarousel"
                   data-bs-slide="next"
                 >
-                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span
+                    class="carousel-control-next-icon"
+                    aria-hidden="true"
+                  ></span>
                 </button>
               </div>
 
               <!-- 썸네일 스트립 (업로드 타일 + 대표/드래그 정렬/개별 삭제) -->
-              <div id="previewContainer" class="thumb-strip d-flex flex-wrap gap-2 mt-3"></div>
+              <div
+                id="previewContainer"
+                class="thumb-strip d-flex flex-wrap gap-2"
+              ></div>
 
               <!-- 파일 인풋: 화면에서는 숨김(타일 클릭으로 열림) -->
               <div class="mt-3">
                 <input
-                  class="visually-hidden"
+                  class="files"
                   type="file"
                   id="imageFiles"
                   name="imageFiles"
@@ -90,7 +105,9 @@
                   required
                 />
                 <div class="form-text">대표 사진은 맨 앞에 배치해 주세요.</div>
-                <div class="invalid-feedback">최소 1장 이상의 사진을 올려주세요.</div>
+                <div class="invalid-feedback">
+                  최소 1장 이상의 사진을 올려주세요.
+                </div>
               </div>
             </div>
           </div>
@@ -115,7 +132,13 @@
                 </div>
                 <div class="col-auto">
                   <label for="dates" class="form-label">날짜</label>
-                  <input type="date" id="dates" name="dates" class="form-control" required />
+                  <input
+                    type="date"
+                    id="dates"
+                    name="dates"
+                    class="form-control"
+                    required
+                  />
                 </div>
               </div>
 
@@ -138,7 +161,9 @@
 
               <!-- 버튼 -->
               <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary" id="bsubmitBtn">등록</button>
+                <button type="submit" class="btn btn-primary" id="bsubmitBtn">
+                  등록
+                </button>
               </div>
             </div>
           </div>

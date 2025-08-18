@@ -229,19 +229,19 @@
                   <button type="button" class="btn-action btn-like" th:attr="data-id=${post.id}" title="좋아요">
                     <i class="bi" th:classappend="${post.likedByMe} ? ' bi-heart-fill' : ' bi-heart'"></i>
                   </button>
-                  <!-- <span class="count like-count" th:attr="data-count=${post.recommendCount}">0</span> -->
+                  <span class="count like-count" th:attr="data-count=${post.recommendCount}">0</span>
                 </div>
                 <div class="action-group">
                   <button type="button" class="btn-action btn-comment" th:attr="data-id=${post.id}" title="댓글">
                     <i class="bi bi-chat"></i>
                   </button>
-                  <!-- <span
+                  <span
                     class="ig-count"
                     id="igCommentCount"
                     th:attr="data-count=${post.commentCount}"
                     th:text="${post.commentCount}"
                     >0</span
-                  > -->
+                  >
                 </div>
               </div>
               <div class="right-actions">
@@ -312,19 +312,19 @@
                   <button type="button" class="btn-action btn-like" th:attr="data-id=${post.id}" title="좋아요">
                     <i class="bi" th:classappend="${post.likedByMe} ? ' bi-heart-fill' : ' bi-heart'"></i>
                   </button>
-                  <!-- <span class="count like-count" th:attr="data-count=${post.recommendCount}">0</span> -->
+                  <span class="count like-count" th:attr="data-count=${post.recommendCount}">0</span>
                 </div>
                 <div class="action-group">
                   <button type="button" class="btn-action btn-comment" th:attr="data-id=${post.id}" title="댓글">
                     <i class="bi bi-chat"></i>
                   </button>
-                  <!-- <span
+                  <span
                     class="ig-count"
                     id="igCommentCount"
                     th:attr="data-count=${post.commentCount}"
                     th:text="${post.commentCount}"
                     >0</span
-                  > -->
+                  >
                 </div>
               </div>
               <div class="right-actions">
