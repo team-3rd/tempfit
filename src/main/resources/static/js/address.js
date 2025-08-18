@@ -34,54 +34,64 @@ window.addEventListener("DOMContentLoaded", async () => {
     });
 
   // 첫 접속 때 현위치 표시
-  navigator.geolocation.getCurrentPosition((pos) => {
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      console.log(pos);
 
-    fetch(
-      `https://geocode.googleapis.com/v4beta/geocode/location/${lat},${lon}?key=AIzaSyAH3J5S71gGtsQUQ-ABAoLmHQZ2kaEA88g`
-    )
-      .then((res) => res.json())
-      .then((loc) => {
-        const addressArray = loc.results[2].formattedAddress.split(" ");
+      fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=AIzaSyAH3J5S71gGtsQUQ-ABAoLmHQZ2kaEA88g`
+      )
+        .then((res) => res.json())
+        .then((loc) => {
+          console.log(loc);
+          const addressArray = loc.results[2].formatted_address.split(" ");
 
-        document.querySelector(".dosi").textContent = "";
+          document.querySelector(".dosi").textContent = "";
 
-        document
-          .querySelector(".dosi")
-          .appendChild(document.createTextNode(addressArray[1] + " "));
+          document
+            .querySelector(".dosi")
+            .appendChild(document.createTextNode(addressArray[1] + " "));
 
-        const span = document.createElement("span");
-        span.className = "do-toggle-icon";
-        const icon = document.createElement("i");
-        icon.classList.add("bi");
-        icon.classList.add("bi-caret-down-fill");
-        document.querySelector(".dosi").appendChild(span);
-        document.querySelector(".do-toggle-icon").appendChild(icon);
-        document.querySelector(".layer-do").classList.add("hide");
-        document.querySelector(".do-btn").classList.remove("unfold");
+          const span = document.createElement("span");
+          span.className = "do-toggle-icon";
+          const icon = document.createElement("i");
+          icon.classList.add("bi");
+          icon.classList.add("bi-caret-down-fill");
+          document.querySelector(".dosi").appendChild(span);
+          document.querySelector(".do-toggle-icon").appendChild(icon);
+          document.querySelector(".layer-do").classList.add("hide");
+          document.querySelector(".do-btn").classList.remove("unfold");
 
-        document.querySelector(".sigungu").textContent = "";
+          document.querySelector(".sigungu").textContent = "";
 
-        document
-          .querySelector(".sigungu")
-          .appendChild(document.createTextNode(addressArray[2] + " "));
+          document
+            .querySelector(".sigungu")
+            .appendChild(document.createTextNode(addressArray[2] + " "));
 
-        const spans = document.createElement("span");
-        spans.className = "si-toggle-icon";
-        const icons = document.createElement("i");
-        icons.classList.add("bi");
-        icons.classList.add("bi-caret-down-fill");
-        document.querySelector(".sigungu").appendChild(spans);
-        document.querySelector(".si-toggle-icon").appendChild(icons);
-        document.querySelector(".layer-si").classList.add("hide");
-        document.querySelector(".si-btn").classList.remove("unfold");
+          const spans = document.createElement("span");
+          spans.className = "si-toggle-icon";
+          const icons = document.createElement("i");
+          icons.classList.add("bi");
+          icons.classList.add("bi-caret-down-fill");
+          document.querySelector(".sigungu").appendChild(spans);
+          document.querySelector(".si-toggle-icon").appendChild(icons);
+          document.querySelector(".layer-si").classList.add("hide");
+          document.querySelector(".si-btn").classList.remove("unfold");
 
-        document.querySelector(".si-btn").classList.remove("disabled");
+          document.querySelector(".si-btn").classList.remove("disabled");
 
-        dosis = document.querySelector(".dosi").textContent;
-      });
-  });
+          dosis = document.querySelector(".dosi").textContent;
+        });
+    },
+    (error) => {
+      console.log(error.message);
+    },
+    {
+      enableHighAccuracy: true,
+    }
+  );
 });
 
 // 도·시 리스트 토글

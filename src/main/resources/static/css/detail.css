@@ -288,11 +288,14 @@
 .ig-submit {
   background: transparent;
   border: none;
-  color: #0d6efd;
+  color:dodgerblue;
   font-weight: 600;
   height: 42px;
   padding: 0 4px;
   cursor: pointer;
+}
+.ig-submit:hover {
+  color: #0d6efd;
 }
 
 /* 로그인 힌트 */

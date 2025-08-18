@@ -211,6 +211,9 @@ function chatFunc() {
                       },
                       () => {
                         /* 무시: 위치 거부 시 서버가 안내 */
+                      },
+                      {
+                        enableHighAccuracy: true,
                       }
                     );
                   }

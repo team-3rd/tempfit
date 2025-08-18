@@ -18,7 +18,9 @@ const submitBtn = document.getElementById("bsubmitBtn");
 
 /* 큰 미리보기 캐러셀 요소 */
 const carouselEl = document.getElementById("createCarousel");
-const carouselInner = carouselEl ? carouselEl.querySelector(".carousel-inner") : null;
+const carouselInner = carouselEl
+  ? carouselEl.querySelector(".carousel-inner")
+  : null;
 const prevBtn = document.getElementById("carouselPrev");
 const nextBtn = document.getElementById("carouselNext");
 
@@ -271,7 +273,9 @@ function filesToItemsAndBuild(fileList) {
 /* 인덱스의 item 제거(외부에서 쓸 때) */
 function removeItemAt(index) {
   if (index < 0 || index >= items.length) return;
-  try { URL.revokeObjectURL(items[index].url); } catch(e){}
+  try {
+    URL.revokeObjectURL(items[index].url);
+  } catch (e) {}
   items.splice(index, 1);
   rebuildThumbnails();
   rebuildCarousel();
@@ -340,7 +344,9 @@ function onDrop(e) {
 
 function onDragEnd(e) {
   const wraps = previewContainer.querySelectorAll(".thumb-wrap");
-  wraps.forEach((w) => w.classList.remove("dragging", "over-before", "over-after"));
+  wraps.forEach((w) =>
+    w.classList.remove("dragging", "over-before", "over-after")
+  );
   dragFromIndex = null;
 }
 
@@ -372,11 +378,12 @@ imageInput.addEventListener("change", function () {
 /* 캐러셀 슬라이드 이동 시 화살표 갱신 */
 if (carouselEl) {
   carouselEl.addEventListener("slid.bs.carousel", (ev) => {
-    const activeIndex = typeof ev.to === "number"
-      ? ev.to
-      : Array.from(carouselInner.querySelectorAll(".carousel-item")).findIndex((el) =>
-          el.classList.contains("active")
-        );
+    const activeIndex =
+      typeof ev.to === "number"
+        ? ev.to
+        : Array.from(
+            carouselInner.querySelectorAll(".carousel-item")
+          ).findIndex((el) => el.classList.contains("active"));
     updateCarouselArrows(activeIndex);
   });
 }
@@ -423,19 +430,18 @@ document.querySelectorAll(".style-check").forEach((chk) => {
 
 /* 위치 정보 설정 + 업로드 타일 초기 렌더 */
 window.addEventListener("DOMContentLoaded", () => {
-  if (previewContainer && !previewContainer.querySelector(".upload-tile-wrap")) {
-    previewContainer.appendChild(buildUploadTile());
-  }
-  updateFileCount();
-
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((pos) => {
-      const latEl = document.getElementById("lat");
-      const lonEl = document.getElementById("lon");
-      if (latEl) latEl.value = pos.coords.latitude;
-      if (lonEl) lonEl.value = pos.coords.longitude;
-    });
-  }
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      document.getElementById("lat").value = pos.coords.latitude;
+      document.getElementById("lon").value = pos.coords.longitude;
+    },
+    (error) => {
+      console.log(error.message);
+    },
+    {
+      enableHighAccuracy: true,
+    }
+  );
 });
 
 /* 폼 유효성 & 중복 제출 방지 */
@@ -474,7 +480,9 @@ form &&
       }
     }
     if (sexGroup) {
-      const checkedSexes = Array.from(sexChecks || []).filter((chk) => chk.checked);
+      const checkedSexes = Array.from(sexChecks || []).filter(
+        (chk) => chk.checked
+      );
       const sexFeedback = sexGroup.querySelector(".invalid-feedback");
       if (checkedSexes.length < 1) {
         sexGroup.classList.add("was-validated");

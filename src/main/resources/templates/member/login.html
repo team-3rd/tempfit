@@ -9,7 +9,7 @@
       integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
       crossorigin="anonymous"
     />
-    <link href="/css/darkmode.css" rel="stylesheet" />
+    <!-- <link href="/css/darkmode.css" rel="stylesheet" /> -->
     <link href="/css/login.css" rel="stylesheet" />
     <link
       href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/variable/pretendardvariable.css"
@@ -20,36 +20,63 @@
   <body class="bg-light d-flex flex-column min-vh-100">
     <th:block th:replace="fragments/navbar :: navbar"></th:block>
 
-    <th:block th:replace="fragments/toggle :: toggle"></th:block>
+    <!-- <th:block th:replace="fragments/toggle :: toggle"></th:block> -->
 
-    <div class="container d-flex align-items-center justify-content-center min-vh-100">
-      <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
+    <div
+      class="container d-flex align-items-center justify-content-center min-vh-100"
+    >
+      <div class="card shadow p-4" style="width: 100%; max-width: 400px">
         <h2 class="text-center mb-4">로그인</h2>
 
         <form th:action="@{/member/login}" method="post">
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="id" name="username" placeholder=" " spellcheck="false" required />
+            <input
+              type="text"
+              class="form-control"
+              id="id"
+              name="username"
+              placeholder=" "
+              spellcheck="false"
+              required
+            />
             <label for="id">이메일 (ID)</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input type="password" class="form-control" id="InputPassword" name="password" placeholder=" " required />
+            <input
+              type="password"
+              class="form-control"
+              id="InputPassword"
+              name="password"
+              placeholder=" "
+              required
+            />
             <label for="InputPassword">비밀번호</label>
           </div>
 
           <div class="form-check mb-3">
-            <input type="checkbox" class="form-check-input" id="rememberMe" name="remember-me" />
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="rememberMe"
+              name="remember-me"
+            />
             <label class="form-check-label" for="rememberMe">로그인 유지</label>
           </div>
 
-          <button type="submit" class="btn btn-primary w-100 mb-2">로그인</button>
+          <button type="submit" class="btn btn-primary w-100 mb-2">
+            로그인
+          </button>
         </form>
 
         <div th:if="${param.error}" class="text-danger text-center mb-2">
           아이디나 비밀번호를 확인해 주세요
         </div>
 
-        <a href="/oauth2/authorization/google" class="btn btn-outline-danger w-100 mb-2">
+        <a
+          href="/oauth2/authorization/google"
+          class="btn btn-outline-danger w-100 mb-2"
+        >
           <i class="bi bi-google"></i> 구글 로그인
         </a>
 

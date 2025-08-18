@@ -105,7 +105,7 @@ window.initDetailModal = function initDetailModal(host) {
       // ✅ 우선 '가까운' 액션 그룹에서 like-count 찾고, 없으면 전체에서 하나
       const countEl =
         btn.closest(".action-group")?.querySelector(".like-count") ||
-        root.querySelector(".like-count");
+        document.getElementById("igLikeCount");
 
       let current = Number(countEl?.getAttribute("data-count") || 0);
       const wasLiked = icon.classList.contains("bi-heart-fill");
@@ -204,8 +204,35 @@ window.initDetailModal = function initDetailModal(host) {
             .then((data) => {
               const dialog = document.querySelector(".modal-dialog");
               dialog.innerHTML = data;
+
+              // 댓글 로드 후 사진 1개면 스크롤 버튼 숨기기
+              const imgCount =
+                document.querySelectorAll(".carousel-item").length;
+              const prevBtn = document.querySelector(".carousel-control-prev");
+              const nextBtn = document.querySelector(".carousel-control-next");
+
+              if (imgCount == 1) {
+                prevBtn.style.display = "none";
+                nextBtn.style.display = "none";
+              } else {
+                prevBtn.style.display = "flex";
+                nextBtn.style.display = "flex";
+              }
             });
         });
     });
+  }
+
+  // 사진 1개면 스크롤 버튼 숨기기
+  const imgCount = document.querySelectorAll(".carousel-item").length;
+  const prevBtn = document.querySelector(".carousel-control-prev");
+  const nextBtn = document.querySelector(".carousel-control-next");
+
+  if (imgCount == 1) {
+    prevBtn.style.display = "none";
+    nextBtn.style.display = "none";
+  } else {
+    prevBtn.style.display = "flex";
+    nextBtn.style.display = "flex";
   }
 };
