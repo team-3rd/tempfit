@@ -95,14 +95,14 @@
               </a>
             </li> -->
             <li class="nav-item">
-              <a class="nav-link" href="/community/list" title="게시글">
+              <a class="nav-link" href="/community/list" title="게시글" style="margin-top: 10%;">
                 <i class="bi bi-collection fs-4"></i>
               </a>
             </li>
             <!-- 검색 아이콘 (로그인시에만 노출) -->
             <li class="nav-item nav-search" id="nav-search-item" sec:authorize="isAuthenticated()">
-              <a href="#" class="nav-link" id="nav-search-toggle" title="작성자 검색">
-                <i class="bi bi-search fs-4"></i>
+              <a href="#" class="nav-link" id="nav-search-toggle" title="작성자 검색" style="margin-top: 10%;">
+                <i class="bi bi-search fs-4 ms-auto"></i>
               </a>
               <div class="nav-search-panel" id="nav-search-panel">
                 <form id="nav-search-form" action="/community/list" method="get" autocomplete="off">
@@ -114,23 +114,26 @@
             </li>
 
             <li class="nav-item" sec:authorize="!isAuthenticated()">
-              <a class="nav-link" href="/member/register" title="회원가입">
-                <i class="bi bi-person-add fs-4"></i>
+              <a class="nav-link" href="/member/register" title="회원가입" style="margin-top: 10%;">
+                <i class="bi bi-person-add fs-4 ms-auto"></i>
               </a>
             </li>
             <li class="nav-item" sec:authorize="!isAuthenticated()">
-              <a class="nav-link" href="/member/login" title="로그인">
-                <i class="bi bi-box-arrow-in-left fs-4"></i>
+              <a class="nav-link" href="/member/login" title="로그인" style="margin-top: 10%;">
+                <i class="bi bi-box-arrow-in-left fs-4 ms-auto"></i>
               </a>
             </li>
-            <li class="nav-item" sec:authorize="isAuthenticated()">
-              <a class="nav-link" th:href="@{/member/{id}(id=${#authentication.principal.email})}" title="프로필">
-                <i class="bi bi-person-circle fs-4"></i>
+             <li class="nav-item" sec:authorize="isAuthenticated()">
+              <a class="nav-link" th:href="@{/member/{id}(id=${#authentication.principal.email})}" th:title="${#authentication.principal.nickname}">
+                <img th:src="${#authentication.principal.profileImage != null ? #authentication.principal.profileImage : '/images/default-profile.png'}"
+                    alt="프로필"
+                    class="rounded-circle fs-4"
+                    style="margin-bottom: 10%; width:32px; height:32px; object-fit:scale-down;">
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/member/logout}" title="로그아웃">
-                <i class="bi bi-box-arrow-right fs-4"></i>
+              <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/member/logout}" title="로그아웃" style="margin-top: 10%;">
+                <i class="bi bi-box-arrow-right fs-4 ms-auto"></i>
               </a>
             </li>
           </ul>

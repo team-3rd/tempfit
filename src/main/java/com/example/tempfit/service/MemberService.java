@@ -110,7 +110,7 @@ public class MemberService {
         }
 
         LoginMemberDetails updatedUserDetails = new LoginMemberDetails(member);
-        AuthMemberDTO authMemberDTO = new AuthMemberDTO(email, updatedUserDetails.getName(), updatedUserDetails.getNickname(), updatedUserDetails.getPassword(), updatedUserDetails.isFromSocial(), updatedUserDetails.getSex(), updatedUserDetails.getAuthorities());
+        AuthMemberDTO authMemberDTO = new AuthMemberDTO(email, updatedUserDetails.getName(), updatedUserDetails.getNickname(), updatedUserDetails.getPassword(), updatedUserDetails.isFromSocial(), updatedUserDetails.getSex(), updatedUserDetails.getProfileImage(), updatedUserDetails.getAuthorities());
 
         Authentication newAuth = new UsernamePasswordAuthenticationToken(
         authMemberDTO,

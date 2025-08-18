@@ -147,84 +147,209 @@
         </div>
       </div>
 
-      <div class="post-list">
-        <h4>게시글</h4>
-        <div class="post-table bg-white p-3">
-          <table
-            class="table table-hover align-middle mb-0"
-            th:if="${#lists.size(posts) > 0}"
-          >
-            <thead class="table-light">
-              <tr>
-                <th>내용</th>
-                <th>작성일</th>
-                <th>추천수</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                th:each="post : ${posts}"
-                class="posts post-card"
-                style="cursor: pointer"
-                th:attr="data-id=${post.id}"
-              >
-                <td th:text="${post.content}">내용</td>
-                <td
-                  th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd')}"
-                >
-                  날짜
-                </td>
-                <td th:text="${post.recommendCount}">0</td>
-              </tr>
-            </tbody>
-          </table>
+      <section class="mt-4">
 
-          <!-- 글이 하나도 없을 때 -->
-          <div class="no-posts" th:if="${#lists.size(posts) == 0}">
-            아직 작성한 게시글이 없습니다 📝
+  <!-- 탭 헤더 -->
+<div class="profile-tabbar">
+  <ul class="nav profile-tabs" id="profileTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="posts-tab"
+              data-bs-toggle="tab" data-bs-target="#tab-posts"
+              type="button" role="tab" aria-label="게시글">
+        <i class="bi bi-grid-3x3-gap"></i>
+        <span class="visually-hidden">게시글</span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="bookmarks-tab"
+              data-bs-toggle="tab" data-bs-target="#tab-bookmarks"
+              type="button" role="tab" aria-label="북마크">
+        <i class="bi bi-bookmark"></i>
+        <span class="visually-hidden">북마크</span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="dibs-tab"
+              data-bs-toggle="tab" data-bs-target="#tab-dibs"
+              type="button" role="tab" aria-label="찜 리스트">
+        <i class="bi bi-bag"></i>
+        <span class="visually-hidden">찜 리스트</span>
+      </button>
+    </li>
+  </ul>
+</div>
+
+  <!-- 탭 내용 -->
+  <div class="tab-content pt-3">
+    <!-- 게시글 -->
+     <div class="tab-pane fade show active" id="tab-posts" role="tabpanel" aria-labelledby="posts-tab">
+      <div class="post-grid">
+        <div th:each="post : ${posts}" class="post-card text-decoration-none text-reset" th:attr="data-id=${post.id}">
+          <div class="card-top">
+            <div class="left">
+              <img class="profileImg" th:src="@{${post.profileImageUrl}}" alt="프로필" />
+              <div class="name-time">
+                <p class="nickname" th:text="${post.author.nickname}">닉네임</p>
+                <p class="time" th:text="${post.displayDate}">1시간 전</p>
+              </div>
+            </div>
+            <div class="weather">
+              <i
+                class="bi"
+                th:classappend="
+                   ${post.sky}=='맑음' ? ' bi-sun' :
+                   (${post.sky}=='흐림' ? ' bi-cloud-sun' :
+                   (${post.sky}=='구름 많음' ? ' bi-clouds' :
+                   (${post.sky}=='비' ? ' bi-cloud-rain' :
+                   (${post.sky}=='눈' ? ' bi-cloud-snow' : ''))))"
+              >
+              </i>
+              <span class="temp" th:text="${post.maxTemp + '°'}"></span>
+              <span class="temp" th:text="${post.minTemp + '°'}"></span>
+            </div>
+          </div>
+
+          <!-- 이미지(정방형) + 여러장 인디케이터 -->
+          <div class="image-wrap">
+            <img
+              th:if="${post.repImageUrl != null}"
+              th:src="@{'/uploads/' + ${post.repImageUrl}}"
+              alt="대표사진"
+              class="card-img-top"
+            />
+            <i
+              class="bi bi-stickies-fill multi-indicator"
+              th:if="${post.extraImageUrls != null and #lists.size(post.extraImageUrls) > 0}"
+            ></i>
+          </div>
+
+          <div class="card-body-ig">
+            <div class="actions">
+              <div class="left-actions">
+                <div class="action-group">
+                  <button type="button" class="btn-action btn-like" th:attr="data-id=${post.id}" title="좋아요">
+                    <i class="bi" th:classappend="${post.likedByMe} ? ' bi-heart-fill' : ' bi-heart'"></i>
+                  </button>
+                  <span class="count like-count" th:attr="data-count=${post.recommendCount}">0</span>
+                </div>
+                <div class="action-group">
+                  <button type="button" class="btn-action btn-comment" th:attr="data-id=${post.id}" title="댓글">
+                    <i class="bi bi-chat"></i>
+                  </button>
+                  <span
+                    class="ig-count"
+                    id="igCommentCount"
+                    th:attr="data-count=${post.commentCount}"
+                    th:text="${post.commentCount}"
+                    >0</span
+                  >
+                </div>
+              </div>
+              <div class="right-actions">
+                <button type="button" class="btn-action btn-bookmark" th:attr="data-id=${post.id}" title="북마크">
+                  <i class="bi" th:classappend="${post.bookmarkedByMe} ? ' bi-bookmark-fill' : ' bi-bookmark'"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="caption">
+              <span class="name" th:text="${post.author.nickname}">닉네임</span>
+              <span class="content" th:text="${post.content}">내용</span>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="post-list">
-        <h4>북마크</h4>
-        <div class="post-table bg-white p-3">
-          <table
-            class="table table-hover align-middle mb-0"
-            th:if="${#lists.size(posts) > 0}"
-          >
-            <thead class="table-light">
-              <tr>
-                <th>내용</th>
-                <th>작성일</th>
-                <th>추천수</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                th:each="post : ${bookmarks}"
-                class="bookmarkedPosts post-card"
-                style="cursor: pointer"
-                th:attr="data-id=${post.id}"
-              >
-                <td th:text="${post.content}">내용</td>
-                <td
-                  th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd')}"
-                >
-                  날짜
-                </td>
-                <td th:text="${post.recommendCount}">0</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <!-- 글이 하나도 없을 때 -->
-          <div class="no-posts" th:if="${#lists.size(posts) == 0}">
+        <div class="no-posts" th:if="${#lists.size(posts) == 0}">
             아직 작성한 게시글이 없습니다 📝
-          </div>
         </div>
       </div>
+      </div>
+
+    <!-- 북마크 -->
+     <div class="tab-pane fade" id="tab-bookmarks" role="tabpanel" aria-labelledby="bookmarks-tab">
+      <div class="post-grid">
+      <div th:each="post : ${bookmarks}" class="post-card text-decoration-none text-reset" th:attr="data-id=${post.id}">
+          <div class="card-top">
+            <div class="left">
+              <img class="profileImg" th:src="@{${post.profileImageUrl}}" alt="프로필" />
+              <div class="name-time">
+                <p class="nickname" th:text="${post.author.nickname}">닉네임</p>
+                <p class="time" th:text="${post.displayDate}">1시간 전</p>
+              </div>
+            </div>
+            <div class="weather">
+              <i
+                class="bi"
+                th:classappend="
+                   ${post.sky}=='맑음' ? ' bi-sun' :
+                   (${post.sky}=='흐림' ? ' bi-cloud-sun' :
+                   (${post.sky}=='구름 많음' ? ' bi-clouds' :
+                   (${post.sky}=='비' ? ' bi-cloud-rain' :
+                   (${post.sky}=='눈' ? ' bi-cloud-snow' : ''))))"
+              >
+              </i>
+              <span class="temp" th:text="${post.maxTemp + '°'}"></span>
+              <span class="temp" th:text="${post.minTemp + '°'}"></span>
+            </div>
+          </div>
+
+          <!-- 이미지(정방형) + 여러장 인디케이터 -->
+          <div class="image-wrap">
+            <img
+              th:if="${post.repImageUrl != null}"
+              th:src="@{'/uploads/' + ${post.repImageUrl}}"
+              alt="대표사진"
+              class="card-img-top"
+            />
+            <i
+              class="bi bi-stickies-fill multi-indicator"
+              th:if="${post.extraImageUrls != null and #lists.size(post.extraImageUrls) > 0}"
+            ></i>
+          </div>
+
+          <div class="card-body-ig">
+            <div class="actions">
+              <div class="left-actions">
+                <div class="action-group">
+                  <button type="button" class="btn-action btn-like" th:attr="data-id=${post.id}" title="좋아요">
+                    <i class="bi" th:classappend="${post.likedByMe} ? ' bi-heart-fill' : ' bi-heart'"></i>
+                  </button>
+                  <span class="count like-count" th:attr="data-count=${post.recommendCount}">0</span>
+                </div>
+                <div class="action-group">
+                  <button type="button" class="btn-action btn-comment" th:attr="data-id=${post.id}" title="댓글">
+                    <i class="bi bi-chat"></i>
+                  </button>
+                  <span
+                    class="ig-count"
+                    id="igCommentCount"
+                    th:attr="data-count=${post.commentCount}"
+                    th:text="${post.commentCount}"
+                    >0</span
+                  >
+                </div>
+              </div>
+              <div class="right-actions">
+                <button type="button" class="btn-action btn-bookmark" th:attr="data-id=${post.id}" title="북마크">
+                  <i class="bi" th:classappend="${post.bookmarkedByMe} ? ' bi-bookmark-fill' : ' bi-bookmark'"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="caption">
+              <span class="name" th:text="${post.author.nickname}">닉네임</span>
+              <span class="content" th:text="${post.content}">내용</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-muted text-center py-5" th:if="${bookmarks == null || #lists.isEmpty(bookmarks)}">
+          북마크한 글이 없습니다 ⭐
+        </div>
+      </div>
+    </div>
+
+    <!-- 찜 리스트 (상품 카드 그리드) -->
+    <div class="tab-pane fade" id="tab-dibs" role="tabpanel" aria-labelledby="dibs-tab">
       <div class="products-grid">
-        <h4>찜 리스트</h4>
         <div
           th:if="${#lists.isEmpty(products)}"
           class="no-products"
@@ -233,9 +358,10 @@
           등록된 상품이 없습니다.
         </div>
 
-        <div th:each="p : ${products}">
+        <div th:each="p : ${products}" class="product-card-wrapper">
+          <!-- 카드 전체는 상품 링크 -->
           <a
-            th:href="${p.linkUrl}"
+            th:href="${p.linkUrl != null && !#strings.isEmpty(p.linkUrl) ? p.linkUrl : '#'}"
             target="_blank"
             class="card product-card mb-0"
           >
@@ -244,13 +370,41 @@
             </div>
             <div class="card-body">
               <div class="brand-name" th:text="${p.brandName}">브랜드</div>
-              <div class="product-name" th:text="${p.productName}">상품명</div>
+              <div
+                class="product-name text-truncate"
+                th:text="${p.productName}"
+              >
+                상품명
+              </div>
             </div>
           </a>
+          <button
+            type="button"
+            class="dib-btn btn-action"
+            th:attr="data-id=${p.id}"
+            title="찜"
+            aria-pressed="false"
+          >
+            <i class="bi bi-bag"></i>
+          </button>
         </div>
       </div>
+  </div>
+</section>
     </main>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const initial = location.hash || '#tab-posts';
+        const btn = document.querySelector(`[data-bs-target="${initial}"]`);
+        if (btn) new bootstrap.Tab(btn).show();
 
+        document.querySelectorAll('#profileTabs [data-bs-toggle="tab"]').forEach(b => {
+          b.addEventListener('shown.bs.tab', e => {
+            history.replaceState(null, '', e.target.getAttribute('data-bs-target'));
+          });
+        });
+      });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/modalLoader.js"></script>
     <script src="/js/profile.js"></script>

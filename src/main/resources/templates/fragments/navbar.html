@@ -91,8 +91,11 @@
             </li>
 
             <li class="nav-item" sec:authorize="isAuthenticated()">
-              <a class="nav-link" th:href="@{/member/{id}(id=${#authentication.principal.email})}" title="프로필">
-                <i class="bi bi-person-circle fs-4"></i>
+              <a class="nav-link" th:href="@{/member/{id}(id=${#authentication.principal.email})}" th:title="${#authentication.principal.nickname}">
+                <img th:src="${#authentication.principal.profileImage != null ? #authentication.principal.profileImage : '/images/default-profile.png'}"
+                    alt="프로필"
+                    class="rounded-circle fs-4"
+                    style="margin-top: 10%; width:32px; height:32px; object-fit:scale-down;">
               </a>
             </li>
 

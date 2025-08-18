@@ -25,10 +25,11 @@ public class AuthMemberDTO extends User implements OAuth2User {
     private String nickname;
     private Sex sex;
     private boolean fromSocial;
+    private String profileImage;
 
     private Map<String, Object> attr;
 
-    public AuthMemberDTO(String username, String name, String nickname, String password, boolean fromSocial, Sex sex,
+    public AuthMemberDTO(String username, String name, String nickname, String password, boolean fromSocial, Sex sex, String profileImage,
             Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
         this.email = username;
@@ -37,11 +38,12 @@ public class AuthMemberDTO extends User implements OAuth2User {
         this.password = password;
         this.fromSocial = fromSocial;
         this.sex = sex;
+        this.profileImage = profileImage;
     }
 
-    public AuthMemberDTO(String username, String name, String nickname, String password, boolean fromSocial, Sex sex,
+    public AuthMemberDTO(String username, String name, String nickname, String password, boolean fromSocial, Sex sex, String profileImage,
             Collection<? extends GrantedAuthority> authorities, Map<String, Object> attr) {
-        this(username, name, nickname, password, fromSocial, sex, authorities);
+        this(username, name, nickname, password, fromSocial, sex, profileImage, authorities);
         this.attr = attr;
     }
 
