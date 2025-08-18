@@ -32,3 +32,7 @@ build/
 ### VS Code ###
 .vscode/
 /uploads
+
+# properties
+src/main/resources/application-db.properties
+
