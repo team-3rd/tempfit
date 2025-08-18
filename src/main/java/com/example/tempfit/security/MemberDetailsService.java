@@ -31,7 +31,7 @@ public class MemberDetailsService implements UserDetailsService{
             throw new UsernameNotFoundException("알맞은 이메일인지 확인해주세요");
         
         AuthMemberDTO authMemberDTO = new AuthMemberDTO(member.getEmail(), member.getName(), member.getNickname(),
-            member.getPassword(), member.isFromSocial(), member.getSex(),
+            member.getPassword(), member.isFromSocial(), member.getSex(), member.getProfileImageUrl(),
             member.getRoleSet().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
         .collect(Collectors.toList()));
 

@@ -9,10 +9,11 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>board</artifactId>
+	<artifactId>tempfit</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>board</name>
-	<description>Demo project for Spring Boot</description>
+	<packaging>jar</packaging>
+	<name>tempfit</name>
+	<description>project for Spring Boot</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -41,34 +42,34 @@
   		</dependencies>
 	</dependencyManagement>
 	<dependencies>
-	<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-webflux</artifactId>
-	</dependency>
+		<dependency>
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
 
-	  <!-- 코어가 필요하면 함께 추가 -->
-<dependency>
-    <groupId>org.apache.httpcomponents.client5</groupId>
-    <artifactId>httpclient5</artifactId>
-    <version>5.5</version>
-</dependency>
-<!-- 1) ChatClient 코어 API -->
-  <dependency>
-    <groupId>org.springframework.ai</groupId>
-    <artifactId>spring-ai-client-chat</artifactId>
-  </dependency>
+	  	<!-- 코어가 필요하면 함께 추가 -->
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
+			<version>5.5</version>
+		</dependency>
+		<!-- 1) ChatClient 코어 API -->
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-client-chat</artifactId>
+		</dependency>
 
-  <!-- 2) ChatClient 자동설정 (모델별 바인딩) -->
-  <dependency>
-    <groupId>org.springframework.ai</groupId>
-    <artifactId>spring-ai-autoconfigure-model-chat-client</artifactId>
-  </dependency>
+		<!-- 2) ChatClient 자동설정 (모델별 바인딩) -->
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-autoconfigure-model-chat-client</artifactId>
+		</dependency>
 
-  <!-- 3) OpenAI 모델을 위한 스타터 -->
-  <dependency>
-    <groupId>org.springframework.ai</groupId>
-    <artifactId>spring-ai-starter-model-openai</artifactId>
-  </dependency>
+		<!-- 3) OpenAI 모델을 위한 스타터 -->
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-starter-model-openai</artifactId>
+		</dependency>
 
 		<dependency>
     		<groupId>com.fasterxml.jackson.core</groupId>
@@ -116,7 +117,8 @@
 			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-apt</artifactId>
 			<version>5.0.0</version>	
-			<classifier>jakarta</classifier>		
+			<classifier>jakarta</classifier>
+			<scope>provided</scope>		
 		</dependency>
 		<dependency>
 			<groupId>org.modelmapper</groupId>
@@ -191,33 +193,41 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>com.mysema.maven</groupId>
-				<artifactId>apt-maven-plugin</artifactId>
-				<version>1.1.3</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>process</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>target/generated-sources/annotations</outputDirectory>
-							<processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.13.0</version>
 				<configuration>
+					<source>17</source>
+					<target>17</target>
+
+					<!-- 생성물 경로: 여기로 Q 클래스가 생깁니다 -->
+					<generatedSourcesDirectory>target/generated-sources/annotations</generatedSourcesDirectory>
+
+					<!-- Annotation Processor 등록 -->
 					<annotationProcessorPaths>
-						<path>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</path>
+					<path>
+						<groupId>com.querydsl</groupId>
+						<artifactId>querydsl-apt</artifactId>
+						<version>5.0.0</version>
+						<classifier>jakarta</classifier>
+					</path>
+					<path>
+						<groupId>org.projectlombok</groupId>
+						<artifactId>lombok</artifactId>
+					</path>
+					<path>
+						<groupId>jakarta.persistence</groupId>
+						<artifactId>jakarta.persistence-api</artifactId>
+						<version>3.1.0</version>
+					</path>
+					<path>
+						<groupId>jakarta.annotation</groupId>
+						<artifactId>jakarta.annotation-api</artifactId>
+						<version>2.1.1</version>
+					</path>
 					</annotationProcessorPaths>
 				</configuration>
-			</plugin>
+				</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

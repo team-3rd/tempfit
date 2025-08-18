@@ -51,4 +51,8 @@ public class LoginMemberDetails implements UserDetails {
     public boolean isFromSocial() {
         return member.isFromSocial();
     }
+
+    public String getProfileImage() {
+        return member.getProfileImageUrl();
+    }
 }

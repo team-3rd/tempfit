@@ -67,11 +67,13 @@ public class OAuthMemberDetailsService extends DefaultOAuth2UserService{
         String nickname = name + String.format("%04d", random.nextInt(10000));
 
         Sex sex = null;
+        String image = null;
+
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
-        String url = "https://people.googleapis.com/v1/people/me?personFields=genders";
+        String url = "https://people.googleapis.com/v1/people/me?personFields=genders,photos";
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Map> response = restTemplate.exchange(url,HttpMethod.GET,entity,Map.class);
@@ -88,18 +90,35 @@ public class OAuthMemberDetailsService extends DefaultOAuth2UserService{
                 if (gender.equals("male"))sex = Sex.MALE;
                 else if (gender.equals("female"))sex = Sex.FEMALE;
             }
+            List<Map<String, Object>> photos = (List<Map<String, Object>>) body.get("photos");
+            if (photos != null && !photos.isEmpty()) {
+            // 기본 프로필( default == true )을 우선 사용
+                for (Map<String, Object> p : photos) {
+                    Object isDefault = p.get("default");
+                    if (isDefault instanceof Boolean && (Boolean) isDefault) {
+                        image = (String) p.get("url");
+                        break;
+                    }
+                }
+                // 기본 프로필 못 찾았으면 첫 번째 사용
+                if (image == null) {
+                    image = (String) photos.get(0).get("url");
+                }
+            }
         }
 
-        Member member = saveSocialMember(email, name, nickname, sex);
 
-        AuthMemberDTO authMemberDTO = new AuthMemberDTO(member.getEmail(), member.getName(), member.getNickname(), member.getPassword(), member.isFromSocial(), member.getSex(),
+
+        Member member = saveSocialMember(email, name, nickname, sex, image);
+
+        AuthMemberDTO authMemberDTO = new AuthMemberDTO(member.getEmail(), member.getName(), member.getNickname(), member.getPassword(), member.isFromSocial(), member.getSex(), member.getProfileImageUrl(),
         member.getRoleSet().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())).collect(Collectors.toList()),
         oAuth2User.getAttributes());
 
         return authMemberDTO;
     }
 
-    private Member saveSocialMember(String email, String name, String nickname, Sex sex){
+    private Member saveSocialMember(String email, String name, String nickname, Sex sex, String image){
         Member member = memberRepository.findByEmailAndFromSocial(email, true);
         if(member == null){
             Member saveMember = Member.builder()
@@ -108,6 +127,7 @@ public class OAuthMemberDetailsService extends DefaultOAuth2UserService{
                         .nickname(nickname)
                         .password(passwordEncoder.encode("1111"))
                         .sex(sex)
+                        .profileImageUrl(image)
                         .fromSocial(true)
                         .build();
                     saveMember.addMemberRole(Role.USER);
