@@ -182,28 +182,30 @@ window.initDetailModal = function initDetailModal(host) {
   });
 
   // 댓글
-  const commentForm = document.querySelector(".ig-form");
-  const id = commentForm.getAttribute("data-id");
+  if (document.querySelector(".ig-input")) {
+    const commentForm = document.querySelector(".ig-form");
+    const id = commentForm.getAttribute("data-id");
 
-  commentForm.addEventListener("submit", async function (e) {
-    e.preventDefault();
+    commentForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-    const formData = new FormData(commentForm);
-    await fetch(`/api/community/detail/${id}/comments`, {
-      method: "POST",
-      credentials: "same-origin",
-      body: formData,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
+      const formData = new FormData(commentForm);
+      await fetch(`/api/community/detail/${id}/comments`, {
+        method: "POST",
+        credentials: "same-origin",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
 
-        fetch(`/community/detail/${id}/fragment`)
-          .then((res) => res.text())
-          .then((data) => {
-            const dialog = document.querySelector(".modal-dialog");
-            dialog.innerHTML = data;
-          });
-      });
-  });
+          fetch(`/community/detail/${id}/fragment`)
+            .then((res) => res.text())
+            .then((data) => {
+              const dialog = document.querySelector(".modal-dialog");
+              dialog.innerHTML = data;
+            });
+        });
+    });
+  }
 };
