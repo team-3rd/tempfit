@@ -33,13 +33,12 @@
   border-right: 1px solid #eee;
 }
 .ig-photo {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 579px;
+  max-height: 579px;
   width: 579px;
   height: 579px;
   object-fit: contain !important;
   object-position: center center !important;
-  display: block;
   margin: 0 auto;
 }
 #igCarousel {
@@ -78,7 +77,7 @@
 }
 #carousel-prev-btn:hover,
 #carousel-next-btn:hover {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.15);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
   transform: scale(1.02);
 }
@@ -87,17 +86,18 @@
   width: 2.5rem !important;
   height: 2.5rem !important;
 }
-.is-disabled {
+#carousel-prev-btn.is_disabled,
+#carousel-next-btn.is_disabled {
   opacity: 0.28;
   pointer-events: none;
 }
 
-.carousel-inner .carousel-item.active {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.carousel-item.active {
   width: 579px;
   height: 579px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
 }
 .carousel-inner {
   background: #000;
@@ -106,7 +106,7 @@
   width: 579px;
   height: 579px;
   align-items: center;
-  vertical-align: middle;
+  justify-content: center;
 }
 
 /* (작성자 전용) 삭제 버튼 — 사진 우측 하단 */

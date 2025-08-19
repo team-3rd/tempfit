@@ -224,12 +224,12 @@ window.initDetailModal = function initDetailModal(host) {
   }
 
   // 사진 1개면 스크롤 버튼 숨기기 + 인디케이터 설정
-  const imgCount = document.querySelectorAll(".carousel-item").length;
+  const imgCount = document.querySelectorAll(".carousel-item");
   const indicators = document.querySelector(".carousel-indicators");
   const prevBtn = document.querySelector(".carousel-control-prev");
   const nextBtn = document.querySelector(".carousel-control-next");
 
-  if (imgCount == 1) {
+  if (imgCount.length == 1) {
     prevBtn.style.display = "none";
     nextBtn.style.display = "none";
 
@@ -238,7 +238,7 @@ window.initDetailModal = function initDetailModal(host) {
     prevBtn.style.display = "flex";
     nextBtn.style.display = "flex";
 
-    for (let i = 1; i < imgCount; i++) {
+    for (let i = 1; i < imgCount.length; i++) {
       const idx = document.createElement("button");
       idx.type = "button";
       idx.setAttribute("data-bs-target", "#igCarousel");
@@ -247,4 +247,35 @@ window.initDetailModal = function initDetailModal(host) {
       indicators.appendChild(idx);
     }
   }
+
+  // 스크롤 버튼 설정
+  prevBtn.disabled = true;
+  prevBtn.classList.add("is_disabled");
+  const carousel = document.getElementById("igCarousel");
+
+  carousel.addEventListener("slid.bs.carousel", (e) => {
+    const activeIndex = [...imgCount].indexOf(
+      carousel.querySelector(".carousel-item.active")
+    );
+
+    // 첫 번째 슬라이드
+    if (activeIndex <= 0) {
+      prevBtn.disabled = true;
+      if (!prevBtn.classList.contains("is_disabled")) {
+        prevBtn.classList.add("is_disabled");
+      }
+    } else {
+      prevBtn.disabled = false;
+      prevBtn.classList.remove("is_disabled");
+    }
+
+    // 마지막 슬라이드
+    if (activeIndex == imgCount.length - 1) {
+      nextBtn.disabled = true;
+      nextBtn.classList.add("is_disabled");
+    } else {
+      nextBtn.disabled = false;
+      nextBtn.classList.remove("is_disabled");
+    }
+  });
 };
