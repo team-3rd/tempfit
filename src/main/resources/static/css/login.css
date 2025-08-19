@@ -4,7 +4,7 @@ body {
   height: 100%;
   box-sizing: border-box;
 }
-* {
+* :not(.profile-image-wrapper,.profile-container, .overlay){
   border-radius: 0 !important;
 }
 .form-login {
