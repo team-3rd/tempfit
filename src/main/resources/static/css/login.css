@@ -4,7 +4,9 @@ body {
   height: 100%;
   box-sizing: border-box;
 }
-
+* {
+  border-radius: 0 !important;
+}
 .form-login {
   max-width: 330px;
   padding: 1rem;

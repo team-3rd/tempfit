@@ -1,7 +1,9 @@
 body {
+  background: #f5f6fa;
   font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto,
     "Noto Sans KR", sans-serif;
 }
+
 /* 컨테이너 */
 .profile-page {
   max-width: 900px;
@@ -59,18 +61,19 @@ body {
 
 /* 팔로우 버튼 그룹 */
 .follow-buttons {
-  margin-top: 0.75rem;
+  margin-top: 0.4rem;
 }
 
 .profile-tabbar{
   display:flex; justify-content:center;
-  background: var(--bs-body-bg);
+  background: #f5f6fa;
   border-bottom: 1px solid var(--bs-border-color);
 }
 
 /* ★ 더 넓게 퍼지도록: 폭을 크게 + 균등 분배 */
 .profile-tabs{
   display:flex;
+  background: #f5f6fa;
   justify-content: space-evenly;     /* 아이콘 간격을 균등하게 */
   align-items:center;
   width: clamp(720px, 80vw, 1280px); /* 화면에 따라 커지게 */

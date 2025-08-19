@@ -61,6 +61,7 @@ public class MemberService {
         Member member = dtoToEntity(dto);
         member.setPassword(passwordEncoder.encode(dto.getPassword()));
         member.setProfileImageUrl(defaultProfileImageUrl);
+        member.setPersonalColorCode(dto.getPersonalColorCode());
         Member newMember = memberRepository.save(member);
         return newMember.getEmail();
     }

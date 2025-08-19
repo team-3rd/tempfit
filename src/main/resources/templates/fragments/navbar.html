@@ -52,21 +52,21 @@
           </li> -->
 
             <!-- 기본 '게시글' 아이콘 -->
-            <li class="nav-item" id="nav-community-list-item">
+            <li class="nav-item" id="nav-community-list-item" style="margin-left: auto; margin-right: 2.5%;">
               <a class="nav-link" href="/community/list" title="게시글">
                 <i class="bi bi-collection fs-4"></i>
               </a>
             </li>
 
             <!-- /community/list 에서 로그인 시 '글쓰기' 아이콘으로 교체 (초기 숨김) -->
-            <li class="nav-item" id="nav-community-create-item" sec:authorize="isAuthenticated()" style="display: none">
+            <li class="nav-item" id="nav-community-create-item" sec:authorize="isAuthenticated()" style="display: none; margin-left: auto; margin-right: 2.5%;">
               <a th:href="@{/community/create}" class="nav-link" title="글쓰기">
                 <i class="bi bi-pencil-square fs-4"></i>
               </a>
             </li>
 
             <!-- 검색 아이콘 (로그인시에만 노출) -->
-            <li class="nav-item nav-search" id="nav-search-item" sec:authorize="isAuthenticated()">
+            <li class="nav-item nav-search" id="nav-search-item" sec:authorize="isAuthenticated()" style="margin-left: auto; margin-right: 2.5%;">
               <a href="#" class="nav-link" id="nav-search-toggle" title="작성자 검색">
                 <i class="bi bi-search fs-4"></i>
               </a>
@@ -79,18 +79,18 @@
               </div>
             </li>
 
-            <li class="nav-item" sec:authorize="!isAuthenticated()">
+            <li class="nav-item" sec:authorize="!isAuthenticated()" style="margin-left: auto; margin-right: 2.5%;">
               <a class="nav-link" href="/member/register" title="회원가입">
                 <i class="bi bi-person-add fs-4"></i>
               </a>
             </li>
-            <li class="nav-item" sec:authorize="!isAuthenticated()">
+            <li class="nav-item" sec:authorize="!isAuthenticated()" style="margin-left: auto; margin-right: 2.5%;">
               <a class="nav-link" href="/member/login" title="로그인">
                 <i class="bi bi-box-arrow-in-left fs-4"></i>
               </a>
             </li>
 
-            <li class="nav-item" sec:authorize="isAuthenticated()">
+            <li class="nav-item" sec:authorize="isAuthenticated()" style="margin-left: auto; margin-right: 2.5%;">
               <a class="nav-link" th:href="@{/member/{id}(id=${#authentication.principal.email})}" th:title="${#authentication.principal.nickname}">
                 <img th:src="${#authentication.principal.profileImage != null ? #authentication.principal.profileImage : '/images/default-profile.png'}"
                     alt="프로필"
@@ -99,7 +99,7 @@
               </a>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item" style="margin-left: auto; margin-right: 2.5%;">
               <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/member/logout}" title="로그아웃">
                 <i class="bi bi-box-arrow-right fs-4"></i>
               </a>

@@ -23,9 +23,9 @@
     <!-- <th:block th:replace="fragments/toggle :: toggle"></th:block> -->
 
     <div
-      class="container d-flex align-items-center justify-content-center min-vh-100"
+      class="container d-flex align-items-center justify-content-center min-vh-100 "
     >
-      <div class="card shadow p-4" style="width: 100%; max-width: 400px">
+      <div class="card shadow p-4" style="width: 100%; max-width: 400px; border-color: transparent;">
         <h2 class="text-center mb-4">로그인</h2>
 
         <form th:action="@{/member/login}" method="post">
@@ -72,16 +72,19 @@
         <div th:if="${param.error}" class="text-danger text-center mb-2">
           아이디나 비밀번호를 확인해 주세요
         </div>
-
+        <span style="color: gray; text-align: center;">또는</span>
         <a
           href="/oauth2/authorization/google"
-          class="btn btn-outline-danger w-100 mb-2"
+          class="btn btn-outline-danger w-100 mt-2 mb-2"
         >
           <i class="bi bi-google"></i> 구글 로그인
         </a>
 
-        <div class="text-center">
-          <a href="/member/register" class="text-decoration-none">회원가입</a>
+        <div style="margin-top: 8px; border-top: 1px solid var(--bs-border-color);">
+          <div class="text-center mt-2">
+            <span style="color: gray; margin-right: 5px;">계정이 없으신가요?</span>
+            <a href="/member/register" class="text-decoration-none">회원가입</a>
+          </div>
         </div>
       </div>
     </div>

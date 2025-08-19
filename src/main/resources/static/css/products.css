@@ -1,6 +1,8 @@
 /* 전체 배경 */
 body {
   background: #f5f6fa !important;
+  font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto,
+    "Noto Sans KR", sans-serif;
 }
 
 /* 그리드 레이아웃 */
