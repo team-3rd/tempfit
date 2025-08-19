@@ -50,28 +50,28 @@ public class MemberController {
     private final FollowService followService;
     private final ProductsService productsService;
 
-    //@PreAuthorize("permitAll()")
+    // @PreAuthorize("permitAll()")
     @GetMapping("/login")
-    public void getLogin(){
+    public void getLogin() {
         log.info("login 폼 요청");
     }
 
     @PreAuthorize("permitAll()")
     @GetMapping("/register")
-    public void getRegister(@ModelAttribute("dto") MemberDTO dto){
+    public void getRegister(@ModelAttribute("dto") MemberDTO dto) {
         log.info("회원가입 폼 요청");
     }
 
     @PreAuthorize("permitAll()")
     @PostMapping("/register")
-    public String postRegister(@ModelAttribute("dto") @Valid MemberDTO dto){
+    public String postRegister(@ModelAttribute("dto") @Valid MemberDTO dto) {
         log.info("회원가입 요청 {}", dto);
         memberService.register(dto);
         return "redirect:/member/login";
     }
 
     @GetMapping("/mypage")
-    public void getMypage(Model model, Authentication authentication){
+    public void getMypage(Model model, Authentication authentication) {
         log.info("Mypage 요청");
         String email = authentication.getName();
         MemberDTO memberDTO = memberService.getMember(email);
@@ -79,11 +79,13 @@ public class MemberController {
     }
 
     @GetMapping("/{email}")
-    public String getProfile(@PathVariable String email, @AuthenticationPrincipal AuthMemberDTO authMemberDTO, Model model, CsrfToken csrfToken) {
+    public String getProfile(@PathVariable String email, @AuthenticationPrincipal AuthMemberDTO authMemberDTO,
+            Model model, CsrfToken csrfToken) {
 
-        Member profileMember = memberRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("해당 회원이 존재하지 않습니다."));
+        Member profileMember = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("해당 회원이 존재하지 않습니다."));
         String myEmail = null;
-        if(authMemberDTO != null)
+        if (authMemberDTO != null)
             myEmail = authMemberDTO.getEmail();
 
         boolean isOwner = authMemberDTO != null && myEmail.equals(email);
@@ -96,7 +98,9 @@ public class MemberController {
         long followingCount = followService.countFollowing(profileMember);
 
         List<CommunityDTO> posts = communityService.getPostsByMember(profileMember);
-        List<CommunityDTO> bookmarks = communityService.getPostsByIds(bookmarkRepository.findCommunityIdsByMemberEmail(email));
+        communityService.applyUserFlags(posts, profileMember);
+        List<CommunityDTO> bookmarks = communityService
+                .getPostsByIds(bookmarkRepository.findCommunityIdsByMemberEmail(email));
         List<ProductsDTO> products = memberService.getDibList(email);
 
         model.addAttribute("profile", profileMember);
@@ -111,9 +115,9 @@ public class MemberController {
 
         return "member/profile";
     }
-    
+
     @GetMapping("/mychange")
-    public void getMychange(Authentication authentication, Model model){
+    public void getMychange(Authentication authentication, Model model) {
         log.info("Mychange 요청");
         String email = authentication.getName();
         MemberDTO dto = memberService.getMember(email);
@@ -121,12 +125,11 @@ public class MemberController {
     }
 
     @PostMapping("/mychange")
-    public String postMychange(@ModelAttribute("dto") @Valid MemberDTO dto, Authentication authentication){
+    public String postMychange(@ModelAttribute("dto") @Valid MemberDTO dto, Authentication authentication) {
         log.info("Mychange 요청");
         String email = authentication.getName();
-        if(memberService.checkPw(dto.getEmail(), dto.getPassword()))
-        {
-            memberService.update(email,dto);
+        if (memberService.checkPw(dto.getEmail(), dto.getPassword())) {
+            memberService.update(email, dto);
             return "redirect:/member/" + dto.getEmail();
         }
         return "redirect:/member/" + dto.getEmail();
@@ -144,7 +147,7 @@ public class MemberController {
             return ResponseEntity.status(500).body("이미지 업로드 실패");
         }
     }
-    
+
     @DeleteMapping("/{email}/profile-image")
     public ResponseEntity<String> deleteProfileImage(@PathVariable String email) throws IOException {
         memberService.resetToDefaultProfileImage(email);
